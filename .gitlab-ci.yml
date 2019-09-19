@@ -8,5 +8,6 @@ test:
   script:
   - apt-get update
   - apt-get install -yqq nodejs
+  - ln -s /usr/bin/nodejs /usr/bin/node
   - haxelib install utest
   - haxe test.hxml
