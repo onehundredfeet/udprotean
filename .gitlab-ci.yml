@@ -1,7 +1,12 @@
-image: haxe:4.0
+image: haxe:4.0-stretch
+
+before_script:
+- haxelib install all
 
 test:
   stage: test
   script:
+  - apt-get update
+  - apt-get install nodejs
   - haxelib install utest
   - haxe test.hxml

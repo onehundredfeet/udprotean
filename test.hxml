@@ -6,5 +6,5 @@
 --main TestMain
 -D utest
 
--neko build/test.n
--cmd neko build/test.n
+-js build/test.js
+-cmd node build/test.js
