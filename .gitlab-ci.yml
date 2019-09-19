@@ -6,4 +6,6 @@ before_script:
 test:
   stage: test
   script:
+  - apt-get update
+  - apt-get install -yqq build-essential g++
   - haxe test.hxml
