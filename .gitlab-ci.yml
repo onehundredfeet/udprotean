@@ -3,4 +3,5 @@ image: haxe:4.0
 test:
   stage: test
   script:
+  - haxelib install utest
   - haxe test.hxml

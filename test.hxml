@@ -2,7 +2,9 @@
 -dce no
 -cp src
 -cp test
---main test.TestMain
+-lib utest
+--main TestMain
+-D utest
 
---neko build/neko/test.n
---cmd neko build/neko/test.n
+-neko build/test.n
+-cmd neko build/test.n
