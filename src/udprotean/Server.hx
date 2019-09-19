@@ -2,9 +2,11 @@ package udprotean;
 
 class Server 
 {
-    public function new() 
+    var port: UInt;
+
+    public function new(port: UInt) 
     {
-        
+        this.port = port;
     }
 }
 
