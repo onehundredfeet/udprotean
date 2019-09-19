@@ -1,4 +1,4 @@
-image: haxe:4.0.
+image: haxe:4.0
 
 test:
   stage: test
