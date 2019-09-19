@@ -1,12 +1,25 @@
 package udprotean;
 
-class UDProteanServer 
-{
-    var port: UInt;
+import sys.net.UdpSocket;
+import udprotean.shared.UDProteanSocket;
 
-    public function new(port: UInt) 
+class UDProteanServer
+{
+    var socket: UDProteanSocket;
+
+    public function new(host: String, port: Int) 
     {
-        this.port = port;
+        socket = new UDProteanSocket(host, port);
+    }
+
+    public function start()
+    {
+        socket.bind();
+    }
+
+    public function stop()
+    {
+        socket.close();
     }
 }
 

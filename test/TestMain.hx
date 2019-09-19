@@ -6,7 +6,7 @@ class TestMain
     static function main()
     {
         var runner = new Runner();
-        runner.addCase(new TestCase1());
+        runner.addCase(new TestSocket());
 
         Report.create(runner);
 
