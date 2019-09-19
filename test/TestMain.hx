@@ -1,8 +1,6 @@
 import utest.Runner;
 import utest.ui.Report;
 
-import udprotean.Server;
-
 class TestMain
 {
     static function main()

@@ -1,7 +1,7 @@
 image: haxe:4.0-stretch
 
 before_script:
-- haxelib install all
+- haxelib install all --always
 
 test:
   stage: test

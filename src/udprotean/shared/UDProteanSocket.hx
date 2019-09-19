@@ -2,7 +2,9 @@ package udprotean.shared;
 
 import sys.net.UdpSocket;
 
-class Socket
+class UDProteanSocket
 {
+    var socket: UdpSocket;
+
     
 }

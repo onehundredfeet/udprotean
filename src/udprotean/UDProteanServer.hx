@@ -1,6 +1,6 @@
 package udprotean;
 
-class Server 
+class UDProteanServer 
 {
     var port: UInt;
 
