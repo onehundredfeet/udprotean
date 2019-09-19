@@ -1,0 +1,8 @@
+
+-dce no
+-cp src
+-cp test
+--main test.TestMain
+
+--neko build/neko/test.n
+--cmd neko build/neko/test.n

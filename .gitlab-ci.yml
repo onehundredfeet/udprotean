@@ -1,0 +1,6 @@
+image: haxe:4.0.
+
+test:
+  stage: test
+  script:
+  - haxe test.hxml
