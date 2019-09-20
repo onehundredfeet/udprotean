@@ -9,5 +9,5 @@
 --each
 
 --next
--cpp build/
--cmd ./build/TestMain
+-neko build/test.n
+-cmd neko build/test.n

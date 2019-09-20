@@ -20,7 +20,7 @@ class UDProteanSocket
         this.port = port;
 
         socket = new UdpSocket();
-        socket.setFastSend(true);
+        //socket.setFastSend(true);
         recvBuffer = Bytes.alloc(1024);
     }
 
