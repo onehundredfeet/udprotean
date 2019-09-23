@@ -1,5 +1,9 @@
 image: haxe:4.0-stretch
 
+cache:
+  paths:
+  - /haxelib/
+
 before_script:
 - haxelib install all --always
 

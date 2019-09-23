@@ -22,6 +22,7 @@ class UDProteanSocket
         socket = new UdpSocket();
         //socket.setFastSend(true);
         recvBuffer = Bytes.alloc(1024);
+        recvAddress = new Address();
     }
 
     public function sendTo(buf: Bytes, addr: Address)
@@ -34,6 +35,11 @@ class UDProteanSocket
         socket.waitForRead();
         var bytesRead: Int = socket.readFrom(recvBuffer, 0, recvBuffer.length, recvAddress);
         return recvBuffer.sub(0, bytesRead);
+    }
+
+    public inline function recvFromAddress(): Address
+    {
+        return recvAddress;
     }
 
     public inline function recvFromAddressString(): String

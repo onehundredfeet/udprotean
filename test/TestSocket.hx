@@ -25,22 +25,16 @@ class TestSocket extends TestCase
         client.connect();
     }
 
-    function testSend()
+    function testBasicSendReceive()
     {
         client.sendTo(Bytes.ofString("ping"), serverAddr);
 
-        try
-        {
-            var recvBytes = server.receive();
+        var serverRecv = server.receive().toString();
+        assertEquals("ping", serverRecv);
 
-            trace(recvBytes.toString());
-            trace(server.recvFromAddressString());
-        }
-        catch (e: Dynamic)
-        {
-            trace(e);
-        }
+        server.sendTo(Bytes.ofString("pong"), server.recvFromAddress());
 
-        assertTrue(true);
+        var clientRecv = client.receive().toString();
+        assertEquals("pong", clientRecv);
     }
 }
