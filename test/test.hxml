@@ -1,0 +1,9 @@
+
+-cp src
+-cp test
+-lib hx3compat
+--main TestMain
+
+--each
+
+
