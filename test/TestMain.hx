@@ -1,14 +1,11 @@
-import utest.Runner;
-import utest.ui.Report;
+import haxe.unit.TestRunner;
 
 class TestMain
 {
     static function main()
     {
-        var runner = new Runner();
-        runner.addCase(new TestSocket());
-
-        Report.create(runner);
+        var runner = new TestRunner();
+        runner.add(new TestSocket());
 
         runner.run();
     }

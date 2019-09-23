@@ -1,20 +1,19 @@
 import haxe.macro.Expr.Catch;
 import haxe.io.Bytes;
-import utest.Assert;
-import utest.Test;
+import haxe.unit.TestCase;
 
 import sys.net.Address;
 import sys.net.Host;
 
 import udprotean.shared.UDProteanSocket;
 
-class TestSocket extends Test
+class TestSocket extends TestCase
 {
     var serverAddr: Address;
     var server: UDProteanSocket;
     var client: UDProteanSocket;
 
-    public function setup()
+    public override function setup()
     {
         serverAddr = new Address();
         serverAddr.host = new Host("127.0.0.1").ip;
@@ -41,5 +40,7 @@ class TestSocket extends Test
         {
             trace(e);
         }
+
+        assertTrue(true);
     }
 }

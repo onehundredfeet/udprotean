@@ -2,12 +2,15 @@
 -dce no
 -cp src
 -cp test
--lib utest
+-lib hx3compat
 --main TestMain
--D utest
 
 --each
 
 --next
--neko build/test.n
--cmd neko build/test.n
+-cpp build
+-cmd ./build/TestMain
+
+#--next
+#-neko build/test.n
+#-cmd neko build/test.n
