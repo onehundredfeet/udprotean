@@ -77,24 +77,34 @@ abstract Sequence(Int) from Int to Int
 
 
     /**
-        Returns the distance to the given sequence.
-        Meaning the amount of steps with the `moveNext()` function needed to reach it.
-    **/
+     * Returns the distance to the given sequence.
+     * Meaning the amount of steps with the `moveNext()` function needed to reach it.
+     */
     public inline function distanceTo(seq: Sequence): Int
     {
         return seq > this ? cast(seq - this, Int) : cast(SequentialCommunication.SequenceSize - this + seq, Int);
     }
 
 
+    /**
+     * Returns the sequence number from the first `SequenceBytes` little-endian bytes of the given buffer.
+     */
     public static inline function fromBytes(bytes: Bytes): Sequence
     {
-        return bytes.getInt32(0);
+        return bytes.sub(0, SequentialCommunication.SequenceBytes).getInt32(0);
     }
 
 
     /**
         OVERLOADS
     **/
+    @:op(A == B)
+    static function eq(a: Sequence, b: Sequence): Bool
+    {
+        return cast(a, Int) == cast(b, Int);
+    }
+
+
     @:op(A > B)
     static function gt(a: Sequence, b: Sequence): Bool
     {
