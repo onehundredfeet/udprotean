@@ -84,7 +84,7 @@ class SequentialCommunication
         * This is done to ensure separation between this
         * and the previous cycle of values.
         * Helps clearing the buffer backwards upon
-        * acknowledgements without deleting newer payloads.
+        * acknowledgements without deleting newer datagrams.
         */
         sendingBuffer.clear(datagramSequenceNumber.next);
 
