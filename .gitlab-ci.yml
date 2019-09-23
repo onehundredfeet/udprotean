@@ -7,13 +7,13 @@ cache:
 test-neko:
   stage: test
   script:
-  - haxelib install --always test-neko.hxml
+  - haxelib install --always --quiet test-neko.hxml
   - haxe test-neko.hxml
 
 test-cpp:
   stage: test
   script:
-  - haxelib install --always test-cpp.hxml
+  - haxelib install --always --quiet test-cpp.hxml
   - apt-get update
   - apt-get install -yqq build-essential g++
   - haxe test-cpp.hxml

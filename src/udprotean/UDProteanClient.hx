@@ -8,6 +8,7 @@ class UDProteanClient
 {
     var socket: UDProteanSocket;
     var serverAddr: Address;
+    
 
     public function new(host: String, port: Int) 
     {
@@ -16,6 +17,7 @@ class UDProteanClient
         serverAddr.host = new Host(host).ip;
         serverAddr.port = port;
     }
+
 
     public function connect()
     {

@@ -13,6 +13,7 @@ class UDProteanSocket
 
     var recvBuffer: Bytes;
     var recvAddress: Address;
+    
 
     public function new(host: String, port: Int)
     {
@@ -25,10 +26,12 @@ class UDProteanSocket
         recvAddress = new Address();
     }
 
+
     public function sendTo(buf: Bytes, addr: Address)
     {
         socket.sendTo(buf, 0, buf.length, addr);
     }
+
 
     public function receive(): Bytes
     {
@@ -37,25 +40,30 @@ class UDProteanSocket
         return recvBuffer.sub(0, bytesRead);
     }
 
+
     public inline function recvFromAddress(): Address
     {
         return recvAddress;
     }
+
 
     public inline function recvFromAddressString(): String
     {
         return recvAddress.host + ":" + recvAddress.port;
     }
 
+
     public function bind()
     {
         socket.bind(new Host(host), port);
     }
 
+
     public function connect()
     {
         socket.connect(new Host(host), port);
     }
+
 
     public function close()
     {
