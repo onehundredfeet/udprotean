@@ -2,5 +2,5 @@
 test/test.hxml
 
 --next
--neko build/test.n
--cmd neko build/test.n
+-neko build/neko/test.n
+-cmd neko build/neko/test.n
