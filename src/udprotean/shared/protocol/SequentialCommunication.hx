@@ -1,6 +1,7 @@
 package udprotean.shared.protocol;
 
 import haxe.io.Bytes;
+import haxe.io.BytesBuffer;
 
 
 class SequentialCommunication
@@ -88,8 +89,7 @@ class SequentialCommunication
             sendAck(receivingSequence);
             receivingSequence.moveNext();
         }
-        else if (!receivingBuffer.isEmpty(receivingSequence)
-            && receivingBuffer.isStale(receivingSequence))
+        else if (receivingBuffer.isStale(receivingSequence))
         {
             /*
              * We received a datagram with an unexpected sequence number.
@@ -140,7 +140,23 @@ class SequentialCommunication
     {
         while (!receivingBuffer.isEmpty(processingSequence))
         {
-            var fragmentCount: Int = getCompletedDatagramAt(processingSequence);
+            var datagramLength: Int = getCompletedDatagramAt(processingSequence);
+
+            if (datagramLength > 0)
+            {
+                // There is a completed datagram at the current position.
+                var datagram: Bytes = Bytes.alloc(datagramLength);
+                var bufferIndex: Int = 0;
+
+                while (bufferIndex < datagramLength)
+                {
+                    var fragment: Bytes = receivingBuffer.get(processingSequence);
+
+
+                    bufferIndex += fragment.length - 1;
+                    processingSequence.moveNext();
+                }
+            }
         }
     }
 
@@ -149,33 +165,41 @@ class SequentialCommunication
      * Checks if the potentially fragmented datagram, starting at the given position, is completed.
      * Meaning that all of its fragments are already stored in the buffer and in the correct order.
      *
-     * @returns The number of fragments comprising the datagram.
+     * @returns The length in bytes of the datagram, or `0` if there is no completed datagram.
      */
     function getCompletedDatagramAt(sequenceNum: Sequence): Int
     {
-        var fragmentCount: Int = 1;
+        var datagramLength: Int = 0;
         var previousFragmentNum: Int = 0;
 
         while (!receivingBuffer.isEmpty(sequenceNum))
         {
+            var fragment: Bytes = receivingBuffer.get(sequenceNum);
+
             // Get the first byte, which is the fragment number.
-            var fragmentNum: Int = receivingBuffer.get(sequenceNum).get(0);
+            var fragmentNum: Int = fragment.get(0);
+            var fragmentPayloadLength: Int = fragment.length - 1;
+
+            datagramLength += fragmentPayloadLength;
 
             if (fragmentNum == 0)
             {
-                return fragmentCount;
+                return datagramLength;
             }
 
-            if (fragmentNum != previousFragmentNum - 1)
+            if (previousFragmentNum > 0
+                && fragmentNum != previousFragmentNum - 1)
             {
-                // INCOSISTENT FRAGMENT NUMBER
+                // INCONSISTENT FRAGMENT NUMBER
                 // TODO: Raise some error.
+                trace("INCONSISTENT");
+                return 0;
             }
 
-            fragmentCount++;
             previousFragmentNum = fragmentNum;
             sequenceNum.moveNext();
         }
+
         return 0;
     }
 
@@ -184,6 +208,7 @@ class SequentialCommunication
     {
         // TODO
     }
+
 
     function sendAck(sequenceNumber: Sequence)
     {

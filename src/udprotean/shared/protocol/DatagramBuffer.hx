@@ -56,11 +56,12 @@ class DatagramBuffer
 
 
     /**
-     * Returns `true` if the datagram at the given index in the buffer is older than StaleDatagramAge.
+     * Returns `true` if the datagram at the given index in the buffer exists and is older than StaleDatagramAge.
      */
     public inline function isStale(index: Int): Bool
     {
-        return (getTimestamp() - timestamps[index]) > SequentialCommunication.StaleDatagramAge;
+        return !isEmpty(index) &&
+            (getTimestamp() - timestamps[index]) > SequentialCommunication.StaleDatagramAge;
     }
 
 
