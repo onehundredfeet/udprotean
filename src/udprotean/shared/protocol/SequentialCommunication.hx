@@ -15,11 +15,11 @@ class SequentialCommunication
     public static inline var SequenceBytes    = 3;
 
 
-    var sendingSequence: Sequence;      // Sending progress through sendingBuffer.
-    var sendingAckSequence: Sequence;   // Sent dgrams that have been ACKed.
-    var receivingSequence: Sequence;    // Receiving progress through receivingBuffer.
-    var receivingAckSequence: Sequence; // Received dgrams that have been ACKed.
-    var processingSequence: Sequence;   // Dgrams that have been processed.
+    var sendingSequence: Sequence = 0;      // Sending progress through sendingBuffer.
+    var sendingAckSequence: Sequence = 0;   // Sent dgrams that have been ACKed.
+    var receivingSequence: Sequence = 0;    // Receiving progress through receivingBuffer.
+    var receivingAckSequence: Sequence = 0; // Received dgrams that have been ACKed.
+    var processingSequence: Sequence = 0;   // Dgrams that have been processed.
 
 
     var sendingBuffer: DatagramBuffer;
@@ -48,7 +48,7 @@ class SequentialCommunication
             var fragment: Bytes = Bytes.alloc(fragmentSize + 1);
 
             fragment.set(0, fragmentCount);
-            fragment.blit(0, data, dataIndex, fragmentSize);
+            fragment.blit(1, data, dataIndex, fragmentSize);
             
             dataIndex += fragmentSize;
 
@@ -127,7 +127,7 @@ class SequentialCommunication
         sendingBuffer.clear(datagramSequence.next);
 
         // Finally, transmit the datagram.
-        transmit(datagramSequence);
+        transmitFromBuffer(datagramSequence);
     }
 
     /**
@@ -155,6 +155,9 @@ class SequentialCommunication
                     // Write the fragment to the datagram, excluding the first byte
                     // which is the fragment number.
                     datagram.blit(bufferIndex, fragment, 1, fragment.length - 1);
+
+                    // Clear the datagram we just read.
+                    receivingBuffer.clear(processingSequence);
 
                     bufferIndex += fragment.length - 1;
                     processingSequence.moveNext();
@@ -226,20 +229,24 @@ class SequentialCommunication
         // Send the ACK.
         var ackDatagram: Bytes = Bytes.alloc(SequenceBytes);
         ackDatagram.setInt32(0, sequenceNumber);
-        // TODO: send the datagram over UDP
+        onTransmit(ackDatagram);
     }
 
 
-    function transmit(bufferIndex: Int)
+    function transmitFromBuffer(bufferIndex: Int)
     {
-        // TODO: send the datagram over UDP
-        sendingBuffer.get(bufferIndex);
+        var datagram: Bytes = sendingBuffer.get(bufferIndex);
         sendingBuffer.refresh(bufferIndex);
+        onTransmit(datagram);
     }
 
 
     function handleDatagram(datagram: Bytes)
     {
-        // TODO
+        onMessageReceived(datagram);
     }
+
+
+    function onTransmit(datagram: Bytes)        { throw "Not implemented, function should be overriden."; }
+    function onMessageReceived(datagram: Bytes) { throw "Not implemented, function should be overriden."; }
 }

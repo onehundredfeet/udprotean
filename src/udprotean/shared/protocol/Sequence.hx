@@ -10,7 +10,7 @@ abstract Sequence(Int) from Int to Int
 {
     public static var maxValue(get, never): Int;
     public var previous(get, never): Int;
-    public var next(get, never):Int;
+    public var next(get, never): Int;
 
 
     public function new(initialValue: Int = 0)
@@ -27,7 +27,7 @@ abstract Sequence(Int) from Int to Int
 
     public function get_previous(): Int
     {
-        return this > 0 ? this - 1 : maxValue;
+        return this > 0 ? (this - 1) : maxValue;
     }
 
 
@@ -91,7 +91,9 @@ abstract Sequence(Int) from Int to Int
      */
     public static inline function fromBytes(bytes: Bytes): Sequence
     {
-        return bytes.sub(0, SequentialCommunication.SequenceBytes).getInt32(0);
+        var b: Bytes = Bytes.alloc(4);
+        b.blit(0, bytes, 0, SequentialCommunication.SequenceBytes);
+        return b.getInt32(0);
     }
 
 
