@@ -1,29 +1,30 @@
-import haxe.unit.TestCase;
+import utest.Test;
+import utest.Assert;
 
 import udprotean.shared.protocol.Sequence;
 import udprotean.shared.protocol.SequentialCommunication;
 
 
-class TestSequence extends TestCase
+class TestSequence extends Test
 {
     function testPreviousAndNext()
     {
         var sequence = new Sequence();
 
-        assertEquals(SequentialCommunication.SequenceSize - 1, Sequence.maxValue);
+        Assert.equals(SequentialCommunication.SequenceSize - 1, Sequence.maxValue);
 
         sequence.set(0);
-        assertEquals(1, sequence.next);
-        assertEquals(Sequence.maxValue, sequence.previous);
+        Assert.equals(1, sequence.next);
+        Assert.equals(Sequence.maxValue, sequence.previous);
 
         sequence.set(128);
-        assertEquals(129, sequence.next);
-        assertEquals(127, sequence.previous);
+        Assert.equals(129, sequence.next);
+        Assert.equals(127, sequence.previous);
 
         
         sequence.set(Sequence.maxValue);
-        assertEquals(0, sequence.next);
-        assertEquals(Sequence.maxValue - 1, sequence.previous);
+        Assert.equals(0, sequence.next);
+        Assert.equals(Sequence.maxValue - 1, sequence.previous);
     }
 
     function testSequenceMove()
@@ -32,14 +33,14 @@ class TestSequence extends TestCase
 
         for (i in 0...Sequence.maxValue)
         {
-            assertEquals(i, sequence);
+            Assert.equals(i, sequence);
             sequence.moveNext();
         }
 
         sequence.set(0);
         for (i in 0...Sequence.maxValue)
         {
-            assertEquals(0, sequence);
+            Assert.equals(0, sequence);
             sequence.movePrevious();
             sequence.moveNext();
         }
@@ -49,6 +50,6 @@ class TestSequence extends TestCase
         {
             sequence.movePrevious();
         }
-        assertEquals(0, sequence);
+        Assert.equals(0, sequence);
     }
 }

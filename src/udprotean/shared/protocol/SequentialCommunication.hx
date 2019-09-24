@@ -152,6 +152,8 @@ class SequentialCommunication
                 {
                     var fragment: Bytes = receivingBuffer.get(processingSequence);
 
+                    // Write the fragment to the datagram, excluding the first byte
+                    // which is the fragment number.
 
                     bufferIndex += fragment.length - 1;
                     processingSequence.moveNext();

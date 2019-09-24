@@ -1,7 +1,7 @@
 
 -cp src
 -cp test
--lib hx3compat
+-lib utest
 --main TestMain
 
 --each

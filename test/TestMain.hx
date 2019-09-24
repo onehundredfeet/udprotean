@@ -1,14 +1,17 @@
-import haxe.unit.TestRunner;
+import utest.Runner;
+import utest.ui.Report;
 
 class TestMain
 {
     static function main()
     {
-        var runner = new TestRunner();
-        runner.add(new TestDatagramBuffer());
-        runner.add(new TestSequence());
-        runner.add(new TestSequentialCommunication());
-        runner.add(new TestSocket());
+        var runner = new Runner();
+        runner.addCase(new TestDatagramBuffer());
+        runner.addCase(new TestSequence());
+        runner.addCase(new TestSequentialCommunication());
+        runner.addCase(new TestSocket());
+
+        Report.create(runner);
 
         runner.run();
     }

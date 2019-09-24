@@ -1,19 +1,20 @@
 import haxe.macro.Expr.Catch;
 import haxe.io.Bytes;
-import haxe.unit.TestCase;
+import utest.Test;
+import utest.Assert;
 
 import sys.net.Address;
 import sys.net.Host;
 
 import udprotean.shared.UDProteanSocket;
 
-class TestSocket extends TestCase
+class TestSocket extends Test
 {
     var serverAddr: Address;
     var server: UDProteanSocket;
     var client: UDProteanSocket;
 
-    public override function setup()
+    public function setup()
     {
         serverAddr = new Address();
         serverAddr.host = new Host("127.0.0.1").ip;
@@ -30,11 +31,11 @@ class TestSocket extends TestCase
         client.sendTo(Bytes.ofString("ping"), serverAddr);
 
         var serverRecv = server.receive().toString();
-        assertEquals("ping", serverRecv);
+        Assert.equals("ping", serverRecv);
 
         server.sendTo(Bytes.ofString("pong"), server.recvFromAddress());
 
         var clientRecv = client.receive().toString();
-        assertEquals("pong", clientRecv);
+        Assert.equals("pong", clientRecv);
     }
 }
