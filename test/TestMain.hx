@@ -1,5 +1,7 @@
 import utest.Runner;
 import utest.ui.Report;
+import utest.ui.common.HeaderDisplayMode;
+import utest.ui.common.HeaderDisplayMode.SuccessResultsDisplayMode;
 
 class TestMain
 {
@@ -11,7 +13,7 @@ class TestMain
         runner.addCase(new TestSequentialCommunication());
         runner.addCase(new TestSocket());
 
-        Report.create(runner);
+        Report.create(runner, SuccessResultsDisplayMode.ShowSuccessResultsWithNoErrors, HeaderDisplayMode.AlwaysShowHeader);
 
         runner.run();
     }

@@ -154,10 +154,13 @@ class SequentialCommunication
 
                     // Write the fragment to the datagram, excluding the first byte
                     // which is the fragment number.
+                    datagram.blit(bufferIndex, fragment, 1, fragment.length - 1);
 
                     bufferIndex += fragment.length - 1;
                     processingSequence.moveNext();
                 }
+
+                handleDatagram(datagram);
             }
         }
     }
@@ -232,5 +235,11 @@ class SequentialCommunication
         // TODO: send the datagram over UDP
         sendingBuffer.get(bufferIndex);
         sendingBuffer.refresh(bufferIndex);
+    }
+
+
+    function handleDatagram(datagram: Bytes)
+    {
+        // TODO
     }
 }
