@@ -14,3 +14,12 @@ test-cpp:
   - apt-get update
   - apt-get install -yqq build-essential g++
   - haxe test-cpp.hxml
+
+deploy:
+  stage: deploy
+  before_script:
+  - apt-get update
+  - apt-get install -yqq zip
+  script:
+  - mkdir -p build
+  - zip build/udprotean.zip -@ < haxelib.lst

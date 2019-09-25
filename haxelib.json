@@ -5,7 +5,7 @@
     "tags": ["udp"],
     "description": "This library is useless in the same way on every platform.",
     "version": "0.1.0",
-    "classPath": "src/",
+    "classPath": "src",
     "releasenote": "Initial release, everything is working correctly.",
     "contributors": [ "Haath" ],
     "dependencies": {
