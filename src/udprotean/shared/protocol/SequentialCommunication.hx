@@ -12,6 +12,7 @@ class SequentialCommunication
     public static inline var FragmentSize     = 540;
     /** The time after which an un-ACKed datagram should be re-sent. */
     public static inline var StaleDatagramAge = 200;
+    /** The number of bytes needed to hold the sequence number in datagrams. */
     public static inline var SequenceBytes    = 3;
 
 
@@ -165,6 +166,10 @@ class SequentialCommunication
 
                 handleDatagram(datagram);
             }
+            else
+            {
+                return;
+            }
         }
     }
 
@@ -214,7 +219,35 @@ class SequentialCommunication
 
     function onReceivedAck(sequenceNumberAcked: Sequence)
     {
-        // TODO
+        if (sequenceNumberAcked == sendingAckSequence)
+        {
+            /*
+             * Received an expected ACK on-sequence.
+             * Cleared the ACKed datagram from the sending buffer,
+             * as well as any datagrams before it.
+             */
+            var bufferClearSequence: Sequence = sendingAckSequence.getAndMoveNext();
+
+            while (!sendingBuffer.isEmpty(bufferClearSequence)
+                && bufferClearSequence != sendingAckSequence)
+            {
+                sendingBuffer.clear(bufferClearSequence);
+                bufferClearSequence.movePrevious();
+            }
+        }
+        else
+        {
+            /*
+            * We received an ACK for a datagram that was not the last on the sequence.
+            * Resend the datagram that is after the one being acknowledged.
+            */
+            sendingAckSequence.set(sequenceNumberAcked.next);
+
+            if (!sendingBuffer.isEmpty(sendingAckSequence))
+            {
+                transmitFromBuffer(sendingAckSequence);
+            }
+        }
     }
 
 

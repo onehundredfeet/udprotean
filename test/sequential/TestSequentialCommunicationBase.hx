@@ -61,4 +61,14 @@ class TestSequentialCommunicationBase extends SequentialCommunication implements
     {
         return Bytes.ofHex(hex);
     }
+
+
+    function dgramInt(seq: Int, frag: Int, data: Int)
+    {
+        var buffer: Bytes = Bytes.alloc(Std.int(SequenceBytes + 1 + 4));
+        buffer.setInt32(0, seq);
+        buffer.set(SequenceBytes, frag);
+        buffer.setInt32(SequenceBytes + 1, data);
+        return buffer;
+    }
 }

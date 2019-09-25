@@ -3,6 +3,8 @@
 -cp test
 --main TestMain
 
+-lib seedyrng
+
 -lib utest
 -D utest
 -D UTEST_PRINT_TESTS
