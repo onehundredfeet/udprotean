@@ -7,6 +7,8 @@
 -D utest
 -D UTEST_PRINT_TESTS
 
+-lib mlib
+-lib mcover
+--macro mcover.MCover.coverage([''], ['src'], null)
+
 --each
-
-
