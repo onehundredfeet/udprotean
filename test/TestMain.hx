@@ -14,11 +14,9 @@ class TestMain
         var runner = new Runner();
         runner.onComplete.add(onComplete);
         
+        runner.addCases("sequential", true);
         runner.addCase(new TestDatagramBuffer());
         runner.addCase(new TestSequence());
-        runner.addCase(new TestSequentialCommunicationBase());
-        runner.addCase(new TestSequentialCommunicationSend());
-        runner.addCase(new TestSequentialCommunicationSendFragment());
         runner.addCase(new TestSocket());
 
         Report.create(runner, SuccessResultsDisplayMode.NeverShowSuccessResults, HeaderDisplayMode.AlwaysShowHeader);
