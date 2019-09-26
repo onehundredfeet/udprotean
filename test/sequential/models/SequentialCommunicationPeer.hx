@@ -14,7 +14,7 @@ class SequentialCommunicationPeer extends SequentialCommunication
     var packetLoss: Float = 0;
 
 
-    public function new(callback: Bytes->Void)
+    public function new(callback: Bytes->Void, seed: Null<Int> = null)
     {
         super();
         this.callback = callback;

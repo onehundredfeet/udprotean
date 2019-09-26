@@ -1,27 +1,41 @@
 package udprotean;
 
-import sys.net.Address;
+import haxe.io.Bytes;
 import sys.net.Host;
-import udprotean.shared.UDProteanSocket;
+import sys.net.Address;
+import udprotean.shared.UdpSocketEx;
+import udprotean.shared.UDProteanPeer;
 
-class UDProteanClient
+
+class UDProteanClient extends UDProteanPeer
 {
-    var socket: UDProteanSocket;
-    var serverAddr: Address;
+    public final function new(serverHost: String, serverPort: Int)
+    {
+        var socket: UdpSocketEx = new UdpSocketEx();
+        var serverAddress = new Address();
+        serverAddress.host = new Host(serverHost).ip;
+        serverAddress.port = serverPort;
+        
+        super(socket, serverAddress);
+
+        initialize();
+    }
+
     
-
-    public function new(host: String, port: Int) 
+    public final function connect()
     {
-        socket = new UDProteanSocket(host, port);
-        serverAddr = new Address();
-        serverAddr.host = new Host(host).ip;
-        serverAddr.port = port;
+        socket.connect(peerAddress.getHost().host, peerAddress.port);
+        socket.send(Bytes.alloc(4));
+        
     }
 
 
-    public function connect()
+    final override function onMessageReceived(message: Bytes) 
     {
-        socket.bind();
-        socket.connect();
+        onMessage(message);
     }
+
+
+    function initialize() { }
+    function onMessage(message: Bytes) { }
 }

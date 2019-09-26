@@ -11,7 +11,7 @@ class SequentialCommunication
     /** The maximum transmittable datagram size in bytes. */
     public static inline var FragmentSize     = 540;
     /** The time (in ms) after which an un-ACKed datagram should be re-sent. */
-    public static inline var StaleDatagramAge = 20;
+    public static inline var StaleDatagramAge = 50;
     /** The number of bytes needed to hold the sequence number in datagrams. */
     public static inline var SequenceBytes    = 3;
 
@@ -80,6 +80,12 @@ class SequentialCommunication
         if (datagramSequence.isBetween(receivingAckSequence, receivingSequence))
         {
             // TODO: Should it be inclusively between?
+            return;
+        }
+
+        // Check if it's an unnecessary retransmission of an already-processed datagram.
+        if (datagramSequence.isBefore(processingSequence))
+        {
             return;
         }
 
@@ -207,6 +213,7 @@ class SequentialCommunication
                          * - ACKs should not be sent for datagrams that are not the last one that we actually have.
                          * - The processReceivingBuffer() method will not be called properly if processing > receiving.
                          */
+                        sendAck(receivingSequence);
                         receivingSequence.moveNext();
                     }
                     processingSequence.moveNext();
@@ -253,9 +260,7 @@ class SequentialCommunication
             if (previousFragmentNum > 0
                 && fragmentNum != previousFragmentNum - 1)
             {
-                // INCONSISTENT FRAGMENT NUMBER
-                // TODO: Raise some error.
-                trace("INCONSISTENT");
+                throw 'Inconsistent fragment numbers: $previousFragmentNum->$fragmentNum';
                 return 0;
             }
 
@@ -293,7 +298,7 @@ class SequentialCommunication
             */
             sendingAckSequence.set(sequenceNumberAcked.next);
 
-            if (!sendingBuffer.isEmpty(sendingAckSequence))
+            if (sendingBuffer.isStale(sendingAckSequence))
             {
                 transmitFromBuffer(sendingAckSequence);
             }
@@ -330,6 +335,6 @@ class SequentialCommunication
     }
 
 
-    function onTransmit(datagram: Bytes)        { throw "Not implemented, function should be overriden."; }
-    function onMessageReceived(datagram: Bytes) { throw "Not implemented, function should be overriden."; }
+    function onTransmit(message: Bytes)        { throw "Not implemented, function should be overriden."; }
+    function onMessageReceived(message: Bytes) { throw "Not implemented, function should be overriden."; }
 }

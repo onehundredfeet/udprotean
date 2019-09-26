@@ -56,10 +56,10 @@ class TestSequentialCommunicationSendFragment extends TestSequentialCommunicatio
     }
 
 
-    override function onTransmit(datagram: Bytes) 
+    override function onTransmit(message: Bytes) 
     {
-        var sequenceNumber = Sequence.fromBytes(datagram);
-        var data = datagram.sub(SequenceBytes, datagram.length - SequenceBytes);
+        var sequenceNumber = Sequence.fromBytes(message);
+        var data = message.sub(SequenceBytes, message.length - SequenceBytes);
         var fragmentNum = data.get(0);
         var payload = data.sub(1, data.length - 1);
         

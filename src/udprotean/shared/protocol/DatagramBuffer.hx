@@ -42,7 +42,7 @@ class DatagramBuffer
     **/
     public inline function refresh(index: Int)
     {
-        timestamps[index] = getTimestamp();
+        timestamps[index] = Utils.getTimestamp();
     }
 
 
@@ -61,7 +61,7 @@ class DatagramBuffer
     public inline function isStale(index: Int): Bool
     {
         return !isEmpty(index) &&
-            (getTimestamp() - timestamps[index]) > SequentialCommunication.StaleDatagramAge;
+            (Utils.getTimestamp() - timestamps[index]) > SequentialCommunication.StaleDatagramAge;
     }
 
 
@@ -71,18 +71,5 @@ class DatagramBuffer
     public inline function clear(index: Int)
     {
         buffer[index] = null;
-    }
-
-
-    /**
-     * Returns the current UNIX timestamp in milliseconds.
-     */
-    static inline function getTimestamp(): Float
-    {
-        #if (cpp || neko)
-            return Sys.time() * 1000;
-        #else
-            return Date.now().getTime();
-        #end
     }
 }

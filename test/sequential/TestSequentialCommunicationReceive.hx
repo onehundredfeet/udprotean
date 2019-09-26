@@ -48,20 +48,20 @@ class TestSequentialCommunicationReceive extends TestSequentialCommunicationBase
     }
 
 
-    override function onTransmit(datagram: Bytes) 
+    override function onTransmit(message: Bytes) 
     {
-        Assert.equals(SequenceBytes, datagram.length);
+        Assert.equals(SequenceBytes, message.length);
 
-        var sequenceNumber = Sequence.fromBytes(datagram);
+        var sequenceNumber = Sequence.fromBytes(message);
         Assert.equals(expectedAck, sequenceNumber);
 
         expectedAck.moveNext();
     }
 
 
-    override function onMessageReceived(datagram: Bytes) 
+    override function onMessageReceived(message: Bytes) 
     {
-        var payload = datagram.getInt32(0);
+        var payload = message.getInt32(0);
 
         Assert.equals(sendExpected * 2, payload);
         sendExpected++;

@@ -1,6 +1,5 @@
 package sequential;
 
-import seedyrng.Seedy;
 import haxe.io.BytesData;
 import utest.ITest;
 import haxe.io.Bytes;
@@ -31,8 +30,8 @@ class TestSequentialCommunication implements ITest
 
     function setup()
     {
-        peer1 = new SequentialCommunicationPeer(peer1receive);
-        peer2 = new SequentialCommunicationPeer(peer2receive);
+        peer1 = new SequentialCommunicationPeer(peer1receive, null);
+        peer2 = new SequentialCommunicationPeer(peer2receive, null);
         peer1expect = 0;
         peer2expect = 0;
 
@@ -51,12 +50,11 @@ class TestSequentialCommunication implements ITest
     {
         sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.1, 2000);
     }
+    
 
-    @Ignored
     function testSendBigPacketLoss()
     {
-        Assert.isTrue(true);
-        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.5, 50000);
+        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.5, 8000);
     }
 
 
@@ -71,7 +69,7 @@ class TestSequentialCommunication implements ITest
         for (i in 0...count)
         {
             var b = Bytes.alloc(4);
-            b.setInt32(0, i * 2);
+            b.setInt32(0, i);
 
             peer1send.push(b);
             peer2send.push(b);
@@ -80,10 +78,12 @@ class TestSequentialCommunication implements ITest
         for (i in 0...peer1send.length)
         {
             peer1.send(peer1send[i]);
+            peer1.update();
         }
         for (i in 0...peer2send.length)
         {
             peer2.send(peer2send[i]);
+            peer2.update();
         }
 
         for (i in 0...updateAttempts)
@@ -100,7 +100,7 @@ class TestSequentialCommunication implements ITest
     function peer1receive(message: Bytes)
     {
         var num = message.getInt32(0);
-        Assert.equals(peer1expect * 2, num);
+        Assert.equals(peer1expect, num);
         peer1expect++;
     }
 
@@ -108,7 +108,7 @@ class TestSequentialCommunication implements ITest
     function peer2receive(message: Bytes)
     {
         var num = message.getInt32(0);
-        Assert.equals(peer2expect * 2, num);
+        Assert.equals(peer2expect, num);
         peer2expect++;
     }
 }

@@ -55,6 +55,18 @@ abstract Sequence(Int) from Int to Int
     }
 
 
+    public inline function isBefore(seq: Sequence): Bool
+    {
+        return !isAfter(seq) && this != seq;
+    }
+
+
+    public inline function isAfter(seq: Sequence): Bool
+    {
+        return distanceTo(seq) >= 16;
+    }
+
+
     /**
      * Returns the current value and then advances it forward.
      */

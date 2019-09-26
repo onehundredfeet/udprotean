@@ -17,7 +17,7 @@ class TestMain
         runner.addCases("sequential", false);
         runner.addCase(new TestDatagramBuffer());
         runner.addCase(new TestSequence());
-        runner.addCase(new TestSocket());
+        runner.addCase(new TestUdpSocketEx());
 
         Report.create(runner, SuccessResultsDisplayMode.NeverShowSuccessResults, HeaderDisplayMode.AlwaysShowHeader);
 

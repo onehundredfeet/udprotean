@@ -27,7 +27,7 @@ class TestSequentialCommunicationReceiveOutOfOrder extends TestSequentialCommuni
     function testReceive()
     {
         var buffers = new Array<Bytes>();
-        var count = SequenceSize;
+        var count = SequenceSize - 16;
 
         for (i in 0...count)
         {
@@ -47,15 +47,15 @@ class TestSequentialCommunicationReceiveOutOfOrder extends TestSequentialCommuni
     }
 
 
-    override function onTransmit(datagram: Bytes) 
+    override function onTransmit(message: Bytes) 
     {
         // Unexpected order of ACKs
     }
 
 
-    override function onMessageReceived(datagram: Bytes) 
+    override function onMessageReceived(message: Bytes) 
     {
-        var payload = datagram.getInt32(0);
+        var payload = message.getInt32(0);
 
         Assert.equals(sendExpected * 2, payload);
         sendExpected++;
