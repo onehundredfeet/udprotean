@@ -10,8 +10,8 @@ class SequentialCommunication
     public static inline var SequenceSize     = 512;
     /** The maximum transmittable datagram size in bytes. */
     public static inline var FragmentSize     = 540;
-    /** The time after which an un-ACKed datagram should be re-sent. */
-    public static inline var StaleDatagramAge = 200;
+    /** The time (in ms) after which an un-ACKed datagram should be re-sent. */
+    public static inline var StaleDatagramAge = 20;
     /** The number of bytes needed to hold the sequence number in datagrams. */
     public static inline var SequenceBytes    = 3;
 
@@ -35,6 +35,10 @@ class SequentialCommunication
     }
 
 
+    /**
+     * Send a payload datagram.
+     * Due to fragmentation, the maximum size for a single datagram is (255 * FragmentSize).
+     */
     public function send(data: Bytes)
     {
         var fragmentCount: Int = Std.int(data.length / FragmentSize) + 1;
@@ -58,6 +62,9 @@ class SequentialCommunication
     }
 
 
+    /**
+     * Process a received datagram, as it was received on the socket.
+     */
     public function onReceived(datagram: Bytes)
     {
         var datagramSequence: Sequence = Sequence.fromBytes(datagram);
@@ -99,6 +106,26 @@ class SequentialCommunication
              * Let the other end know which was the last datagram we received.
              */
             sendAck(receivingSequence.previous);
+        }
+    }
+
+
+    /**
+     * Update method meant to be called periodically.
+     * This method re-sends messages that have not been acknowledged,
+     * and requests repeats of expected messages that have not been received.
+     */
+    public function update()
+    {
+        // Repeat everything from the last ACKed message up to the end of the sending buffer.
+        var sendingFlushSequence: Sequence = sendingAckSequence;
+        while (sendingFlushSequence != sendingSequence)
+        {
+            if (sendingBuffer.isStale(sendingFlushSequence))
+            {
+                transmitFromBuffer(sendingFlushSequence);
+            }
+            sendingFlushSequence.moveNext();
         }
     }
 
@@ -191,11 +218,6 @@ class SequentialCommunication
             {
                 break;
             }
-        }
-
-        if (stepCount > 0 && receivingSequence.distanceTo(processingSequence) > stepCount)
-        {
-            throw "Inconsistent sequence values: receivingSequence | processingSequence";
         }
 
         return stepCount;

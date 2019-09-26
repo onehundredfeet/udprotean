@@ -6,7 +6,7 @@
 -lib seedyrng
 
 -lib utest
--D utest
+-D UNIT_TEST
 -D UTEST_PRINT_TESTS
 
 -lib mlib

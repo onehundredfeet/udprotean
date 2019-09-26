@@ -22,8 +22,6 @@ class TestSequentialCommunication implements ITest
     var peer1expect: Int;
     var peer2expect: Int;
 
-    final count: Int = SequentialCommunication.SequenceSize * 4;
-
 
     public function new()
     {
@@ -45,6 +43,28 @@ class TestSequentialCommunication implements ITest
 
     function testSend()
     {
+        sendIncreasingSequence(SequentialCommunication.SequenceSize * 4);
+    }
+
+
+    function testSendPacketLoss()
+    {
+        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.1, 2000);
+    }
+
+    @Ignored
+    function testSendBigPacketLoss()
+    {
+        Assert.isTrue(true);
+        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.5, 50000);
+    }
+
+
+    function sendIncreasingSequence(count: Int, packetLoss: Float = 0, updateAttempts: Int = 0)
+    {
+        peer1.setPacketLoss(packetLoss);
+        peer2.setPacketLoss(packetLoss);
+
         var peer1send = new Array<Bytes>();
         var peer2send = new Array<Bytes>();
 
@@ -57,17 +77,23 @@ class TestSequentialCommunication implements ITest
             peer2send.push(b);
         }
 
-        send(peer1send, peer2send);
-    }
-
-
-    function send(peer1send: Array<Bytes>, peer2send: Array<Bytes>)
-    {
-        for (i in 0...count)
+        for (i in 0...peer1send.length)
         {
             peer1.send(peer1send[i]);
+        }
+        for (i in 0...peer2send.length)
+        {
             peer2.send(peer2send[i]);
         }
+
+        for (i in 0...updateAttempts)
+        {
+            peer1.update();
+            peer2.update();
+        }
+
+        Assert.equals(peer1send.length, peer1expect);
+        Assert.equals(peer2send.length, peer2expect);
     }
 
 
