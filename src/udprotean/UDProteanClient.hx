@@ -25,8 +25,17 @@ class UDProteanClient extends UDProteanPeer
     public final function connect()
     {
         socket.connect(peerAddress.getHost().host, peerAddress.port);
-        socket.send(Bytes.alloc(4));
         
+        var response: Bytes;
+        do
+        {
+            socket.send(Bytes.ofHex("FFFFFFFF"));
+
+            response = socket.readTimeout(0.5);
+        }
+        while (response == null || response.toHex() != "FFFFFFFF");
+
+        onConnect();
     }
 
 
@@ -37,5 +46,6 @@ class UDProteanClient extends UDProteanPeer
 
 
     function initialize() { }
+    function onConnect() { }
     function onMessage(message: Bytes) { }
 }

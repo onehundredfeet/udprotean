@@ -12,7 +12,6 @@ import udprotean.shared.protocol.DatagramBuffer;
 import udprotean.shared.protocol.SequentialCommunication;
 
 
-@:access(udprotean.shared.protocol.SequentialCommunication)
 class TestSequentialCommunicationReceive extends TestSequentialCommunicationBase implements ITest
 {
     var expectedAck: Sequence;
