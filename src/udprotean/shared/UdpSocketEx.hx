@@ -66,7 +66,11 @@ class UdpSocketEx
 
         while (bytesRead == 0 && (Utils.getTimestamp() - timestamp) < timeoutMs)
         {
-            bytesRead = socket.readFrom(recvBuffer, 0, recvBuffer.length, recvAddress);
+            try
+            {
+                bytesRead = socket.readFrom(recvBuffer, 0, recvBuffer.length, recvAddress);
+            }
+            catch(e: Dynamic) { }
             
             if (bytesRead > 0)
             {

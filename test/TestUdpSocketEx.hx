@@ -24,6 +24,13 @@ class TestUdpSocketEx extends Test
     }
 
 
+    function teardown()
+    {
+        server.close();
+        client.close();
+    }
+
+
     function testBasicSendReceive()
     {
         client.send(Bytes.ofString("ping"));
@@ -38,13 +45,10 @@ class TestUdpSocketEx extends Test
     }
 
 
-    @Ignored
     function testReadTimeout()
     {
-        trace(1);
         var serverRecv: Bytes = server.readTimeout(0.5);
         Assert.equals(null, serverRecv);
-        trace(2);
         
         client.send(Bytes.ofString("ping"));
 
