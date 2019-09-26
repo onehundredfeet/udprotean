@@ -2,11 +2,11 @@
     "name": "udprotean",
     "url" : "https://gitlab.com/gmantaos/udprotean",
     "license": "MIT",
-    "tags": ["udp"],
-    "description": "This library is useless in the same way on every platform.",
+    "tags": ["udp", "multiplayer", "udprotean", "reliable", "inorder"],
+    "description": "A UDP-based protocol for multiplayer games, with reliable in-order message delivery.",
     "version": "0.1.0",
     "classPath": "src",
-    "releasenote": "Initial release, everything is working correctly.",
+    "releasenote": "Initial release.",
     "contributors": [ "Haath" ],
     "dependencies": {
     }

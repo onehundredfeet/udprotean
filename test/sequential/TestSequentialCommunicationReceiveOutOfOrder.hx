@@ -13,15 +13,13 @@ import udprotean.shared.protocol.SequentialCommunication;
 
 
 @:access(udprotean.shared.protocol.SequentialCommunication)
-class TestSequentialCommunicationReceive extends TestSequentialCommunicationBase implements ITest
+class TestSequentialCommunicationReceiveOutOfOrder extends TestSequentialCommunicationBase implements ITest
 {
-    var expectedAck: Sequence;
     var rand: Random;
 
 
     function setup()
     {
-        expectedAck = 0;
         rand = new Random();
     }
 
@@ -38,24 +36,20 @@ class TestSequentialCommunicationReceive extends TestSequentialCommunicationBase
             buffers.push(buffer);
         }
 
+        rand.shuffle(buffers);
+
         for (buffer in buffers)
         {
             onReceived(buffer);
         }
 
         Assert.equals(count, sendExpected);
-        Assert.equals(count % SequenceSize, expectedAck);
     }
 
 
     override function onTransmit(datagram: Bytes) 
     {
-        Assert.equals(SequenceBytes, datagram.length);
-
-        var sequenceNumber = Sequence.fromBytes(datagram);
-        Assert.equals(expectedAck, sequenceNumber);
-
-        expectedAck.moveNext();
+        // Unexpected order of ACKs
     }
 
 

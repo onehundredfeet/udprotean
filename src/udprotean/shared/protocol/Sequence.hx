@@ -82,7 +82,7 @@ abstract Sequence(Int) from Int to Int
      */
     public inline function distanceTo(seq: Sequence): Int
     {
-        return seq > this ? cast(seq - this, Int) : cast(SequentialCommunication.SequenceSize - this + seq, Int);
+        return seq >= this ? Std.int(seq - this) : Std.int(SequentialCommunication.SequenceSize - this + seq);
     }
 
 

@@ -27,6 +27,7 @@ class TestSequence extends Test
         Assert.equals(Sequence.maxValue - 1, sequence.previous);
     }
 
+
     function testSequenceMove()
     {
         var sequence = new Sequence();
@@ -51,5 +52,29 @@ class TestSequence extends Test
             sequence.movePrevious();
         }
         Assert.equals(0, sequence);
+    }
+
+
+    function testDistanceTo()
+    {
+        var s1 = new Sequence();
+        var s2 = new Sequence();
+
+        var cases = [
+        //   s1 s2 d
+            [0, 0, 0],
+            [0, 1, 1],
+            [1, 0, SequentialCommunication.SequenceSize - 1],
+            [12, 24, 12],
+            [25, 10, SequentialCommunication.SequenceSize - 15]
+        ];
+
+        for (c in cases)
+        {
+            s1 = c[0];
+            s2 = c[1];
+
+            Assert.equals(c[2], s1.distanceTo(s2));
+        }
     }
 }

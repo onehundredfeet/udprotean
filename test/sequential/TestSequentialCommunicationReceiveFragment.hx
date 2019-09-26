@@ -13,7 +13,7 @@ import udprotean.shared.protocol.SequentialCommunication;
 
 
 @:access(udprotean.shared.protocol.SequentialCommunication)
-class TestSequentialCommunicationReceive extends TestSequentialCommunicationBase implements ITest
+class TestSequentialCommunicationReceiveFragment extends TestSequentialCommunicationBase implements ITest
 {
     var expectedAck: Sequence;
     var rand: Random;

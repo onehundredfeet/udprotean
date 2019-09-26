@@ -62,7 +62,6 @@ class SequentialCommunication
     {
         var datagramSequence: Sequence = Sequence.fromBytes(datagram);
 
-
         // If the datagram is only SequenceBytes long, then it's an ACK.
         if (datagram.length == SequenceBytes)
         {
@@ -87,8 +86,11 @@ class SequentialCommunication
             /*
              * This datagram is on-par with the sequence.
              */
+            processReceivingBuffer();
+
             sendAck(receivingSequence);
             receivingSequence.moveNext();
+
         }
         else if (receivingBuffer.isStale(receivingSequence))
         {
@@ -136,9 +138,13 @@ class SequentialCommunication
      * This function makes sure that datagrams are consumed in order, and that fragmented
      * payloads are received to their entirety.
      * The `processingSequence` is used to track the last consumed datagram in the receiving buffer.
+     *
+     * @returns The amount of positions the processing sequence was moved by.
      */
-    function processReceivingBuffer()
+    function processReceivingBuffer(): Int
     {
+        var stepCount: Int = 0;
+
         while (!receivingBuffer.isEmpty(processingSequence))
         {
             var datagramLength: Int = getCompletedDatagramAt(processingSequence);
@@ -161,6 +167,21 @@ class SequentialCommunication
                     receivingBuffer.clear(processingSequence);
 
                     bufferIndex += fragment.length - 1;
+                    stepCount++;
+
+                    if (processingSequence == receivingSequence.next)
+                    {
+                        /*
+                         * If we are progressing past the receiving sequence, then it means
+                         * that the datagram that was just received filled a gap in the receiving sequence,
+                         * and allowed the processing sequence to go past the receiving one.
+                         * In this case we should also pull up the receiving sequence so that
+                         * it doesn't stay behind what is being processed for two reasons:
+                         * - ACKs should not be sent for datagrams that are not the last one that we actually have.
+                         * - The processReceivingBuffer() method will not be called properly if processing > receiving.
+                         */
+                        receivingSequence.moveNext();
+                    }
                     processingSequence.moveNext();
                 }
 
@@ -168,9 +189,16 @@ class SequentialCommunication
             }
             else
             {
-                return;
+                break;
             }
         }
+
+        if (stepCount > 0 && receivingSequence.distanceTo(processingSequence) > stepCount)
+        {
+            throw "Inconsistent sequence values: receivingSequence | processingSequence";
+        }
+
+        return stepCount;
     }
 
 

@@ -14,7 +14,7 @@ class TestMain
         var runner = new Runner();
         runner.onComplete.add(onComplete);
         
-        runner.addCases("sequential", true);
+        runner.addCases("sequential", false);
         runner.addCase(new TestDatagramBuffer());
         runner.addCase(new TestSequence());
         runner.addCase(new TestSocket());
