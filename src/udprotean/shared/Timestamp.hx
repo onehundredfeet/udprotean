@@ -1,7 +1,7 @@
 package udprotean.shared;
 
 
-abstract Timestamp(Float)
+abstract Timestamp(Float) to Float
 {
     public inline function new()
     {

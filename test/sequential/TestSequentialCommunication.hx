@@ -48,7 +48,7 @@ class TestSequentialCommunication implements ITest
 
     function testSendPacketLoss()
     {
-        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.1, 2000);
+        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.1, 5000);
     }
     
 

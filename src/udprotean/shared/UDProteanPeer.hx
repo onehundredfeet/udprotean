@@ -9,6 +9,10 @@ class UDProteanPeer extends SequentialCommunication
 {
     var socket: UdpSocketEx;
     var peerAddress: Address;
+    #if UNIT_TEST
+    public static var PacketLoss: Float = 0;
+    var rand: seedyrng.Random = new seedyrng.Random();
+    #end
 
 
     public function new(socket: UdpSocketEx, peerAddress: Address)
@@ -40,6 +44,10 @@ class UDProteanPeer extends SequentialCommunication
     @:noCompletion
     override final function onTransmit(message: Bytes) 
     {
+        #if UNIT_TEST
+        if (rand.random() >= PacketLoss)
+        #end
+
         socket.sendTo(message, peerAddress);
     }
 

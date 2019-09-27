@@ -59,6 +59,7 @@ class UDProteanServer
 
         if (datagram == null)
         {
+            // Nothing to read.
             return;
         }
 

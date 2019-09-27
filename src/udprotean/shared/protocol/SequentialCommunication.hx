@@ -123,7 +123,7 @@ class SequentialCommunication
      * and requests repeats of expected messages that have not been received.
      */
     @:noCompletion
-    public final function update()
+    public function update()
     {
         // Repeat everything from the last ACKed message up to the end of the sending buffer.
         var sendingFlushSequence: Sequence = sendingAckSequence;

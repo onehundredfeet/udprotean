@@ -14,6 +14,7 @@ import utest.Test;
 import utest.Assert;
 
 
+@:access(udprotean.server.UDProteanServer)
 class TestClientServerConnect implements ITest
 {
     final ServerUpdates = 100;
@@ -22,10 +23,7 @@ class TestClientServerConnect implements ITest
     var client: TestConnectClient;
 
 
-    public function new()
-    {
-
-    }
+    public function new() { }
 
 
     function setup()
@@ -66,6 +64,12 @@ class TestClientServerConnect implements ITest
             {
                 server.update();
             }
+
+            Assert.equals(1, Lambda.count(server.peers));
+
+            var peer: TestConnectClientBehavior = cast server.peers.get(server.peers.keys().next());
+            Assert.isTrue(peer.initializeCalled);
+            Assert.isTrue(peer.onConnectCaled);
 
             serverBranch.done();
         });

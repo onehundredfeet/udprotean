@@ -2,7 +2,6 @@ package udprotean.shared;
 
 import sys.net.Address;
 import haxe.io.Bytes;
-import seedyrng.Seedy;
 
 
 class Utils
@@ -22,7 +21,7 @@ class Utils
 
     public static inline function generateHandshake(): String
     {
-        return "ffff" + StringTools.hex(Seedy.instance.nextInt(), 4).toLowerCase();
+        return "ffff" + StringTools.hex(randomInt(), 8).toLowerCase();
     }
 
 
@@ -35,5 +34,14 @@ class Utils
     public static inline function addressToString(addr: Address)
     {
         return addr.host + ":" + addr.port;
+    }
+
+
+    public static inline function randomInt(): Int
+    {
+        return (Std.random(0xff) << 24) |
+            (Std.random(0xff) << 16) |
+            (Std.random(0xff) << 8) |
+            Std.random(0xff);
     }
 }

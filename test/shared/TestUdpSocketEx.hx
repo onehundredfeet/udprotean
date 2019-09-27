@@ -1,3 +1,5 @@
+package shared;
+
 import haxe.macro.Expr.Catch;
 import haxe.io.Bytes;
 import utest.Test;

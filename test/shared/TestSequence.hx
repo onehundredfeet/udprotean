@@ -1,3 +1,5 @@
+package shared;
+
 import utest.Test;
 import utest.Assert;
 

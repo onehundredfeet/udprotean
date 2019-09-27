@@ -1,3 +1,5 @@
+package shared;
+
 import haxe.io.Bytes;
 import utest.Test;
 import utest.Assert;

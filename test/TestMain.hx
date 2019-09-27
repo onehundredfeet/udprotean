@@ -14,9 +14,7 @@ class TestMain
         
         runner.addCases("clientserver", false);
         runner.addCases("sequential", false);
-        runner.addCase(new TestDatagramBuffer());
-        runner.addCase(new TestSequence());
-        runner.addCase(new TestUdpSocketEx());
+        runner.addCases("shared", false);
 
         Report.create(runner, SuccessResultsDisplayMode.NeverShowSuccessResults, HeaderDisplayMode.AlwaysShowHeader);
 

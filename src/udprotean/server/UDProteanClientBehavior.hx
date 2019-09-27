@@ -12,4 +12,10 @@ class UDProteanClientBehavior extends UDProteanPeer
     {
         super(socket, peerAddress);
     }
+    
+
+    public final override function update()
+    {
+        
+    }
 }

@@ -6,7 +6,8 @@ import sys.net.Host;
 import sys.net.Address;
 import udprotean.shared.UdpSocketEx;
 import udprotean.shared.UDProteanPeer;
-import udprotean.shared.Utils;
+
+using udprotean.shared.Utils;
 
 
 class UDProteanClient extends UDProteanPeer
@@ -21,6 +22,14 @@ class UDProteanClient extends UDProteanPeer
         super(socket, serverAddress);
 
         initialize();
+    }
+
+
+    public final override function update()
+    {
+        super.update();
+
+        processRead();
     }
 
 
@@ -66,5 +75,32 @@ class UDProteanClient extends UDProteanPeer
         {
             socket.close();
         }
+    }
+
+
+    function processRead()
+    {
+        // Attempt to read available data.
+        var datagram: Bytes = socket.readTimeout(0.001);
+
+        if (datagram == null)
+        {
+            // Nothing to read.
+            return;
+        }
+
+        if (socket.recvFromAddressString() != peerAddress.addressToString())
+        {
+            // Received from someone other than the server.
+            return;
+        }
+
+        if (Utils.isHandshake(datagram))
+        {
+            // Clients don't have to bounce handshake messages.
+            return;
+        }
+
+        onReceived(datagram);
     }
 }
