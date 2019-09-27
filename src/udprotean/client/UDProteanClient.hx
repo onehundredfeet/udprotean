@@ -78,7 +78,8 @@ class UDProteanClient extends UDProteanPeer
     }
 
 
-    function processRead()
+    @:noCompletion
+    final function processRead()
     {
         // Attempt to read available data.
         var datagram: Bytes = socket.readTimeout(0.001);

@@ -22,4 +22,4 @@ deploy:
   - apt-get install -yqq zip
   script:
   - mkdir -p build
-  - zip build/udprotean.zip -@ < haxelib.lst
+  - zip -r build/udprotean.zip -@ < haxelib.lst
