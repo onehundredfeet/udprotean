@@ -22,13 +22,13 @@ class Utils
 
     public static inline function generateHandshake(): String
     {
-        return "FF" + StringTools.hex(Seedy.instance.nextInt(), 4);
+        return "ffff" + StringTools.hex(Seedy.instance.nextInt(), 4).toLowerCase();
     }
 
 
     public static inline function isHandshake(datagram: Bytes): Bool
     {
-        return datagram.length == 6 && StringTools.startsWith(datagram.toHex(), "FF");
+        return datagram.length == 6 && StringTools.startsWith(datagram.toHex(), "ffff");
     }
 
     

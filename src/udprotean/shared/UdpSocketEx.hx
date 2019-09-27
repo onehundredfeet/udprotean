@@ -70,18 +70,14 @@ class UdpSocketEx
         var bytesRead: Int = 0;
         var timestamp: Timestamp = new Timestamp();
 
-        while (bytesRead == 0 && timestamp.elapsed() < timeout)
+        while (timestamp.elapsed() < timeout)
         {
             try
             {
                 bytesRead = socket.readFrom(recvBuffer, 0, recvBuffer.length, recvAddress);
-            }
-            catch(e: Dynamic) { }
-            
-            if (bytesRead > 0)
-            {
                 return recvBuffer.sub(0, bytesRead);
             }
+            catch(e: Dynamic) { }
         }
 
         return null;

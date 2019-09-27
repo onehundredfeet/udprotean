@@ -14,6 +14,7 @@ class UDProteanServer
     var port: Int;
     var behaviorType: Class<UDProteanPeer>;
 
+    var started: Bool;
     var socket: UdpSocketEx;
     var peers: Map<String, UDProteanPeer>;
 
@@ -23,6 +24,7 @@ class UDProteanServer
         this.host = host;
         this.port = port;
         this.behaviorType = behaviorType;
+        started = false;
         socket = new UdpSocketEx();
         peers = new Map<String, UDProteanPeer>();
     }
@@ -31,15 +33,14 @@ class UDProteanServer
     public function start()
     {
         socket.listen(host, port);
+        started = true;
     }
 
 
     public function stop()
     {
-        if (socket.isConnected())
-        {
+        if (started)
             socket.close();
-        }
     }
 
 
@@ -54,7 +55,7 @@ class UDProteanServer
     function processRead()
     {
         // Attempt to read available data.
-        var datagram: Bytes = socket.read();
+        var datagram: Bytes = socket.readTimeout(0.001);
 
         if (datagram == null)
         {

@@ -1,5 +1,8 @@
 package clientserver;
 
+import sys.thread.Thread;
+import haxe.Timer;
+import utest.Async;
 import clientserver.models.TestConnectClient;
 import clientserver.models.TestConnectClientBehavior;
 import udprotean.client.UDProteanClient;
@@ -13,6 +16,8 @@ import utest.Assert;
 
 class TestClientServerConnect implements ITest
 {
+    final ServerUpdates = 100;
+
     var server: UDProteanServer;
     var client: TestConnectClient;
 
@@ -39,11 +44,38 @@ class TestClientServerConnect implements ITest
 
     function testNotConnect()
     {
-        server.start();
         var connected: Bool = client.connectTimeout(0.3);
 
         Assert.isTrue(client.initializeCalled);
         Assert.isFalse(client.onConnectCaled);
         Assert.isFalse(connected);
+    }
+
+
+    @:timeout(1000)
+    function testConnect(async: Async)
+    {
+        var clientBranch = async.branch();
+        var serverBranch = async.branch();
+
+        Thread.create(() -> {
+            
+            server.start();
+
+            for (_ in 0...ServerUpdates)
+            {
+                server.update();
+            }
+
+            serverBranch.done();
+        });
+        
+        var connected: Bool = client.connectTimeout(0.5);
+
+        Assert.isTrue(client.initializeCalled);
+        Assert.isTrue(client.onConnectCaled);
+        Assert.isTrue(connected);
+
+        clientBranch.done();
     }
 }

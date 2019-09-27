@@ -43,15 +43,15 @@ class UDProteanClient extends UDProteanPeer
         var response: Bytes;
         do
         {
-            socket.send(Bytes.ofHex(handshakeCode));
-
-            response = socket.readTimeout(0.2);
-
             if (timeout > 0 && timestamp.elapsed() > timeout)
             {
                 socket.close();
                 return false;
             }
+
+            socket.sendTo(Bytes.ofHex(handshakeCode), peerAddress);
+
+            response = socket.readTimeout(0.001);
         }
         while (response == null || response.toHex() != handshakeCode);
 
