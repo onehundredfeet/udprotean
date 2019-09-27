@@ -6,14 +6,14 @@ import haxe.io.Bytes;
 class DatagramBuffer
 {
     var buffer: Array<Bytes>;
-    var timestamps: Array<Float>;
+    var timestamps: Array<Timestamp>;
 
 
     public function new(length: Int)
     {
         buffer = new Array<Bytes>();
         buffer.resize(length);
-        timestamps = new Array<Float>();
+        timestamps = new Array<Timestamp>();
         timestamps.resize(length);
     }
 
@@ -42,7 +42,7 @@ class DatagramBuffer
     **/
     public inline function refresh(index: Int)
     {
-        timestamps[index] = Utils.getTimestamp();
+        timestamps[index] = new Timestamp();
     }
 
 
@@ -61,7 +61,7 @@ class DatagramBuffer
     public inline function isStale(index: Int): Bool
     {
         return !isEmpty(index) &&
-            (Utils.getTimestamp() - timestamps[index]) > SequentialCommunication.StaleDatagramAge;
+            timestamps[index].elapsedMs() > SequentialCommunication.StaleDatagramAge;
     }
 
 

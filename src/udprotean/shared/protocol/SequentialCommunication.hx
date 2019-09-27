@@ -39,21 +39,21 @@ class SequentialCommunication
      * Send a payload datagram.
      * Due to fragmentation, the maximum size for a single datagram is (255 * FragmentSize).
      */
-    public function send(data: Bytes)
+    public final function send(message: Bytes)
     {
-        var fragmentCount: Int = Std.int(data.length / FragmentSize) + 1;
+        var fragmentCount: Int = Std.int(message.length / FragmentSize) + 1;
         var dataIndex: Int = 0;
 
         while (fragmentCount > 0)
         {
             fragmentCount--;
 
-            var fragmentSize: Int = Std.int(Math.min(data.length - dataIndex, FragmentSize));
+            var fragmentSize: Int = Std.int(Math.min(message.length - dataIndex, FragmentSize));
 
             var fragment: Bytes = Bytes.alloc(fragmentSize + 1);
 
             fragment.set(0, fragmentCount);
-            fragment.blit(1, data, dataIndex, fragmentSize);
+            fragment.blit(1, message, dataIndex, fragmentSize);
             
             dataIndex += fragmentSize;
 
@@ -65,6 +65,7 @@ class SequentialCommunication
     /**
      * Process a received datagram, as it was received on the socket.
      */
+    @:noCompletion
     public function onReceived(datagram: Bytes)
     {
         var datagramSequence: Sequence = Sequence.fromBytes(datagram);
@@ -121,7 +122,8 @@ class SequentialCommunication
      * This method re-sends messages that have not been acknowledged,
      * and requests repeats of expected messages that have not been received.
      */
-    public function update()
+    @:noCompletion
+    public final function update()
     {
         // Repeat everything from the last ACKed message up to the end of the sending buffer.
         var sendingFlushSequence: Sequence = sendingAckSequence;
@@ -136,7 +138,8 @@ class SequentialCommunication
     }
 
 
-    function sendDatagram(fragment: Bytes)
+    @:noCompletion
+    final function sendDatagram(fragment: Bytes)
     {
         // Get the sequence number for this datagram according to sendingSequence.
         var datagramSequence: Sequence = sendingSequence.getAndMoveNext();
@@ -174,7 +177,8 @@ class SequentialCommunication
      *
      * @returns The amount of positions the processing sequence was moved by.
      */
-    function processReceivingBuffer(): Int
+    @:noCompletion
+    final function processReceivingBuffer(): Int
     {
         var stepCount: Int = 0;
 
@@ -237,7 +241,8 @@ class SequentialCommunication
      *
      * @returns The length in bytes of the datagram, or `0` if there is no completed datagram.
      */
-    function getCompletedDatagramAt(sequenceNum: Sequence): Int
+    @:noCompletion
+    final function getCompletedDatagramAt(sequenceNum: Sequence): Int
     {
         var datagramLength: Int = 0;
         var previousFragmentNum: Int = 0;
@@ -272,7 +277,8 @@ class SequentialCommunication
     }
 
 
-    function onReceivedAck(sequenceNumberAcked: Sequence)
+    @:noCompletion
+    final function onReceivedAck(sequenceNumberAcked: Sequence)
     {
         if (sequenceNumberAcked == sendingAckSequence)
         {
@@ -306,7 +312,8 @@ class SequentialCommunication
     }
 
 
-    function sendAck(sequenceNumber: Sequence)
+    @:noCompletion
+    final function sendAck(sequenceNumber: Sequence)
     {
         // Upda the receiving ack sequence to point to the last number ACKed.
         receivingAckSequence.set(sequenceNumber);
@@ -321,7 +328,8 @@ class SequentialCommunication
     }
 
 
-    function transmitFromBuffer(bufferIndex: Int)
+    @:noCompletion
+    final function transmitFromBuffer(bufferIndex: Int)
     {
         var datagram: Bytes = sendingBuffer.get(bufferIndex);
         sendingBuffer.refresh(bufferIndex);
@@ -329,12 +337,15 @@ class SequentialCommunication
     }
 
 
-    function handleDatagram(datagram: Bytes)
+    @:noCompletion
+    final function handleDatagram(datagram: Bytes)
     {
         onMessageReceived(datagram);
     }
 
 
+    @:noCompletion
     function onTransmit(message: Bytes)        { throw "Not implemented, function should be overriden."; }
+    @:noCompletion
     function onMessageReceived(message: Bytes) { throw "Not implemented, function should be overriden."; }
 }

@@ -19,14 +19,39 @@ class UDProteanPeer extends SequentialCommunication
     }
 
 
+    public final inline function isConnected()
+    {
+        return socket.isConnected();
+    }
+
+
+    @:noCompletion
+    override final function onReceived(datagram: Bytes)
+    {
+        if (Utils.isHandshake(datagram))
+        {
+            return;
+        }
+        
+        super.onReceived(datagram);
+    }
+
+    
+    @:noCompletion
     override final function onTransmit(message: Bytes) 
     {
         socket.sendTo(message, peerAddress);
     }
 
     
-    override function onMessageReceived(message: Bytes) 
+    @:noCompletion
+    final override function onMessageReceived(message: Bytes) 
     {
-        super.onMessageReceived(message);
+        onMessage(message);
     }
+
+
+    @:allow(udprotean.server.UDProteanServer) function initialize() { }
+    @:allow(udprotean.server.UDProteanServer) function onConnect() { }
+    function onMessage(message: Bytes) { }
 }

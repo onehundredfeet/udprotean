@@ -5,6 +5,7 @@ import sys.net.Address;
 import sys.net.Host;
 import sys.net.UdpSocket;
 
+using udprotean.shared.Utils;
 
 class UdpSocketEx
 {
@@ -21,7 +22,6 @@ class UdpSocketEx
     {
         socket = new UdpSocket();
         socket.setBlocking(false);
-        //socket.setFastSend(true);
 
         recvBuffer = Bytes.alloc(1024);
         recvAddress = new Address();
@@ -49,8 +49,15 @@ class UdpSocketEx
 
     public function read(): Bytes
     {
-        var bytesRead: Int = socket.readFrom(recvBuffer, 0, recvBuffer.length, recvAddress);
-        return recvBuffer.sub(0, bytesRead);
+        try
+        {
+            var bytesRead: Int = socket.readFrom(recvBuffer, 0, recvBuffer.length, recvAddress);
+            return recvBuffer.sub(0, bytesRead);
+        }
+        catch (e: Dynamic)
+        {
+            return null;
+        }
     }
 
 
@@ -61,10 +68,9 @@ class UdpSocketEx
     public function readTimeout(timeout: Float): Bytes
     {
         var bytesRead: Int = 0;
-        var timestamp: Float = Utils.getTimestamp();
-        var timeoutMs: Float = timeout * 1000;
+        var timestamp: Timestamp = new Timestamp();
 
-        while (bytesRead == 0 && (Utils.getTimestamp() - timestamp) < timeoutMs)
+        while (bytesRead == 0 && timestamp.elapsed() < timeout)
         {
             try
             {
@@ -90,7 +96,7 @@ class UdpSocketEx
 
     public inline function recvFromAddressString(): String
     {
-        return recvAddress.host + ":" + recvAddress.port;
+        return recvAddress.addressToString();
     }
 
 
@@ -111,6 +117,23 @@ class UdpSocketEx
     public inline function close()
     {
         socket.close();
+    }
+
+
+    public function isConnected(): Bool
+    {
+        try
+        {
+            return socket.peer() != null;
+        }
+        catch (e: Dynamic) { }
+        return false;
+    }
+
+
+    public inline function setBlocking(blocking: Bool)
+    {
+        socket.setBlocking(blocking);
     }
 
 

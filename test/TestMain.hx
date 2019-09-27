@@ -4,8 +4,6 @@ import utest.ui.common.HeaderDisplayMode;
 import utest.ui.common.HeaderDisplayMode.SuccessResultsDisplayMode;
 import mcover.coverage.MCoverage;
 
-import sequential.*;
-
 
 class TestMain
 {
@@ -14,6 +12,7 @@ class TestMain
         var runner = new Runner();
         runner.onComplete.add(onComplete);
         
+        runner.addCases("clientserver", false);
         runner.addCases("sequential", false);
         runner.addCase(new TestDatagramBuffer());
         runner.addCase(new TestSequence());
