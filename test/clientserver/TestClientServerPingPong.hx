@@ -17,7 +17,7 @@ import utest.Assert;
 class TestClientServerPingPong implements ITest
 {
     final Count = SequentialCommunication.SequenceSize * 4;
-    final Updates = 5000;
+    final Updates = 10000;
 
     var server: UDProteanServer;
     var client: TestPingPongClient;
@@ -41,7 +41,7 @@ class TestClientServerPingPong implements ITest
     }
 
 
-    @:timeout(10000)
+    @:timeout(20000)
     function testPingPong(async: Async)
     {
         var clientBranch = async.branch();
