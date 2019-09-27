@@ -16,7 +16,7 @@ import utest.Assert;
 
 class TestClientServerPingPong implements ITest
 {
-    final Count = SequentialCommunication.SequenceSize * 4;
+    final Count = SequentialCommunication.SequenceSize * 2;
     final Updates = 10000;
 
     var server: UDProteanServer;

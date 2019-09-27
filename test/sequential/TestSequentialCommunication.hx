@@ -48,13 +48,13 @@ class TestSequentialCommunication implements ITest
 
     function testSendPacketLoss()
     {
-        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.1, 5000);
+        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.1, 8000);
     }
     
 
     function testSendBigPacketLoss()
     {
-        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.5, 8000);
+        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.5, 10000);
     }
 
 
