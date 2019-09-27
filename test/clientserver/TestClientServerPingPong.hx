@@ -1,5 +1,6 @@
 package clientserver;
 
+import udprotean.shared.UDProteanPeer;
 import udprotean.shared.protocol.SequentialCommunication;
 import sys.thread.Thread;
 import haxe.Timer;
@@ -38,11 +39,26 @@ class TestClientServerPingPong implements ITest
     {
         server.stop();
         client.disconnect();
+        UDProteanPeer.PacketLoss = 0;
     }
 
 
     @:timeout(20000)
     function testPingPong(async: Async)
+    {
+        doTest(async, 10000);
+    }
+
+/*
+    @:timeout(20000)
+    function testPingPongPacketLoss(async: Async)
+    {
+        UDProteanPeer.PacketLoss = 0.1;
+        doTest(async, 10000);
+    }
+*/
+
+    function doTest(async: Async, updates: Int)
     {
         var clientBranch = async.branch();
         var serverBranch = async.branch();
@@ -51,7 +67,7 @@ class TestClientServerPingPong implements ITest
             
             server.start();
 
-            for (_ in 0...Updates)
+            for (_ in 0...updates)
             {
                 server.update();
             }
@@ -65,7 +81,7 @@ class TestClientServerPingPong implements ITest
 
         client.sendInt(0);
 
-        for (_ in 0...Updates)
+        for (_ in 0...updates)
         {
             client.update();
         }
