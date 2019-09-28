@@ -16,6 +16,6 @@ class UDProteanClientBehavior extends UDProteanPeer
 
     public final override function update()
     {
-        
+        super.update();
     }
 }

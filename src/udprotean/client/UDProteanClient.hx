@@ -12,8 +12,15 @@ using udprotean.shared.Utils;
 
 class UDProteanClient extends UDProteanPeer
 {
+    var serverHost: Host;
+    var serverPort: Int;
+
+
     public final function new(serverHost: String, serverPort: Int)
     {
+        this.serverHost = new Host(serverHost);
+        this.serverPort = serverPort;
+
         var socket: UdpSocketEx = new UdpSocketEx();
         var serverAddress = new Address();
         serverAddress.host = new Host(serverHost).ip;
@@ -24,12 +31,33 @@ class UDProteanClient extends UDProteanPeer
         initialize();
     }
 
-
+    /**
+     * Read and process all incoming datagrams currently available on the socket.
+     * The method will only return when there are no available data to read.
+     */
     public final override function update()
+    {
+        updateTimeout(0);
+    }
+
+    /**
+     * Read and process all incoming datagrams currently available on the socket,
+     * for a maximum time of the given `timeout`.
+     * A `timeout` of `0` means infinite and the method will never return as long
+     * as there are available data to read.
+     */
+    public function updateTimeout(timeout: Float)
     {
         super.update();
 
-        processRead();
+        var timestamp: Timestamp = new Timestamp();
+        var hadDatagrams: Bool;
+
+        do
+        {
+            hadDatagrams = processRead();
+        }
+        while (hadDatagrams && !timestamp.isTimedOut(timeout));
     }
 
 
@@ -46,7 +74,7 @@ class UDProteanClient extends UDProteanPeer
     {
         var timestamp: Timestamp = new Timestamp();
 
-        socket.connect(peerAddress.getHost().host, peerAddress.port);
+        socket.connect(serverHost, serverPort);
         
         var handshakeCode: String = Utils.generateHandshake();
         var response: Bytes;
@@ -79,7 +107,7 @@ class UDProteanClient extends UDProteanPeer
 
 
     @:noCompletion
-    final function processRead()
+    final function processRead(): Bool
     {
         // Attempt to read available data.
         var datagram: Bytes = socket.readTimeout(0.001);
@@ -87,21 +115,22 @@ class UDProteanClient extends UDProteanPeer
         if (datagram == null)
         {
             // Nothing to read.
-            return;
+            return false;
         }
 
         if (socket.recvFromAddressString() != peerAddress.addressToString())
         {
             // Received from someone other than the server.
-            return;
+            return true;
         }
 
         if (Utils.isHandshake(datagram))
         {
             // Clients don't have to bounce handshake messages.
-            return;
+            return true;
         }
 
         onReceived(datagram);
+        return true;
     }
 }

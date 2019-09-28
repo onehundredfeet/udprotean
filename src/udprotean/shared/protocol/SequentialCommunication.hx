@@ -7,13 +7,17 @@ import haxe.io.BytesBuffer;
 class SequentialCommunication
 {
     /** The size of the sequential buffers in amount of datagrams. */
-    public static inline var SequenceSize     = 512;
+    public static inline var SequenceSize                 = 512;
     /** The maximum transmittable datagram size in bytes. */
-    public static inline var FragmentSize     = 540;
+    public static inline var FragmentSize                 = 540;
     /** The time (in ms) after which an un-ACKed datagram should be re-sent. */
-    public static inline var StaleDatagramAge = 50;
+    public static inline var RepeatDatagramAge            = 50;
+    /** The time (in ms) after which retransmission of a datagram should be requested when receiving one out-of-order. */
+    public static inline var StaleDatagramAge             = 20;
     /** The number of bytes needed to hold the sequence number in datagrams. */
-    public static inline var SequenceBytes    = 3;
+    public static inline var SequenceBytes                = 3;
+    /** The maximum cyclical distance one datagram can have from another and be presumed to be earlier than it. */
+    public static inline var SequenceDistanceRelationship = 32;
 
 
     var sendingSequence: Sequence = 0;      // Sending progress through sendingBuffer.
@@ -129,7 +133,7 @@ class SequentialCommunication
         var sendingFlushSequence: Sequence = sendingAckSequence;
         while (sendingFlushSequence != sendingSequence)
         {
-            if (sendingBuffer.isStale(sendingFlushSequence))
+            if (sendingBuffer.isToRepeat(sendingFlushSequence))
             {
                 transmitFromBuffer(sendingFlushSequence);
             }

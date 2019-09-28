@@ -57,13 +57,8 @@ abstract Sequence(Int) from Int to Int
 
     public inline function isBefore(seq: Sequence): Bool
     {
-        return !isAfter(seq) && this != seq;
-    }
-
-
-    public inline function isAfter(seq: Sequence): Bool
-    {
-        return distanceTo(seq) >= 16;
+        return distanceTo(seq) < SequentialCommunication.SequenceDistanceRelationship
+            && this != seq;
     }
 
 

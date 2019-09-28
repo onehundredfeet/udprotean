@@ -9,9 +9,6 @@ using udprotean.shared.Utils;
 
 class UdpSocketEx
 {
-    var host: Host;
-    var port: Int;
-
     var socket: UdpSocket;
 
     var recvBuffer: Bytes;
@@ -98,15 +95,13 @@ class UdpSocketEx
 
     public function listen(host: String, port: Int)
     {
-        setHost(host, port);
         socket.bind(new Host(host), port);
     }
 
 
-    public function connect(host: String, port: Int)
+    public function connect(host: Host, port: Int)
     {
-        setHost(host, port);
-        socket.connect(new Host(host), port);
+        socket.connect(host, port);
     }
 
 
@@ -130,12 +125,5 @@ class UdpSocketEx
     public inline function setBlocking(blocking: Bool)
     {
         socket.setBlocking(blocking);
-    }
-
-
-    inline function setHost(host: String, port: Int)
-    {
-        this.host = new Host(host);
-        this.port = port;
     }
 }

@@ -27,7 +27,7 @@ class TestSequentialCommunicationReceiveOutOfOrder extends TestSequentialCommuni
     function testReceive()
     {
         var buffers = new Array<Bytes>();
-        var count = SequenceSize - 16;
+        var count = SequenceSize - SequentialCommunication.SequenceDistanceRelationship;
 
         for (i in 0...count)
         {

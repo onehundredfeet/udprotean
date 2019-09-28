@@ -23,6 +23,12 @@ class UDProteanPeer extends SequentialCommunication
     }
 
 
+    override function update() 
+    {
+        super.update();
+    }
+
+
     public final inline function isConnected()
     {
         return socket.isConnected();

@@ -66,6 +66,16 @@ class DatagramBuffer
 
 
     /**
+     * Returns `true` if the datagram at the given index in the buffer exists and is older than RepeatDatagramAge.
+     */
+    public inline function isToRepeat(index: Int): Bool
+    {
+        return !isEmpty(index) &&
+            timestamps[index].elapsedMs() > SequentialCommunication.RepeatDatagramAge;
+    }
+
+
+    /**
      * Clears the given index in the buffer, setting it to null.
      */
     public inline function clear(index: Int)

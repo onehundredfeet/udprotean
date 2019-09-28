@@ -1,5 +1,6 @@
 package udprotean.server;
 
+import udprotean.shared.Timestamp;
 import sys.net.Address;
 import udprotean.shared.UDProteanPeer;
 import haxe.io.Bytes;
@@ -33,6 +34,7 @@ class UDProteanServer
     public function start()
     {
         socket.listen(host, port);
+        socket.setBlocking(false);
         started = true;
     }
 
@@ -44,15 +46,38 @@ class UDProteanServer
     }
 
 
+    /**
+     * Read and process all incoming datagrams currently available on the socket.
+     * The method will only return when there are no available data to read.
+     */
     public function update()
     {
-        processRead();
-        
-        updatePeers();
+        updateTimeout(0);
     }
 
 
-    function processRead()
+    /**
+     * Read and process all incoming datagrams currently available on the socket,
+     * for a maximum time of the given `timeout`.
+     * A `timeout` of `0` means infinite and the method will never return as long
+     * as there are available data to read.
+     */
+    public function updateTimeout(timeout: Float)
+    {
+        var timestamp: Timestamp = new Timestamp();
+        var hadDatagrams: Bool;
+
+        do
+        {
+            hadDatagrams = processRead();
+
+            updatePeers();
+        }
+        while (hadDatagrams && !timestamp.isTimedOut(timeout));
+    }
+
+
+    function processRead(): Bool
     {
         // Attempt to read available data.
         var datagram: Bytes = socket.readTimeout(0.001);
@@ -60,7 +85,7 @@ class UDProteanServer
         if (datagram == null)
         {
             // Nothing to read.
-            return;
+            return false;
         }
 
         var recvFromAddress: Address = socket.recvFromAddress();
@@ -77,7 +102,7 @@ class UDProteanServer
             {
                 initializePeer(recvFromAddress);
             }
-            return;
+            return true;
         }
 
 
@@ -85,12 +110,13 @@ class UDProteanServer
         {
             // Not a handshake datagram and no known peer on that address.
             // Drop it.
-            return;
+            return true;
         }
 
 
         var peer: UDProteanPeer = peers.get(recvFromAddressString);
         peer.onReceived(datagram);
+        return true;
     }
 
 

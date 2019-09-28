@@ -22,7 +22,7 @@ class TestUdpSocketEx extends Test
         server.listen("127.0.0.1", 9000);
 
         client = new UdpSocketEx();
-        client.connect("127.0.0.1", 9000);
+        client.connect(new Host("127.0.0.1"), 9000);
     }
 
 
