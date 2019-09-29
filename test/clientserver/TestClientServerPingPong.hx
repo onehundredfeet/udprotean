@@ -45,15 +45,15 @@ class TestClientServerPingPong implements ITest
     @:timeout(20000)
     function testPingPong(async: Async)
     {
-        doTest(async, 1000);
+        doTest(async, 5000);
     }
 
 
-    @:timeout(30000)
+    @:timeout(40000)
     function testPingPongPacketLoss(async: Async)
     {
         UDProteanPeer.PacketLoss = 0.1;
-        doTest(async, 10000);
+        doTest(async, 20000);
     }
 
 
