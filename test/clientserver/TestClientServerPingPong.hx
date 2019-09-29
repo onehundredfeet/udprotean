@@ -49,7 +49,7 @@ class TestClientServerPingPong implements ITest
     }
 
 
-    @:timeout(40000)
+    @:timeout(60000)
     function testPingPongPacketLoss(async: Async)
     {
         UDProteanPeer.PacketLoss = 0.1;
