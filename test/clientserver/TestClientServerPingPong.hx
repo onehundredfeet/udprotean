@@ -18,7 +18,6 @@ import utest.Assert;
 class TestClientServerPingPong implements ITest
 {
     final Count = SequentialCommunication.SequenceSize * 2;
-    final Updates = 10000;
 
     var server: UDProteanServer;
     var client: TestPingPongClient;
@@ -46,17 +45,17 @@ class TestClientServerPingPong implements ITest
     @:timeout(20000)
     function testPingPong(async: Async)
     {
-        doTest(async, 10000);
+        doTest(async, 1000);
     }
 
-/*
-    @:timeout(20000)
+
+    @:timeout(30000)
     function testPingPongPacketLoss(async: Async)
     {
         UDProteanPeer.PacketLoss = 0.1;
         doTest(async, 10000);
     }
-*/
+
 
     function doTest(async: Async, updates: Int)
     {
