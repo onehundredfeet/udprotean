@@ -4,7 +4,11 @@ UDProtean - Haxe
 [![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://gitlab.com/haath/udprotean/blob/master/LICENSE)
 ====================
 
+## Install
 
+```
+$ haxelib install udprotean
+```
 
 ## Benchmark
 
