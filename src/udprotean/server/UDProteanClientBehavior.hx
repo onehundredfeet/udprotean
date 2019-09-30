@@ -1,15 +1,23 @@
 package udprotean.server;
 
 import sys.net.Address;
+import haxe.crypto.Sha1;
 import udprotean.shared.UdpSocketEx;
 import udprotean.shared.UDProteanPeer;
 import haxe.io.Bytes;
 
+using udprotean.shared.Utils;
+
 
 class UDProteanClientBehavior extends UDProteanPeer
 {
-    public final function new(socket: UdpSocketEx, peerAddress: Address)
+    @:noCompletion
+    public final peerID: String;
+
+
+    public final function new(socket: UdpSocketEx, peerAddress: Address, peerID: String)
     {
+        this.peerID = peerID;
         super(socket, peerAddress);
     }
     

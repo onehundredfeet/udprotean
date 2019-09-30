@@ -261,16 +261,15 @@ class SequentialCommunication
 
             datagramLength += fragmentPayloadLength;
 
-            if (fragmentNum == 0)
-            {
-                return datagramLength;
-            }
-
             if (previousFragmentNum > 0
                 && fragmentNum != previousFragmentNum - 1)
             {
                 throw 'Inconsistent fragment numbers: $previousFragmentNum->$fragmentNum';
-                return 0;
+            }
+
+            if (fragmentNum == 0)
+            {
+                return datagramLength;
             }
 
             previousFragmentNum = fragmentNum;

@@ -30,6 +30,12 @@ class Utils
         return datagram.length == 6 && StringTools.startsWith(datagram.toHex(), "ffff");
     }
 
+
+    public static inline function getHandshakeCode(datagram: Bytes): String
+    {
+        return datagram.toHex();
+    }
+
     
     public static inline function addressToString(addr: Address)
     {

@@ -27,28 +27,6 @@ class TestSequentialCommunicationBase extends SequentialCommunication implements
     }
 
 
-    function test_getCompletedDatagramAt()
-    {
-        // Test not completed
-        receivingBuffer.insert(12, b("0112"));
-        receivingBuffer.insert(14, b("0034"));
-        Assert.equals(0, getCompletedDatagramAt(12));
-        
-        // Test completed
-        receivingBuffer.insert(20, b("0278"));
-        receivingBuffer.insert(21, b("0199"));
-        receivingBuffer.insert(22, b("00FA"));
-        Assert.equals(3, getCompletedDatagramAt(20));
-
-        // Test cycling completed
-        receivingBuffer.insert(SequenceSize - 2, b("0368"));
-        receivingBuffer.insert(SequenceSize - 1, b("026967"));
-        receivingBuffer.insert(0, b("0199"));
-        receivingBuffer.insert(1, b("0032"));
-        Assert.equals(5, getCompletedDatagramAt(SequenceSize - 2));
-    }
-
-
     function teardown()
     {
         sendingBuffer = new DatagramBuffer(SequenceSize);
@@ -57,7 +35,7 @@ class TestSequentialCommunicationBase extends SequentialCommunication implements
     }
 
 
-    static inline function b(hex: String): Bytes
+    inline function b(hex: String): Bytes
     {
         return Bytes.ofHex(hex);
     }

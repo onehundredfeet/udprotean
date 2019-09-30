@@ -1,5 +1,6 @@
 package udprotean.server;
 
+import haxe.crypto.Sha1;
 import udprotean.shared.Timestamp;
 import sys.net.Address;
 import udprotean.shared.UDProteanPeer;
@@ -13,21 +14,21 @@ class UDProteanServer
 {
     var host: String;
     var port: Int;
-    var behaviorType: Class<UDProteanPeer>;
+    var behaviorType: Class<UDProteanClientBehavior>;
 
     var started: Bool;
     var socket: UdpSocketEx;
-    var peers: Map<String, UDProteanPeer>;
+    var peers: Map<String, UDProteanClientBehavior>;
 
 
-    public function new(host: String, port: Int, behaviorType: Class<UDProteanPeer>)
+    public function new(host: String, port: Int, behaviorType: Class<UDProteanClientBehavior>)
     {
         this.host = host;
         this.port = port;
         this.behaviorType = behaviorType;
         started = false;
         socket = new UdpSocketEx();
-        peers = new Map<String, UDProteanPeer>();
+        peers = new Map<String, UDProteanClientBehavior>();
     }
 
 
@@ -97,10 +98,13 @@ class UDProteanServer
             // Bounce back the handshake code.
             socket.sendTo(datagram, recvFromAddress);
 
+            var handshakeCode: String = Utils.getHandshakeCode(datagram);
+            var peerID: String = Sha1.encode(recvFromAddressString + "|" + handshakeCode);
+
             // Add sender to the peers list.
-            if (!peers.exists(recvFromAddressString))
+            if (!peers.exists(recvFromAddressString) || peers[recvFromAddressString].peerID != peerID)
             {
-                initializePeer(recvFromAddress);
+                initializePeer(recvFromAddress, peerID);
             }
             return true;
         }
@@ -129,9 +133,9 @@ class UDProteanServer
     }
 
 
-    function initializePeer(peerAddress: Address)
+    function initializePeer(peerAddress: Address, peerId: String)
     {
-        var peer: UDProteanPeer = Type.createInstance(behaviorType, [socket, peerAddress]);
+        var peer: UDProteanClientBehavior = Type.createInstance(behaviorType, [socket, peerAddress, peerId]);
         peers.set(peerAddress.addressToString(), peer);
         peer.initialize();
         peer.onConnect();
