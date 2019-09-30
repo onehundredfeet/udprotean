@@ -29,6 +29,7 @@ class UDProteanPeer extends SequentialCommunication
     }
 
 
+    @IgnoreCover 
     public final inline function isConnected()
     {
         return socket.isConnected();
@@ -65,7 +66,7 @@ class UDProteanPeer extends SequentialCommunication
     }
 
 
-    @:allow(udprotean.server.UDProteanServer) function initialize() { }
-    @:allow(udprotean.server.UDProteanServer) function onConnect() { }
-    function onMessage(message: Bytes) { }
+    @:allow(udprotean.server.UDProteanServer) @IgnoreCover function initialize() { }
+    @:allow(udprotean.server.UDProteanServer) @IgnoreCover function onConnect() { }
+    @IgnoreCover                                           function onMessage(message: Bytes) { }
 }

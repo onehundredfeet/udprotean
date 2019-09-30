@@ -56,6 +56,45 @@ class TestClientServerConnect implements ITest
         var clientBranch = async.branch();
         var serverBranch = async.branch();
 
+        runServer(serverBranch, 1);        
+        
+        var connected: Bool = client.connectTimeout(0.5);
+
+        Assert.isTrue(client.initializeCalled);
+        Assert.isTrue(client.onConnectCaled);
+        Assert.isTrue(connected);
+
+        clientBranch.done();
+    }
+
+
+    @:timeout(3000)
+    function testConnectMultiple(async: Async)
+    {
+        var numOfClients = 16;
+        var clientBranch = async.branch();
+        var serverBranch = async.branch();
+
+        runServer(serverBranch, numOfClients);
+
+        for (_ in 0...numOfClients)
+        {
+            var client = new TestConnectClient("127.0.0.1", 9000);
+            var connected = client.connectTimeout(0.5);
+
+            Assert.isTrue(client.initializeCalled);
+            Assert.isTrue(client.onConnectCaled);
+            Assert.isTrue(connected);
+            
+            client.disconnect();
+        }
+
+        clientBranch.done();
+    }
+
+
+    function runServer(async: Async, expectedPeerCount: Int)
+    {
         Thread.create(() -> {
             
             server.start();
@@ -65,21 +104,16 @@ class TestClientServerConnect implements ITest
                 server.update();
             }
 
-            Assert.equals(1, Lambda.count(server.peers));
+            Assert.equals(expectedPeerCount, Lambda.count(server.peers));
 
-            var peer: TestConnectClientBehavior = cast server.peers.get(server.peers.keys().next());
-            Assert.isTrue(peer.initializeCalled);
-            Assert.isTrue(peer.onConnectCaled);
+            for (peer in server.peers)
+            {
+                var peerCasted: TestConnectClientBehavior = cast peer;
+                Assert.isTrue(peerCasted.initializeCalled);
+                Assert.isTrue(peerCasted.onConnectCaled);
+            }
 
-            serverBranch.done();
+            async.done();
         });
-        
-        var connected: Bool = client.connectTimeout(0.5);
-
-        Assert.isTrue(client.initializeCalled);
-        Assert.isTrue(client.onConnectCaled);
-        Assert.isTrue(connected);
-
-        clientBranch.done();
     }
 }

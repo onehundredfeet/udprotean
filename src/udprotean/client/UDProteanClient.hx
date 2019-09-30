@@ -61,6 +61,7 @@ class UDProteanClient extends UDProteanPeer
     }
 
 
+    @IgnoreCover
     public final inline function connect()
     {
         connectTimeout(0);
