@@ -105,9 +105,18 @@ class UDProteanClient extends UDProteanPeer
         if (socket.isConnected())
         {
             var disconnectCode: String = Utils.getDisconnectCode(handshakeCode);
-            socket.sendTo(Bytes.ofHex(disconnectCode), peerAddress);
+            var response: Bytes;
+
+            do
+            {
+                socket.sendTo(Bytes.ofHex(disconnectCode), peerAddress);
+                response = socket.readTimeout(0.001);
+            }
+            while (response == null || response.toHex() != disconnectCode);
 
             socket.close();
+
+            onDisconnect();
         }
     }
 

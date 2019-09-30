@@ -122,6 +122,9 @@ class UDProteanServer
                     // Bounce back the disconnect code.
                     socket.sendTo(datagram, recvFromAddress);
 
+                    // Call the onDisconnect callback.
+                    peers[recvFromAddressString].onDisconnect();
+
                     // Remove peer.
                     peers.remove(recvFromAddressString);
                 }
@@ -156,6 +159,7 @@ class UDProteanServer
 
     function initializePeer(peerAddress: Address, peerId: String)
     {
+        peerAddress = peerAddress.clone();
         var peer: UDProteanClientBehavior = Type.createInstance(behaviorType, [socket, peerAddress, peerId]);
         peers.set(peerAddress.addressToString(), peer);
         peer.initialize();
