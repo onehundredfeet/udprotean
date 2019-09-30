@@ -21,6 +21,7 @@ class TestClientServerConnect implements ITest
 
     var server: UDProteanServer;
     var client: TestConnectClient;
+    var clients: Array<UDProteanClient>;
 
 
     public function new() { }
@@ -30,6 +31,7 @@ class TestClientServerConnect implements ITest
     {
         server = new UDProteanServer("127.0.0.1", 9000, TestConnectClientBehavior);
         client = new TestConnectClient("127.0.0.1", 9000);
+        clients = new Array<UDProteanClient>();
     }
 
 
@@ -37,6 +39,7 @@ class TestClientServerConnect implements ITest
     {
         server.stop();
         client.disconnect();
+        for (c in clients) c.disconnect();
     }
 
 
@@ -75,18 +78,45 @@ class TestClientServerConnect implements ITest
         var clientBranch = async.branch();
         var serverBranch = async.branch();
 
-        var serverThread = runServer(serverBranch, numOfClients);
+        runServer(serverBranch, numOfClients);
 
         for (_ in 0...numOfClients)
         {
             var client = new TestConnectClient("127.0.0.1", 9000);
+            clients.push(client);
+
             var connected = client.connectTimeout(0.5);
 
             Assert.isTrue(client.initializeCalled);
             Assert.isTrue(client.onConnectCaled);
             Assert.isTrue(connected);
+        }
+
+        clientBranch.done();
+    }
+
+
+    @:timeout(3000)
+    function testDisconnect(async: Async)
+    {
+        var numOfClients = 16;
+        var clientBranch = async.branch();
+        var serverBranch = async.branch();
+
+        runServer(serverBranch, 0);
+
+        for (_ in 0...numOfClients)
+        {
+            var client = new TestConnectClient("127.0.0.1", 9000);
+            clients.push(client);
             
-            //client.disconnect();
+            var connected = client.connectTimeout(0.5);
+
+            Assert.isTrue(client.initializeCalled);
+            Assert.isTrue(client.onConnectCaled);
+            Assert.isTrue(connected);
+
+            client.disconnect();
         }
 
         clientBranch.done();
