@@ -96,15 +96,22 @@ class UDProteanClient extends UDProteanPeer
         while (response == null || response.toHex() != handshakeCode);
 
         onConnect();
+        
         return true;
     }
     
 
-    public final inline function disconnect()
+    /**
+     * Disconnect from the server and close the socket.
+     * This method will try to wait until the server acknowledges the disconnect,
+     * for an amount of time up until the given `timeout` in seconds.
+     */
+    public final function disconnect(timeout: Float = 0.3)
     {
         if (socket.isConnected())
         {
             var disconnectCode: String = Utils.getDisconnectCode(handshakeCode);
+            var timestamp: Timestamp = new Timestamp();
             var response: Bytes;
 
             do
@@ -112,7 +119,8 @@ class UDProteanClient extends UDProteanPeer
                 socket.sendTo(Bytes.ofHex(disconnectCode), peerAddress);
                 response = socket.readTimeout(0.001);
             }
-            while (response == null || response.toHex() != disconnectCode);
+            while ((response == null || response.toHex() != disconnectCode)
+                && !timestamp.isTimedOut(timeout));
 
             socket.close();
 

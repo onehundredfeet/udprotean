@@ -110,18 +110,18 @@ class UDProteanServer
 
         if (Utils.isDisconnect(datagram))
         {
+            // Bounce back the disconnect code.
+            socket.sendTo(datagram, recvFromAddress);
+
             var disconnectCode: String = datagram.toHex();
             var peerID: String = Utils.generatePeerID(disconnectCode, recvFromAddressString);
 
             if (peers.exists(recvFromAddressString))
             {
-                var validDisconnectCode: Bool = ( peers[recvFromAddressString].peerID == Utils.generatePeerID(disconnectCode, recvFromAddressString) );
+                var validDisconnectCode: Bool = ( peers[recvFromAddressString].peerID == peerID );
 
                 if (validDisconnectCode)
                 {
-                    // Bounce back the disconnect code.
-                    socket.sendTo(datagram, recvFromAddress);
-
                     // Call the onDisconnect callback.
                     peers[recvFromAddressString].onDisconnect();
 
@@ -142,7 +142,7 @@ class UDProteanServer
         }
 
 
-        var peer: UDProteanPeer = peers.get(recvFromAddressString);
+        var peer: UDProteanClientBehavior = peers.get(recvFromAddressString);
         peer.onReceived(datagram);
         return true;
     }
@@ -156,10 +156,10 @@ class UDProteanServer
         }
     }
 
-
     function initializePeer(peerAddress: Address, peerId: String)
     {
         peerAddress = peerAddress.clone();
+        
         var peer: UDProteanClientBehavior = Type.createInstance(behaviorType, [socket, peerAddress, peerId]);
         peers.set(peerAddress.addressToString(), peer);
         peer.initialize();
