@@ -92,20 +92,41 @@ class UDProteanServer
         var recvFromAddress: Address = socket.recvFromAddress();
         var recvFromAddressString: String = socket.recvFromAddressString();
 
-
         if (Utils.isHandshake(datagram))
         {
             // Bounce back the handshake code.
             socket.sendTo(datagram, recvFromAddress);
 
-            var handshakeCode: String = Utils.getHandshakeCode(datagram);
-            var peerID: String = Sha1.encode(recvFromAddressString + "|" + handshakeCode);
+            var handshakeCode: String = datagram.toHex();
+            var peerID: String = Utils.generatePeerID(handshakeCode, recvFromAddressString);
 
             // Add sender to the peers list.
-            if (!peers.exists(recvFromAddressString) || peers[recvFromAddressString].peerID != peerID)
+            if (!peers.exists(recvFromAddressString))
             {
                 initializePeer(recvFromAddress, peerID);
             }
+            return true;
+        }
+
+        if (Utils.isDisconnect(datagram))
+        {
+            var disconnectCode: String = datagram.toHex();
+            var peerID: String = Utils.generatePeerID(disconnectCode, recvFromAddressString);
+
+            if (peers.exists(recvFromAddressString))
+            {
+                var validDisconnectCode: Bool = ( peers[recvFromAddressString].peerID == Utils.generatePeerID(disconnectCode, recvFromAddressString) );
+
+                if (validDisconnectCode)
+                {
+                    // Bounce back the disconnect code.
+                    socket.sendTo(datagram, recvFromAddress);
+
+                    // Remove peer.
+                    peers.remove(recvFromAddressString);
+                }
+            }
+
             return true;
         }
 

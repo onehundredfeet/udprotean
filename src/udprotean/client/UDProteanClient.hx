@@ -14,6 +14,7 @@ class UDProteanClient extends UDProteanPeer
 {
     var serverHost: Host;
     var serverPort: Int;
+    var handshakeCode: String;
 
 
     public final function new(serverHost: String, serverPort: Int)
@@ -77,7 +78,8 @@ class UDProteanClient extends UDProteanPeer
 
         socket.connect(serverHost, serverPort);
         
-        var handshakeCode: String = Utils.generateHandshake();
+        handshakeCode = Utils.generateHandshake();
+
         var response: Bytes;
         do
         {
@@ -102,6 +104,9 @@ class UDProteanClient extends UDProteanPeer
     {
         if (socket.isConnected())
         {
+            var disconnectCode: String = Utils.getDisconnectCode(handshakeCode);
+            socket.sendTo(Bytes.ofHex(disconnectCode), peerAddress);
+
             socket.close();
         }
     }

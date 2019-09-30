@@ -75,7 +75,7 @@ class TestClientServerConnect implements ITest
         var clientBranch = async.branch();
         var serverBranch = async.branch();
 
-        runServer(serverBranch, numOfClients);
+        var serverThread = runServer(serverBranch, numOfClients);
 
         for (_ in 0...numOfClients)
         {
@@ -86,16 +86,16 @@ class TestClientServerConnect implements ITest
             Assert.isTrue(client.onConnectCaled);
             Assert.isTrue(connected);
             
-            client.disconnect();
+            //client.disconnect();
         }
 
         clientBranch.done();
     }
 
 
-    function runServer(async: Async, expectedPeerCount: Int)
+    function runServer(async: Async, expectedPeerCount: Int): Thread
     {
-        Thread.create(() -> {
+        return Thread.create(() -> {
             
             server.start();
 

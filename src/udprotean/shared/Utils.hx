@@ -1,7 +1,15 @@
 package udprotean.shared;
 
+import haxe.crypto.Sha1;
 import sys.net.Address;
 import haxe.io.Bytes;
+
+@:enum
+abstract CommandCodes(String) to String
+{
+    var Handshake  = "ffff";
+    var Disconnect = "fffe";
+}
 
 
 class Utils
@@ -19,21 +27,48 @@ class Utils
     }
 
 
+    /**
+     * Generates a random 6-byte handshake code.
+     */
     public static inline function generateHandshake(): String
     {
-        return "ffff" + StringTools.hex(randomInt(), 8).toLowerCase();
+        return CommandCodes.Handshake + StringTools.hex(randomInt(), 8).toLowerCase();
     }
 
 
+    /**
+     * Generates a disconnect code for a given handshake code.
+     */
+    public static inline function getDisconnectCode(handshakeCode: String)
+    {
+        return CommandCodes.Disconnect + handshakeCode.substr(4);
+    }
+
+
+    /**
+     * Returns `true` if the given datagram is a handshake command.
+     */
     public static inline function isHandshake(datagram: Bytes): Bool
     {
-        return datagram.length == 6 && StringTools.startsWith(datagram.toHex(), "ffff");
+        return datagram.length == 6 && StringTools.startsWith(datagram.toHex(), CommandCodes.Handshake);
     }
 
 
-    public static inline function getHandshakeCode(datagram: Bytes): String
+    /**
+     * Returns `true` if the given datagram is a disconnect command.
+     */
+    public static inline function isDisconnect(datagram: Bytes): Bool
     {
-        return datagram.toHex();
+        return datagram.length == 6 && StringTools.startsWith(datagram.toHex(), CommandCodes.Disconnect);
+    }
+
+
+    /**
+     * Calculates the Peer ID, given a code and a string representation of the peer's address.
+     */
+    public static inline function generatePeerID(code: String, addressString: String): String
+    {
+        return Sha1.encode(addressString + "|" + code.substr(4));
     }
 
     
