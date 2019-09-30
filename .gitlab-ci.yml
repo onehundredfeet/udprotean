@@ -10,6 +10,7 @@ test-neko:
 
 test-cpp:
   stage: test
+  retry: 2
   script:
   - apt-get update
   - apt-get install -yqq build-essential g++
