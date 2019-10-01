@@ -20,15 +20,15 @@ class SequentialCommunication
     public static inline var SequenceDistanceRelationship = 32;
 
 
-    var sendingSequence: Sequence = 0;      // Sending progress through sendingBuffer.
-    var sendingAckSequence: Sequence = 0;   // Sent dgrams that have been ACKed.
-    var receivingSequence: Sequence = 0;    // Receiving progress through receivingBuffer.
-    var receivingAckSequence: Sequence = 0; // Received dgrams that have been ACKed.
-    var processingSequence: Sequence = 0;   // Dgrams that have been processed.
+    @:private var sendingSequence: Sequence = 0;      // Sending progress through sendingBuffer.
+    @:private var sendingAckSequence: Sequence = 0;   // Sent dgrams that have been ACKed.
+    @:private var receivingSequence: Sequence = 0;    // Receiving progress through receivingBuffer.
+    @:private var receivingAckSequence: Sequence = 0; // Received dgrams that have been ACKed.
+    @:private var processingSequence: Sequence = 0;   // Dgrams that have been processed.
 
 
-    var sendingBuffer: DatagramBuffer;
-    var receivingBuffer: DatagramBuffer;
+    @:private var sendingBuffer: DatagramBuffer;
+    @:private var receivingBuffer: DatagramBuffer;
 
 
     public function new()
@@ -142,7 +142,7 @@ class SequentialCommunication
     }
 
 
-    @:noCompletion
+    @:noCompletion @:private
     final function sendDatagram(fragment: Bytes)
     {
         // Get the sequence number for this datagram according to sendingSequence.
@@ -181,7 +181,7 @@ class SequentialCommunication
      *
      * @returns The amount of positions the processing sequence was moved by.
      */
-    @:noCompletion
+    @:noCompletion @:private
     final function processReceivingBuffer(): Int
     {
         var stepCount: Int = 0;
@@ -245,7 +245,7 @@ class SequentialCommunication
      *
      * @returns The length in bytes of the datagram, or `0` if there is no completed datagram.
      */
-    @:noCompletion
+    @:noCompletion @:private
     final function getCompletedDatagramAt(sequenceNum: Sequence): Int
     {
         var datagramLength: Int = 0;
@@ -280,7 +280,7 @@ class SequentialCommunication
     }
 
 
-    @:noCompletion
+    @:noCompletion @:private
     final function onReceivedAck(sequenceNumberAcked: Sequence)
     {
         if (sequenceNumberAcked == sendingAckSequence)
@@ -315,7 +315,7 @@ class SequentialCommunication
     }
 
 
-    @:noCompletion
+    @:noCompletion @:private
     final function sendAck(sequenceNumber: Sequence)
     {
         // Upda the receiving ack sequence to point to the last number ACKed.
@@ -331,7 +331,7 @@ class SequentialCommunication
     }
 
 
-    @:noCompletion
+    @:noCompletion @:private
     final function transmitFromBuffer(bufferIndex: Int)
     {
         var datagram: Bytes = sendingBuffer.get(bufferIndex);
@@ -340,15 +340,15 @@ class SequentialCommunication
     }
 
 
-    @:noCompletion
+    @:noCompletion @:private
     final function handleDatagram(datagram: Bytes)
     {
         onMessageReceived(datagram);
     }
 
 
-    @:noCompletion
+    @:noCompletion @:protected
     function onTransmit(message: Bytes)        { throw "Not implemented, function should be overriden."; }
-    @:noCompletion
+    @:noCompletion @:protected
     function onMessageReceived(message: Bytes) { throw "Not implemented, function should be overriden."; }
 }

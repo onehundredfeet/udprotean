@@ -5,8 +5,8 @@ import haxe.io.Bytes;
 
 class DatagramBuffer
 {
-    var buffer: Array<Bytes>;
-    var timestamps: Array<Timestamp>;
+    @:private var buffer: Array<Bytes>;
+    @:private var timestamps: Array<Timestamp>;
 
 
     public function new(length: Int)

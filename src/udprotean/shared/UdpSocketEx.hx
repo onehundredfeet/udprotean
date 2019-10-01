@@ -9,10 +9,10 @@ using udprotean.shared.Utils;
 
 class UdpSocketEx
 {
-    var socket: UdpSocket;
+    @:private var socket: UdpSocket;
 
-    var recvBuffer: Bytes;
-    var recvAddress: Address;
+    @:private var recvBuffer: Bytes;
+    @:private var recvAddress: Address;
     
 
     public function new()

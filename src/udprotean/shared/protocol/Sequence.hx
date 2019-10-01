@@ -8,9 +8,9 @@ import haxe.io.Bytes;
 **/
 abstract Sequence(Int) from Int to Int
 {
-    public static var maxValue(get, never): Int;
-    public var previous(get, never): Int;
-    public var next(get, never): Int;
+    @:property public static var maxValue(get, never): Int;
+    @:property public var previous(get, never): Int;
+    @:property public var next(get, never): Int;
 
 
     public function new(initialValue: Int = 0)

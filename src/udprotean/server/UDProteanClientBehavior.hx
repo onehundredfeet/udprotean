@@ -11,17 +11,18 @@ using udprotean.shared.Utils;
 
 class UDProteanClientBehavior extends UDProteanPeer
 {
-    @:noCompletion
+    @:noCompletion @:private
     public final peerID: String;
 
 
+    @:protected
     public final function new(socket: UdpSocketEx, peerAddress: Address, peerID: String)
     {
         this.peerID = peerID;
         super(socket, peerAddress);
     }
     
-
+    
     public final override function update()
     {
         super.update();

@@ -12,13 +12,13 @@ using udprotean.shared.Utils;
 
 class UDProteanServer
 {
-    var host: String;
-    var port: Int;
-    var behaviorType: Class<UDProteanClientBehavior>;
+    @:private var host: String;
+    @:private var port: Int;
+    @:private var behaviorType: Class<UDProteanClientBehavior>;
 
-    var started: Bool;
-    var socket: UdpSocketEx;
-    var peers: Map<String, UDProteanClientBehavior>;
+    @:private var started: Bool;
+    @:private var socket: UdpSocketEx;
+    @:private var peers: Map<String, UDProteanClientBehavior>;
 
 
     public function new(host: String, port: Int, behaviorType: Class<UDProteanClientBehavior>)
@@ -78,6 +78,7 @@ class UDProteanServer
     }
 
 
+    @:private
     function processRead(): Bool
     {
         // Attempt to read available data.
@@ -148,6 +149,7 @@ class UDProteanServer
     }
 
 
+    @:private
     function updatePeers()
     {
         for (peer in peers)
@@ -156,6 +158,8 @@ class UDProteanServer
         }
     }
 
+
+    @:private
     function initializePeer(peerAddress: Address, peerId: String)
     {
         peerAddress = peerAddress.clone();

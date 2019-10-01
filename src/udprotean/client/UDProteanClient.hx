@@ -12,11 +12,12 @@ using udprotean.shared.Utils;
 
 class UDProteanClient extends UDProteanPeer
 {
-    var serverHost: Host;
-    var serverPort: Int;
-    var handshakeCode: String;
+    @:private var serverHost: Host;
+    @:private var serverPort: Int;
+    @:private var handshakeCode: String;
 
 
+    @:protected
     public final function new(serverHost: String, serverPort: Int)
     {
         this.serverHost = new Host(serverHost);
@@ -71,7 +72,7 @@ class UDProteanClient extends UDProteanPeer
 
     /**
      * Attempt to connect to the server for the given time in seconds.
-     */    
+     */
     public final function connectTimeout(timeout: Float): Bool
     {
         var timestamp: Timestamp = new Timestamp();
@@ -129,7 +130,7 @@ class UDProteanClient extends UDProteanPeer
     }
 
 
-    @:noCompletion
+    @:noCompletion @:private
     final function processRead(): Bool
     {
         // Attempt to read available data.

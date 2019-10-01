@@ -7,8 +7,8 @@ import udprotean.shared.protocol.SequentialCommunication;
 
 class UDProteanPeer extends SequentialCommunication
 {
-    var socket: UdpSocketEx;
-    var peerAddress: Address;
+    @:private var socket: UdpSocketEx;
+    @:private var peerAddress: Address;
     #if UNIT_TEST
     public static var PacketLoss: Float = 0;
     var rand: seedyrng.Random = new seedyrng.Random();
@@ -23,20 +23,21 @@ class UDProteanPeer extends SequentialCommunication
     }
 
 
+    @:private
     override function update() 
     {
         super.update();
     }
 
 
-    @IgnoreCover 
+    @IgnoreCover
     public final inline function isConnected()
     {
         return socket.isConnected();
     }
 
 
-    @:noCompletion
+    @:noCompletion @:protected
     override final function onReceived(datagram: Bytes)
     {
         if (Utils.isHandshake(datagram))
@@ -48,7 +49,7 @@ class UDProteanPeer extends SequentialCommunication
     }
 
     
-    @:noCompletion
+    @:noCompletion @:protected
     override final function onTransmit(message: Bytes) 
     {
         #if UNIT_TEST
@@ -59,15 +60,15 @@ class UDProteanPeer extends SequentialCommunication
     }
 
     
-    @:noCompletion
+    @:noCompletion @:private
     final override function onMessageReceived(message: Bytes) 
     {
         onMessage(message);
     }
 
 
-    @:allow(udprotean.server.UDProteanServer) @IgnoreCover function initialize() { }
-    @:allow(udprotean.server.UDProteanServer) @IgnoreCover function onConnect() { }
-    @IgnoreCover                                           function onMessage(message: Bytes) { }
-    @:allow(udprotean.server.UDProteanServer) @IgnoreCover function onDisconnect() { }
+    @:protected @IgnoreCover @:allow(udprotean.server.UDProteanServer) function initialize() { }
+    @:protected @IgnoreCover @:allow(udprotean.server.UDProteanServer) function onConnect() { }
+    @:protected @IgnoreCover                                           function onMessage(message: Bytes) { }
+    @:protected @IgnoreCover @:allow(udprotean.server.UDProteanServer) function onDisconnect() { }
 }
