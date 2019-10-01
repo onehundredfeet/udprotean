@@ -1,5 +1,5 @@
 
-test/test.hxml
+hxml/test.hxml
 
 --next
 -neko build/neko/test.n

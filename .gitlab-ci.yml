@@ -1,20 +1,36 @@
 image: haxe:4.0-stretch
 
-before_script:
-- haxelib install all --always --quiet
+stages:
+- build-test
+- deploy
+
+build-cs:
+  stage: build-test
+  variables:
+    HXML: hxml/build-cs.hxml
+  script:
+  - haxelib install $HXML --always --quiet
+  - haxe $HXML
 
 test-neko:
-  stage: test
+  stage: build-test
+  retry: 2
+  variables:
+    HXML: test-neko.hxml
   script:
-  - haxe test-neko.hxml
+  - haxelib install $HXML --always --quiet
+  - haxe $HXML
 
 test-cpp:
-  stage: test
+  stage: build-test
   retry: 2
+  variables:
+    HXML: test-cpp.hxml
   script:
   - apt-get update
   - apt-get install -yqq build-essential g++
-  - haxe test-cpp.hxml
+  - haxelib install $HXML --always --quiet
+  - haxe $HXML
 
 deploy:
   stage: deploy
