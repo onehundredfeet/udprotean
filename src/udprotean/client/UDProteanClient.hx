@@ -81,7 +81,7 @@ class UDProteanClient extends UDProteanPeer
         
         handshakeCode = Utils.generateHandshake();
 
-        var response: Bytes;
+        var response: Bytes = null;
         do
         {
             if (timeout > 0 && timestamp.elapsed() > timeout)
@@ -90,9 +90,7 @@ class UDProteanClient extends UDProteanPeer
                 return false;
             }
 
-            socket.sendTo(Bytes.ofHex(handshakeCode), peerAddress);
-
-            response = socket.readTimeout(0.0001);
+            response = socket.trySendAndRead(Bytes.ofHex(handshakeCode), peerAddress);
         }
         while (response == null || response.toHex() != handshakeCode);
 
@@ -113,12 +111,11 @@ class UDProteanClient extends UDProteanPeer
         {
             var disconnectCode: String = Utils.getDisconnectCode(handshakeCode);
             var timestamp: Timestamp = new Timestamp();
-            var response: Bytes;
+            var response: Bytes = null;
 
             do
             {
-                socket.sendTo(Bytes.ofHex(disconnectCode), peerAddress);
-                response = socket.readTimeout(0.0001);
+                response = socket.trySendAndRead(Bytes.ofHex(disconnectCode), peerAddress);
             }
             while ((response == null || response.toHex() != disconnectCode)
                 && !timestamp.isTimedOut(timeout));

@@ -112,7 +112,11 @@ class UDProteanServer
         if (Utils.isDisconnect(datagram))
         {
             // Bounce back the disconnect code.
-            socket.sendTo(datagram, recvFromAddress);
+            try
+            {
+                socket.sendTo(datagram, recvFromAddress);
+            }
+            catch (e: Dynamic) { }
 
             var disconnectCode: String = datagram.toHex();
             var peerID: String = Utils.generatePeerID(disconnectCode, recvFromAddressString);

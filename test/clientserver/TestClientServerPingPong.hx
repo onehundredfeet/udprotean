@@ -42,18 +42,18 @@ class TestClientServerPingPong implements ITest
     }
 
 
-    @:timeout(30000)
+    @:timeout(80000)
     function testPingPong(async: Async)
     {
-        doTest(async, 5000);
+        doTest(async, 10000);
     }
 
 
-    @:timeout(60000)
+    @:timeout(80000)
     function testPingPongPacketLoss(async: Async)
     {
         UDProteanPeer.PacketLoss = 0.1;
-        doTest(async, 20000);
+        doTest(async, 30000);
     }
 
 
@@ -62,14 +62,19 @@ class TestClientServerPingPong implements ITest
         var clientBranch = async.branch();
         var serverBranch = async.branch();
 
-        Thread.create(() -> {
+        var serverThread = Thread.create(() -> {
             
             server.start();
 
-            for (_ in 0...updates)
+            var shouldStop: Bool;
+
+            do
             {
                 server.update();
-            }
+
+                shouldStop = Thread.readMessage(false) != null;
+
+            } while(!shouldStop);
 
             serverBranch.done();
         });
@@ -84,6 +89,8 @@ class TestClientServerPingPong implements ITest
         {
             client.update();
         }
+
+        serverThread.sendMessage(true);
 
         Assert.equals(Count, client.expected);
 

@@ -1,5 +1,6 @@
 package udprotean.shared;
 
+import haxe.CallStack;
 import haxe.io.Bytes;
 import sys.net.Address;
 import sys.net.Host;
@@ -78,6 +79,21 @@ class UdpSocketEx
         }
 
         return null;
+    }
+
+
+    public function trySendAndRead(buf: Bytes, addr: Address): Bytes
+    {
+        try
+        {
+            sendTo(buf, addr);
+
+            return readTimeout(0.0001);
+        }
+        catch (e: Dynamic)
+        {
+            return null;
+        }
     }
 
 
