@@ -56,7 +56,7 @@ class TestClientServerConnect implements ITest
     }
 
 
-    @:timeout(1000)
+    @:timeout(10000)
     function testConnect(async: Async)
     {
         var clientBranch = async.branch();
