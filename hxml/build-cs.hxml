@@ -2,7 +2,6 @@
 -cp src
 
 -D dll
--D no-compilation
 
 -cs build/cs/UDProtean.hx
 
