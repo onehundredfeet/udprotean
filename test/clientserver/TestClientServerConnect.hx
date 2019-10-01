@@ -1,5 +1,6 @@
 package clientserver;
 
+import udprotean.shared.UDProteanPeer;
 import sys.thread.Thread;
 import haxe.Timer;
 import utest.Async;
@@ -29,6 +30,7 @@ class TestClientServerConnect implements ITest
 
     function setup()
     {
+        UDProteanPeer.PacketLoss = 0;
         server = new UDProteanServer("127.0.0.1", 9000, TestConnectClientBehavior);
         client = new TestConnectClient("127.0.0.1", 9000);
         clients = new Array<UDProteanClient>();
@@ -37,9 +39,10 @@ class TestClientServerConnect implements ITest
 
     function teardown()
     {
+        UDProteanPeer.PacketLoss = 0;
+        client.disconnect(0.00001);
+        for (c in clients) c.disconnect(0.00001);
         server.stop();
-        client.disconnect();
-        for (c in clients) c.disconnect();
     }
 
 
@@ -74,6 +77,8 @@ class TestClientServerConnect implements ITest
     @:timeout(3000)
     function testConnectMultiple(async: Async)
     {
+        UDProteanPeer.PacketLoss = 0.1;
+
         var numOfClients = 16;
         var clientBranch = async.branch();
         var serverBranch = async.branch();
@@ -89,6 +94,7 @@ class TestClientServerConnect implements ITest
 
             Assert.isTrue(client.initializeCalled);
             Assert.isTrue(client.onConnectCaled);
+            Assert.isFalse(client.onDisconnectCalled);
             Assert.isTrue(connected);
         }
 
@@ -114,9 +120,12 @@ class TestClientServerConnect implements ITest
 
             Assert.isTrue(client.initializeCalled);
             Assert.isTrue(client.onConnectCaled);
+            Assert.isFalse(client.onDisconnectCalled);
             Assert.isTrue(connected);
 
-            client.disconnect();
+            client.disconnect(0.5);
+
+            Assert.isTrue(client.onDisconnectCalled);
         }
 
         clientBranch.done();

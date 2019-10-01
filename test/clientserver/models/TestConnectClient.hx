@@ -9,6 +9,7 @@ class TestConnectClient extends UDProteanClient
 {
     public var initializeCalled: Bool = false;
     public var onConnectCaled: Bool = false;
+    public var onDisconnectCalled: Bool = false;
 
 
     override function initialize() 
@@ -20,5 +21,11 @@ class TestConnectClient extends UDProteanClient
     override function onConnect() 
     {
         onConnectCaled = true;
+    }
+
+
+    override function onDisconnect() 
+    {
+        onDisconnectCalled = true;
     }
 }

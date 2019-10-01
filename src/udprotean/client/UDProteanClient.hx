@@ -91,7 +91,7 @@ class UDProteanClient extends UDProteanPeer
 
             socket.sendTo(Bytes.ofHex(handshakeCode), peerAddress);
 
-            response = socket.readTimeout(0.001);
+            response = socket.readTimeout(0.0001);
         }
         while (response == null || response.toHex() != handshakeCode);
 
@@ -117,7 +117,7 @@ class UDProteanClient extends UDProteanPeer
             do
             {
                 socket.sendTo(Bytes.ofHex(disconnectCode), peerAddress);
-                response = socket.readTimeout(0.001);
+                response = socket.readTimeout(0.0001);
             }
             while ((response == null || response.toHex() != disconnectCode)
                 && !timestamp.isTimedOut(timeout));
