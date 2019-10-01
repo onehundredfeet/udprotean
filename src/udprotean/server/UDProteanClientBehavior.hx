@@ -11,7 +11,7 @@ using udprotean.shared.Utils;
 
 class UDProteanClientBehavior extends UDProteanPeer
 {
-    @:noCompletion @:private
+    @:noCompletion
     public final peerID: String;
 
 

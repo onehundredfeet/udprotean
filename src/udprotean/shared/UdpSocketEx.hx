@@ -11,8 +11,8 @@ class UdpSocketEx
 {
     @:private var socket: UdpSocket;
 
-    @:private var recvBuffer: Bytes;
-    @:private var recvAddress: Address;
+    var recvBuffer: Bytes;
+    var recvAddress: Address;
     
 
     public function new()
@@ -105,7 +105,7 @@ class UdpSocketEx
     }
 
 
-    public inline function close()
+    public function close()
     {
         socket.close();
     }
@@ -122,7 +122,7 @@ class UdpSocketEx
     }
 
 
-    public inline function setBlocking(blocking: Bool)
+    public function setBlocking(blocking: Bool)
     {
         socket.setBlocking(blocking);
     }

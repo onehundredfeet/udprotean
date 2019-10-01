@@ -42,7 +42,7 @@ class TestClientServerPingPong implements ITest
     }
 
 
-    @:timeout(20000)
+    @:timeout(30000)
     function testPingPong(async: Async)
     {
         doTest(async, 5000);
