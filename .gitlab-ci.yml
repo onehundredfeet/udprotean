@@ -9,15 +9,9 @@ build-cs:
   variables:
     HXML: hxml/build-cs.hxml
   script:
-  # Install dotnet sdk 3.0
+  # Install Mono
   - apt-get update
-  - apt-get install -yqq apt-transport-https ca-certificates
-  - wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
-  - mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
-  - wget -q https://packages.microsoft.com/config/debian/9/prod.list
-  - mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
-  - apt-get update
-  - apt-get install -yqq dotnet-sdk-3.0
+  - apt-get install -yqq --no-install-recommends apt-transport-https ca-certificates mono-complete
 
   - haxelib install $HXML --always --quiet
   - haxe $HXML
