@@ -13,7 +13,7 @@ class Utils
      */
     public static inline function getTimestamp(): Float
     {
-        #if (cpp || neko)
+        #if (cpp || neko || hl)
             return Sys.time() * 1000;
         #else
             return Date.now().getTime();

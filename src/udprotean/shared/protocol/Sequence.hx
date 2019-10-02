@@ -93,6 +93,20 @@ abstract Sequence(Int) from Int to Int
     }
 
 
+    public inline function toBytes(): Bytes
+    {
+    #if hl
+        var buf: Bytes = Bytes.alloc(4);
+        buf.setInt32(0, this);
+        return buf.sub(0, UDProteanConfiguration.SequenceBytes);
+    #else
+        var buf: Bytes = Bytes.alloc(UDProteanConfiguration.SequenceBytes);
+        buf.setInt32(0, this);
+        return buf;
+    #end
+    }
+
+
     /**
      * Returns the sequence number from the first `SequenceBytes` little-endian bytes of the given buffer.
      */

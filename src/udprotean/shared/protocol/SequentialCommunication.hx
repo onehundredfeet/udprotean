@@ -318,8 +318,7 @@ class SequentialCommunication
         sendingBuffer.refresh(sequenceNumber);
 
         // Send the ACK.
-        var ackDatagram: Bytes = Bytes.alloc(UDProteanConfiguration.SequenceBytes);
-        ackDatagram.setInt32(0, sequenceNumber);
+        var ackDatagram: Bytes = sequenceNumber.toBytes();
         onTransmit(ackDatagram);
     }
 
