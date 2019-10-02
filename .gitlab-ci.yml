@@ -41,14 +41,14 @@ test-cpp:
 deploy:
   stage: deploy
   only:
-  - tags
+  - /^v\d+.\d+.\d+$/
   before_script:
   - apt-get update
   - apt-get install -yqq zip jq
   script:
   # Patch version number in haxelib.json
   - export TMP=$(mktemp)
-  - export VERSION=$(CI_COMMIT_TAG)
+  - export VERSION=$(echo $CI_COMMIT_TAG | cut -d 'v' -f 0)
   - jq ".version = \"$VERSION\"" haxelib.json > "$TMP"
   - mv "$TMP" haxelib.json
   # Make zip
