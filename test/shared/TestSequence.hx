@@ -5,6 +5,7 @@ import utest.Assert;
 
 import udprotean.shared.protocol.Sequence;
 import udprotean.shared.protocol.SequentialCommunication;
+import udprotean.shared.protocol.UDProteanConfiguration;
 
 
 class TestSequence extends Test
@@ -13,7 +14,7 @@ class TestSequence extends Test
     {
         var sequence = new Sequence();
 
-        Assert.equals(SequentialCommunication.SequenceSize - 1, Sequence.maxValue);
+        Assert.equals(UDProteanConfiguration.SequenceSize - 1, Sequence.maxValue);
 
         sequence.set(0);
         Assert.equals(1, sequence.next);
@@ -66,9 +67,9 @@ class TestSequence extends Test
         //   s1 s2 d
             [0, 0, 0],
             [0, 1, 1],
-            [1, 0, SequentialCommunication.SequenceSize - 1],
+            [1, 0, UDProteanConfiguration.SequenceSize - 1],
             [12, 24, 12],
-            [25, 10, SequentialCommunication.SequenceSize - 15]
+            [25, 10, UDProteanConfiguration.SequenceSize - 15]
         ];
 
         for (c in cases)

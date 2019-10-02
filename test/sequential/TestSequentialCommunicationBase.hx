@@ -9,14 +9,15 @@ import utest.Assert;
 import udprotean.shared.protocol.Sequence;
 import udprotean.shared.protocol.DatagramBuffer;
 import udprotean.shared.protocol.SequentialCommunication;
+import udprotean.shared.protocol.UDProteanConfiguration;
 
 
 @:access(udprotean.shared.protocol.SequentialCommunication)
 class TestSequentialCommunicationBase extends SequentialCommunication implements ITest
 {
-    final SequenceSize = SequentialCommunication.SequenceSize;
-    final SequenceBytes = SequentialCommunication.SequenceBytes;
-    final FragmentSize = SequentialCommunication.FragmentSize;
+    final SequenceSize = UDProteanConfiguration.SequenceSize;
+    final SequenceBytes = UDProteanConfiguration.SequenceBytes;
+    final FragmentSize = UDProteanConfiguration.FragmentSize;
 
     var sendExpected: Int = 0;
 
@@ -29,8 +30,7 @@ class TestSequentialCommunicationBase extends SequentialCommunication implements
 
     function teardown()
     {
-        sendingBuffer = new DatagramBuffer(SequenceSize);
-        receivingBuffer = new DatagramBuffer(SequenceSize);
+        initSequentialCommunication();
         sendExpected = 0;
     }
 

@@ -21,7 +21,7 @@ abstract Sequence(Int) from Int to Int
 
     public static inline function get_maxValue(): Int
     {
-        return SequentialCommunication.SequenceSize - 1;
+        return UDProteanConfiguration.SequenceSize - 1;
     }
 
 
@@ -33,7 +33,7 @@ abstract Sequence(Int) from Int to Int
 
     public function get_next(): Int
     {
-        return (this + 1) % SequentialCommunication.SequenceSize;
+        return (this + 1) % UDProteanConfiguration.SequenceSize;
     }
 
 
@@ -57,7 +57,7 @@ abstract Sequence(Int) from Int to Int
 
     public inline function isBefore(seq: Sequence): Bool
     {
-        return distanceTo(seq) < SequentialCommunication.SequenceDistanceRelationship
+        return distanceTo(seq) < UDProteanConfiguration.SequenceDistanceRelationship
             && this != seq;
     }
 
@@ -89,7 +89,7 @@ abstract Sequence(Int) from Int to Int
      */
     public inline function distanceTo(seq: Sequence): Int
     {
-        return seq >= this ? Std.int(seq - this) : Std.int(SequentialCommunication.SequenceSize - this + seq);
+        return seq >= this ? Std.int(seq - this) : Std.int(UDProteanConfiguration.SequenceSize - this + seq);
     }
 
 
@@ -99,7 +99,7 @@ abstract Sequence(Int) from Int to Int
     public static inline function fromBytes(bytes: Bytes): Sequence
     {
         var b: Bytes = Bytes.alloc(4);
-        b.blit(0, bytes, 0, SequentialCommunication.SequenceBytes);
+        b.blit(0, bytes, 0, UDProteanConfiguration.SequenceBytes);
         return b.getInt32(0);
     }
 

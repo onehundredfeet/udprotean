@@ -1,5 +1,6 @@
 package clientserver;
 
+import udprotean.shared.protocol.UDProteanConfiguration;
 import udprotean.shared.UDProteanPeer;
 import udprotean.shared.protocol.SequentialCommunication;
 import sys.thread.Thread;
@@ -17,7 +18,7 @@ import utest.Assert;
 
 class TestClientServerPingPong implements ITest
 {
-    final Count = SequentialCommunication.SequenceSize * 2;
+    final Count = UDProteanConfiguration.SequenceSize * 2;
 
     var server: UDProteanServer;
     var client: TestPingPongClient;
@@ -42,14 +43,14 @@ class TestClientServerPingPong implements ITest
     }
 
 
-    @:timeout(80000)
+    @:timeout(100000)
     function testPingPong(async: Async)
     {
         doTest(async, 10000);
     }
 
 
-    @:timeout(80000)
+    @:timeout(100000)
     function testPingPongPacketLoss(async: Async)
     {
         UDProteanPeer.PacketLoss = 0.1;

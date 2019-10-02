@@ -6,6 +6,7 @@ import utest.Assert;
 
 import udprotean.shared.protocol.DatagramBuffer;
 import udprotean.shared.protocol.SequentialCommunication;
+import udprotean.shared.protocol.UDProteanConfiguration;
 
 
 class TestDatagramBuffer extends Test
@@ -15,7 +16,7 @@ class TestDatagramBuffer extends Test
 
     function testEmpty()
     {
-        var buffer: DatagramBuffer = new DatagramBuffer(BufferSize);
+        var buffer: DatagramBuffer = new DatagramBuffer();
 
         for (i in 0...BufferSize)
         {
@@ -32,12 +33,12 @@ class TestDatagramBuffer extends Test
 
     function testTimestamps()
     {
-        var buffer: DatagramBuffer = new DatagramBuffer(BufferSize);
+        var buffer: DatagramBuffer = new DatagramBuffer();
         buffer.insert(12, Bytes.alloc(24));
 
         Assert.isFalse( buffer.isStale(12) );
 
-        Sys.sleep(0.002 + SequentialCommunication.StaleDatagramAge / 1000);
+        Sys.sleep(0.002 + UDProteanConfiguration.StaleDatagramAge / 1000);
 
         Assert.isTrue( buffer.isStale(12) );
 

@@ -10,6 +10,7 @@ import utest.Assert;
 import udprotean.shared.protocol.Sequence;
 import udprotean.shared.protocol.DatagramBuffer;
 import udprotean.shared.protocol.SequentialCommunication;
+import udprotean.shared.protocol.UDProteanConfiguration;
 
 
 @:access(udprotean.shared.protocol.SequentialCommunication)
@@ -27,7 +28,7 @@ class TestSequentialCommunicationReceiveOutOfOrder extends TestSequentialCommuni
     function testReceive()
     {
         var buffers = new Array<Bytes>();
-        var count = SequenceSize - SequentialCommunication.SequenceDistanceRelationship;
+        var count = SequenceSize - UDProteanConfiguration.SequenceDistanceRelationship;
 
         for (i in 0...count)
         {

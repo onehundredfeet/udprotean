@@ -56,7 +56,7 @@ class TestClientServerConnect implements ITest
     }
 
 
-    @:timeout(10000)
+    @:timeout(20000)
     function testConnect(async: Async)
     {
         var clientBranch = async.branch();
@@ -74,7 +74,7 @@ class TestClientServerConnect implements ITest
     }
 
 
-    @:timeout(10000)
+    @:timeout(20000)
     function testConnectMultiple(async: Async)
     {
         UDProteanPeer.PacketLoss = 0.1;

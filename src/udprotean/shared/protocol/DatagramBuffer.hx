@@ -9,12 +9,12 @@ class DatagramBuffer
     var timestamps: Array<Timestamp>;
 
 
-    public function new(length: Int)
+    public function new()
     {
         buffer = new Array<Bytes>();
-        buffer.resize(length);
+        buffer.resize(UDProteanConfiguration.SequenceSize);
         timestamps = new Array<Timestamp>();
-        timestamps.resize(length);
+        timestamps.resize(UDProteanConfiguration.SequenceSize);
     }
 
 
@@ -61,13 +61,13 @@ class DatagramBuffer
     public inline function isStale(index: Int): Bool
     {
         return !isEmpty(index) &&
-            timestamps[index].elapsedMs() > SequentialCommunication.StaleDatagramAge;
+            timestamps[index].elapsedMs() > UDProteanConfiguration.StaleDatagramAge;
     }
 
 
     /**
      * Sets the timestamp of the datagram at the given index in the buffer to zero,
-     * thus making subsequent calls to the `isStale()` method return `true`.
+     * thus making subsequent calls to the `isStale()` and `istoRepeat()` methods return `true`.
      * (Assuming that the datagram at the given index exists)
      */
     public inline function setStale(index: Int)
@@ -82,7 +82,7 @@ class DatagramBuffer
     public inline function isToRepeat(index: Int): Bool
     {
         return !isEmpty(index) &&
-            timestamps[index].elapsedMs() > SequentialCommunication.RepeatDatagramAge;
+            timestamps[index].elapsedMs() > UDProteanConfiguration.RepeatDatagramAge;
     }
 
 

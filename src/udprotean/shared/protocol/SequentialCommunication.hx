@@ -6,20 +6,6 @@ import haxe.io.BytesBuffer;
 
 class SequentialCommunication
 {
-    /** The size of the sequential buffers in amount of datagrams. */
-    public static inline var SequenceSize                 = 512;
-    /** The maximum transmittable datagram size in bytes. */
-    public static inline var FragmentSize                 = 540;
-    /** The time (in ms) after which an un-ACKed datagram should be re-sent. */
-    public static inline var RepeatDatagramAge            = 50;
-    /** The time (in ms) after which retransmission of a datagram should be requested when receiving one out-of-order. */
-    public static inline var StaleDatagramAge             = 20;
-    /** The number of bytes needed to hold the sequence number in datagrams. */
-    public static inline var SequenceBytes                = 3;
-    /** The maximum cyclical distance one datagram can have from another and be presumed to be earlier than it. */
-    public static inline var SequenceDistanceRelationship = 32;
-
-
     @:private var sendingSequence: Sequence = 0;      // Sending progress through sendingBuffer.
     @:private var sendingAckSequence: Sequence = 0;   // Sent dgrams that have been ACKed.
     @:private var receivingSequence: Sequence = 0;    // Receiving progress through receivingBuffer.
@@ -33,9 +19,16 @@ class SequentialCommunication
 
     public function new()
     {
+        initSequentialCommunication();
+    }
+
+
+    @:protected @:noCompletion
+    function initSequentialCommunication()
+    {
         // Initialize buffers.
-        sendingBuffer = new DatagramBuffer(SequenceSize);
-        receivingBuffer = new DatagramBuffer(SequenceSize);
+        sendingBuffer = new DatagramBuffer();
+        receivingBuffer = new DatagramBuffer();
     }
 
 
@@ -45,14 +38,14 @@ class SequentialCommunication
      */
     public final function send(message: Bytes)
     {
-        var fragmentCount: Int = Std.int(message.length / FragmentSize) + 1;
+        var fragmentCount: Int = Std.int(message.length / UDProteanConfiguration.FragmentSize) + 1;
         var dataIndex: Int = 0;
 
         while (fragmentCount > 0)
         {
             fragmentCount--;
 
-            var fragmentSize: Int = Std.int(Math.min(message.length - dataIndex, FragmentSize));
+            var fragmentSize: Int = Std.int(Math.min(message.length - dataIndex, UDProteanConfiguration.FragmentSize));
 
             var fragment: Bytes = Bytes.alloc(fragmentSize + 1);
 
@@ -75,7 +68,7 @@ class SequentialCommunication
         var datagramSequence: Sequence = Sequence.fromBytes(datagram);
 
         // If the datagram is only SequenceBytes long, then it's an ACK.
-        if (datagram.length == SequenceBytes)
+        if (datagram.length == UDProteanConfiguration.SequenceBytes)
         {
             onReceivedAck(datagramSequence);
             return;
@@ -96,7 +89,7 @@ class SequentialCommunication
 
         // Keep the payload in the datagramm by removing the sequence bytes,
         // and add it to the receiving buffer at its position in the sequence.
-        var data: Bytes = datagram.sub(SequenceBytes, datagram.length - SequenceBytes);
+        var data: Bytes = datagram.sub(UDProteanConfiguration.SequenceBytes, datagram.length - UDProteanConfiguration.SequenceBytes);
         receivingBuffer.insert(datagramSequence, data);
 
         if (datagramSequence == receivingSequence)
@@ -149,13 +142,13 @@ class SequentialCommunication
         var datagramSequence: Sequence = sendingSequence.getAndMoveNext();
 
         // Allocate the size of the datagram.
-        var datagram: Bytes = Bytes.alloc(SequenceBytes + fragment.length);
+        var datagram: Bytes = Bytes.alloc(UDProteanConfiguration.SequenceBytes + fragment.length);
 
         // Write sequence number goes into the first bytes.
         datagram.setInt32(0, datagramSequence);
 
         // Write the fragment into the rest.
-        datagram.blit(SequenceBytes, fragment, 0, fragment.length);
+        datagram.blit(UDProteanConfiguration.SequenceBytes, fragment, 0, fragment.length);
 
         // Store the datagram in the sending buffer.
         sendingBuffer.insert(datagramSequence, datagram);
@@ -325,7 +318,7 @@ class SequentialCommunication
         sendingBuffer.refresh(sequenceNumber);
 
         // Send the ACK.
-        var ackDatagram: Bytes = Bytes.alloc(SequenceBytes);
+        var ackDatagram: Bytes = Bytes.alloc(UDProteanConfiguration.SequenceBytes);
         ackDatagram.setInt32(0, sequenceNumber);
         onTransmit(ackDatagram);
     }

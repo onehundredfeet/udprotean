@@ -76,6 +76,8 @@ class UDProteanClient extends UDProteanPeer
      */
     public final function connectTimeout(timeout: Float): Bool
     {
+        initSequentialCommunication();
+        
         var timestamp: Timestamp = new Timestamp();
 
         socket.connect(serverHost, serverPort);

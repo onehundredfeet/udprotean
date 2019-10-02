@@ -9,6 +9,7 @@ import utest.Assert;
 import udprotean.shared.protocol.Sequence;
 import udprotean.shared.protocol.DatagramBuffer;
 import udprotean.shared.protocol.SequentialCommunication;
+import udprotean.shared.protocol.UDProteanConfiguration;
 
 import sequential.models.SequentialCommunicationPeer;
 
@@ -42,19 +43,19 @@ class TestSequentialCommunication implements ITest
 
     function testSend()
     {
-        sendIncreasingSequence(SequentialCommunication.SequenceSize * 4);
+        sendIncreasingSequence(UDProteanConfiguration.SequenceSize * 4);
     }
 
 
     function testSendPacketLoss()
     {
-        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.1, 10000);
+        sendIncreasingSequence(UDProteanConfiguration.SequenceSize, 0.1, 10000);
     }
     
 
     function testSendBigPacketLoss()
     {
-        sendIncreasingSequence(SequentialCommunication.SequenceSize, 0.4, 20000);
+        sendIncreasingSequence(UDProteanConfiguration.SequenceSize, 0.4, 20000);
     }
 
 
