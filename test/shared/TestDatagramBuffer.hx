@@ -44,5 +44,9 @@ class TestDatagramBuffer extends Test
         buffer.refresh(12);
 
         Assert.isFalse( buffer.isStale(12) );
+
+        buffer.setStale(12);
+
+        Assert.isTrue( buffer.isStale(12) );
     }
 }

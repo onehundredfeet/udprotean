@@ -66,6 +66,17 @@ class DatagramBuffer
 
 
     /**
+     * Sets the timestamp of the datagram at the given index in the buffer to zero,
+     * thus making subsequent calls to the `isStale()` method return `true`.
+     * (Assuming that the datagram at the given index exists)
+     */
+    public inline function setStale(index: Int)
+    {
+        timestamps[index] = cast(0.0, Timestamp);
+    }
+
+
+    /**
      * Returns `true` if the datagram at the given index in the buffer exists and is older than RepeatDatagramAge.
      */
     public inline function isToRepeat(index: Int): Bool
