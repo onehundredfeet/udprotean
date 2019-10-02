@@ -36,8 +36,8 @@ class TestClientServerPingPong implements ITest
 
     function teardown()
     {
-        server.stop();
         client.disconnect();
+        server.stop();
         UDProteanPeer.PacketLoss = 0;
     }
 
@@ -53,7 +53,7 @@ class TestClientServerPingPong implements ITest
     function testPingPongPacketLoss(async: Async)
     {
         UDProteanPeer.PacketLoss = 0.1;
-        doTest(async, 30000);
+        doTest(async, 20000);
     }
 
 
@@ -66,7 +66,7 @@ class TestClientServerPingPong implements ITest
             
             server.start();
 
-            var shouldStop: Bool;
+            var shouldStop: Bool = false;
 
             do
             {

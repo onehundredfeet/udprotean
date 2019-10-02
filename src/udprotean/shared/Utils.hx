@@ -3,13 +3,7 @@ package udprotean.shared;
 import haxe.crypto.Sha1;
 import sys.net.Address;
 import haxe.io.Bytes;
-
-@:enum
-abstract CommandCodes(String) to String
-{
-    var Handshake  = "ffff";
-    var Disconnect = "fffe";
-}
+import udprotean.shared.protocol.CommandCode;
 
 
 class Utils
@@ -32,7 +26,7 @@ class Utils
      */
     public static inline function generateHandshake(): String
     {
-        return CommandCodes.Handshake + StringTools.hex(randomInt(), 8).toLowerCase();
+        return CommandCode.Handshake + StringTools.hex(randomInt(), 8).toLowerCase();
     }
 
 
@@ -41,7 +35,7 @@ class Utils
      */
     public static inline function getDisconnectCode(handshakeCode: String)
     {
-        return CommandCodes.Disconnect + handshakeCode.substr(4);
+        return CommandCode.Disconnect + handshakeCode.substr(4);
     }
 
 
@@ -50,7 +44,7 @@ class Utils
      */
     public static inline function isHandshake(datagram: Bytes): Bool
     {
-        return datagram.length == 6 && StringTools.startsWith(datagram.toHex(), CommandCodes.Handshake);
+        return datagram.length == 6 && StringTools.startsWith(datagram.toHex(), CommandCode.Handshake);
     }
 
 
@@ -59,7 +53,7 @@ class Utils
      */
     public static inline function isDisconnect(datagram: Bytes): Bool
     {
-        return datagram.length == 6 && StringTools.startsWith(datagram.toHex(), CommandCodes.Disconnect);
+        return datagram.length == 6 && StringTools.startsWith(datagram.toHex(), CommandCode.Disconnect);
     }
 
 

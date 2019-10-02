@@ -1,5 +1,6 @@
 package udprotean.server;
 
+import udprotean.shared.protocol.CommandCode;
 import haxe.crypto.Sha1;
 import udprotean.shared.Timestamp;
 import sys.net.Address;
@@ -92,50 +93,23 @@ class UDProteanServer
 
         var recvFromAddress: Address = socket.recvFromAddress();
         var recvFromAddressString: String = socket.recvFromAddressString();
+        var commandCode: CommandCode = CommandCode.ofBytes(datagram);
 
-        if (Utils.isHandshake(datagram))
+        switch (commandCode)
         {
-            // Bounce back the handshake code.
-            socket.sendTo(datagram, recvFromAddress);
+            case CommandCode.Handshake:
+                handleHandshake(datagram, recvFromAddress);
+                return true;
 
-            var handshakeCode: String = datagram.toHex();
-            var peerID: String = Utils.generatePeerID(handshakeCode, recvFromAddressString);
 
-            // Add sender to the peers list.
-            if (!peers.exists(recvFromAddressString))
-            {
-                initializePeer(recvFromAddress, peerID);
-            }
-            return true;
-        }
+            case CommandCode.Disconnect:
+                handleDisconnect(datagram, recvFromAddress);
+                return true;
 
-        if (Utils.isDisconnect(datagram))
-        {
-            // Bounce back the disconnect code.
-            try
-            {
-                socket.sendTo(datagram, recvFromAddress);
-            }
-            catch (e: Dynamic) { }
 
-            var disconnectCode: String = datagram.toHex();
-            var peerID: String = Utils.generatePeerID(disconnectCode, recvFromAddressString);
-
-            if (peers.exists(recvFromAddressString))
-            {
-                var validDisconnectCode: Bool = ( peers[recvFromAddressString].peerID == peerID );
-
-                if (validDisconnectCode)
-                {
-                    // Call the onDisconnect callback.
-                    peers[recvFromAddressString].onDisconnect();
-
-                    // Remove peer.
-                    peers.remove(recvFromAddressString);
-                }
-            }
-
-            return true;
+            case _:
+            // Necessary on Neko for some reason.
+            // If not present, execution will abruptly stop at the beginning of the switch.
         }
 
 
@@ -150,6 +124,54 @@ class UDProteanServer
         var peer: UDProteanClientBehavior = peers.get(recvFromAddressString);
         peer.onReceived(datagram);
         return true;
+    }
+
+
+    @:private
+    function handleHandshake(datagram: Bytes, recvFromAddress: Address)
+    {
+        // Bounce back the handshake code.
+        socket.sendTo(datagram, recvFromAddress);
+
+        var handshakeCode: String = datagram.toHex();
+        var peerID: String = Utils.generatePeerID(handshakeCode, recvFromAddress.addressToString());
+
+        // Add sender to the peers list.
+        if (!peers.exists(recvFromAddress.addressToString()))
+        {
+            initializePeer(recvFromAddress, peerID);
+        }
+    }
+
+
+    @:private
+    function handleDisconnect(datagram: Bytes, recvFromAddress: Address)
+    {
+        var recvFromAddressString: String = recvFromAddress.addressToString();
+
+        // Bounce back the disconnect code.
+        try
+        {
+            socket.sendTo(datagram, recvFromAddress);
+        }
+        catch (e: Dynamic) { }
+
+        var disconnectCode: String = datagram.toHex();
+        var peerID: String = Utils.generatePeerID(disconnectCode, recvFromAddressString);
+
+        if (peers.exists(recvFromAddressString))
+        {
+            var validDisconnectCode: Bool = ( peers[recvFromAddressString].peerID == peerID );
+
+            if (validDisconnectCode)
+            {
+                // Call the onDisconnect callback.
+                peers[recvFromAddressString].onDisconnect();
+
+                // Remove peer.
+                peers.remove(recvFromAddressString);
+            }
+        }
     }
 
 
