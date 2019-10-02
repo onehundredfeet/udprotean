@@ -2,6 +2,7 @@ UDProtean - Haxe
 [![pipeline status](https://gitlab.com/haath/udprotean/badges/master/pipeline.svg)](https://gitlab.com/haath/udprotean/pipelines/latest)
 [![coverage report](https://gitlab.com/haath/udprotean/badges/master/coverage.svg)](https://gitlab.com/haath/udprotean/pipelines/latest)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://gitlab.com/haath/udprotean/blob/master/LICENSE)
+[![release](https://img.shields.io/badge/release-haxelib-informational)](https://lib.haxe.org/p/udprotean/)
 ====================
 
 
@@ -36,12 +37,12 @@ $ haxelib install udprotean
 
 ## Usage
 
-#### Server
+### Server
 
 ```haxe
 import udprotean.server.UDProteanClientBehavior;
 
-class MyClientBehavior extends UDProteanClientBehavior
+class EchoClientBehavior extends UDProteanClientBehavior
 {
     // Called after the constructor.
     override function initialize() { }
@@ -49,14 +50,17 @@ class MyClientBehavior extends UDProteanClientBehavior
     // Called after the connection handshake.
     override function onConnect() { }
 
-    override function onMessage(message: Bytes) { }
+    override function onMessage(message: Bytes) {
+        // Repeat all messages back to the client.
+        send(message);
+    }
 
     override function onDisconnect() { }
 }
 ```
 
 ```haxe
-var server = new UDProteanServer("0.0.0.0", 9000, MyClientBehavior);
+var server = new UDProteanServer("0.0.0.0", 9000, EchoClientBehavior);
 
 server.start();
 
@@ -70,7 +74,7 @@ server.stop();
 ```
 
 
-#### Client
+### Client
 
 ```haxe
 import udprotean.server.UDProteanClient;
@@ -105,10 +109,43 @@ while (running)
 client.disconnect();
 ```
 
+
+### Synchronous or with a Timeout
+
 The `update()` method only returns when there is no data left to read on the socket.
 For continuous communication, the `updateTimeout()` method may be preferable.
 
 ```haxe
-// Process incoming data for 16ms.
+// Process incoming data for up to 16ms.
 client.updateTimeout(0.016);
 ```
+
+This method is useful, when the load on the incoming buffer is not enough to cause a growing backlog, because it lets you synchronously handle the networking, and with a more-or-less fixed interval execute the rest of the application logic, all on a single thread. For example, a game loop could look like the following:
+
+```haxe
+while (gameIsRunning)
+{
+    // Process incoming data for up to 10ms.
+    udproteanClient.updateTimeout(0.010);
+
+    var input = getUserInput();
+
+    // Send the user's input to the server.
+    udproteanClient.send(input);
+
+    // Update things in the game, like moving the player, physics etc.
+    updateGame(input);
+    render();
+}
+```
+
+
+### Unreliable Sending
+
+The option to send unreliable UDP messages is still available through the `sendUnreliable()` method. Messages sent this way will bypass the sequential communication protocol, will not be stored in the local buffers, and instead will just be transmitted immediately as plain UDP datagrams.
+
+```haxe
+udproteanClient.sendUnreliable(bytes);
+```
+
+This can be useful for certain types of messages, such as for example position updates sent by the server to the clients, as this could significantly lower the server's memory usage. Additionally, loss of such messages is generally acceptable, since newer more recent position updates are more or less sent out continuously.

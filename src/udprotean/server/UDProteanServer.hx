@@ -94,35 +94,32 @@ class UDProteanServer
         var recvFromAddress: Address = socket.recvFromAddress();
         var recvFromAddressString: String = socket.recvFromAddressString();
         var commandCode: CommandCode = CommandCode.ofBytes(datagram);
+        
+        var peer: UDProteanClientBehavior = peers.get(recvFromAddressString);
 
         switch (commandCode)
         {
             case CommandCode.Handshake:
                 handleHandshake(datagram, recvFromAddress);
-                return true;
 
 
             case CommandCode.Disconnect:
                 handleDisconnect(datagram, recvFromAddress);
-                return true;
+
+
+            case CommandCode.UnreliableMessage if (peer != null):
+                peer.onUnreliableMessageReceived(datagram);
+
+
+            case _ if (peer != null):
+                peer.onReceived(datagram);
 
 
             case _:
             // Necessary on Neko for some reason.
-            // If not present, execution will abruptly stop at the beginning of the switch.
+            // If not present, execution of the method will abruptly stop at the beginning of the switch.
         }
-
-
-        if (!peers.exists(recvFromAddressString))
-        {
-            // Not a handshake datagram and no known peer on that address.
-            // Drop it.
-            return true;
-        }
-
-
-        var peer: UDProteanClientBehavior = peers.get(recvFromAddressString);
-        peer.onReceived(datagram);
+        
         return true;
     }
 

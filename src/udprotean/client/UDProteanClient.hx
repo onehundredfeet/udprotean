@@ -1,5 +1,6 @@
 package udprotean.client;
 
+import udprotean.shared.protocol.CommandCode;
 import udprotean.shared.Timestamp;
 import haxe.io.Bytes;
 import sys.net.Host;
@@ -145,13 +146,27 @@ class UDProteanClient extends UDProteanPeer
             return true;
         }
 
-        if (Utils.isHandshake(datagram))
+        var commandCode: CommandCode = CommandCode.ofBytes(datagram);
+
+        switch (commandCode)
         {
-            // Clients don't have to bounce handshake messages.
-            return true;
+            case CommandCode.Handshake:
+                // Clients don't have to bounce handshake messages.
+
+
+            case CommandCode.Disconnect:
+                // Do nothing, probably a bounce.
+                // Although if we issued a disconnect we probably shouldn't be calling update() anymore.
+
+
+            case CommandCode.UnreliableMessage:
+                onUnreliableMessageReceived(datagram);
+
+
+            case _:
+                onReceived(datagram);
         }
 
-        onReceived(datagram);
         return true;
     }
 }

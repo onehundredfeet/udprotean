@@ -348,7 +348,7 @@ class SequentialCommunication
 
 
     @:noCompletion @:protected
-    function onTransmit(message: Bytes)        { throw "Not implemented, function should be overriden."; }
+    function onTransmit(datagram: Bytes)       { throw "Not implemented, function should be overriden."; }
     @:noCompletion @:protected
     function onMessageReceived(message: Bytes) { throw "Not implemented, function should be overriden."; }
 }

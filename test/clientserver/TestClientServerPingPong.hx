@@ -63,6 +63,8 @@ class TestClientServerPingPong implements ITest
         var serverBranch = async.branch();
 
         var serverThread = Thread.create(() -> {
+
+            var branch: Async = cast Thread.readMessage(true);
             
             server.start();
 
@@ -76,8 +78,10 @@ class TestClientServerPingPong implements ITest
 
             } while(!shouldStop);
 
-            serverBranch.done();
+            branch.done();
         });
+
+        serverThread.sendMessage(serverBranch);
         
         var connected: Bool = client.connectTimeout(0.5);
 
