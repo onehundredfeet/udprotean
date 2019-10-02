@@ -1,13 +1,13 @@
 {
-    "name": "udprotean",
-    "url" : "https://gitlab.com/haath/udprotean",
-    "license": "MIT",
-    "tags": ["udp", "multiplayer", "udprotean", "reliable", "inorder"],
-    "description": "A UDP-based protocol for multiplayer games, with reliable in-order message delivery.",
-    "version": "0.1.1",
-    "classPath": "src",
-    "releasenote": "Initial release.",
-    "contributors": [ "Haath" ],
-    "dependencies": {
-    }
+  "name": "udprotean",
+  "url" : "https://gitlab.com/haath/udprotean",
+  "license": "MIT",
+  "tags": ["udp", "multiplayer", "udprotean", "reliable", "inorder"],
+  "description": "A UDP-based protocol for multiplayer games, with reliable in-order message delivery.",
+  "version": "0.0.0",
+  "classPath": "src",
+  "releasenote": "Initial release.",
+  "contributors": [ "Haath" ],
+  "dependencies": {
   }
+}

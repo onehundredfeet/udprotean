@@ -40,9 +40,19 @@ test-cpp:
 
 deploy:
   stage: deploy
+  only:
+  - tags
   before_script:
   - apt-get update
-  - apt-get install -yqq zip
+  - apt-get install -yqq zip jq
   script:
+  # Patch version number in haxelib.json
+  - export TMP=$(mktemp)
+  - export VERSION=$(CI_COMMIT_TAG)
+  - jq ".version = \"$VERSION\"" haxelib.json > "$TMP"
+  - mv "$TMP" haxelib.json
+  # Make zip
   - mkdir -p build
   - zip -r build/udprotean.zip -@ < haxelib.lst
+  # Publish
+  - haxelib submit build/udprotean.zip "$HAXELIB_PASSWORD"
