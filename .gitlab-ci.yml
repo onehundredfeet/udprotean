@@ -48,7 +48,8 @@ deploy:
   script:
   # Patch version number in haxelib.json
   - export TMP=$(mktemp)
-  - export VERSION=$(echo $CI_COMMIT_TAG | cut -d 'v' -f 0)
+  - export VERSION=$(echo $CI_COMMIT_TAG | cut -d 'v' -f 2)
+  - echo $VERSION
   - jq ".version = \"$VERSION\"" haxelib.json > "$TMP"
   - mv "$TMP" haxelib.json
   # Make zip
