@@ -165,7 +165,7 @@ class TestClientServerConnect implements ITest
     {
         return Thread.create(() -> {
 
-            var branch = Thread.readMessage(true);
+            var branch: Async = cast Thread.readMessage(true);
             
             server.start();
 
