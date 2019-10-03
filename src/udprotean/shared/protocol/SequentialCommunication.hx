@@ -6,11 +6,11 @@ import haxe.io.BytesBuffer;
 
 class SequentialCommunication
 {
-    @:private var sendingSequence: Sequence = 0;       // Sending progress through sendingBuffer.
-    @:private var sendingAckSequence: Sequence = 0;    // Sent dgrams that have been ACKed.
-    @:private var receivingSequence: Sequence = 0;     // Receiving progress through receivingBuffer.
-    @:private var receivingAckSequence: Sequence = -1; // Received dgrams that have been ACKed.
-    @:private var processingSequence: Sequence = 0;    // Dgrams that have been processed.
+    @:private var sendingSequence: Sequence;       // Sending progress through sendingBuffer.
+    @:private var sendingAckSequence: Sequence;    // Sent dgrams that have been ACKed.
+    @:private var receivingSequence: Sequence;     // Receiving progress through receivingBuffer.
+    @:private var receivingAckSequence: Sequence;  // Received dgrams that have been ACKed.
+    @:private var processingSequence: Sequence;    // Dgrams that have been processed.
 
 
     @:private var sendingBuffer: DatagramBuffer;
@@ -29,6 +29,13 @@ class SequentialCommunication
         // Initialize buffers.
         sendingBuffer = new DatagramBuffer();
         receivingBuffer = new DatagramBuffer();
+
+        // Initialize sequences
+        sendingSequence = 0;      
+        sendingAckSequence = 0;   
+        receivingSequence = 0;    
+        receivingAckSequence = -1;
+        processingSequence = 0;   
     }
 
 
@@ -80,7 +87,6 @@ class SequentialCommunication
         if (datagramSequence == receivingAckSequence 
          || datagramSequence.isBetween(receivingAckSequence, receivingSequence))
         {
-            // TODO: Should it be inclusively between?
             return;
         }
 

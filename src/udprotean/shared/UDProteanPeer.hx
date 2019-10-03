@@ -58,11 +58,6 @@ class UDProteanPeer extends SequentialCommunication
     @:noCompletion
     public override final function onReceived(datagram: Bytes)
     {
-        if (Utils.isHandshake(datagram))
-        {
-            return;
-        }
-        
         super.onReceived(datagram);
     }
 

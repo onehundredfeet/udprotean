@@ -19,7 +19,7 @@ class TestSequentialCommunicationReceiveFragment extends TestSequentialCommunica
     var rand: Random;
 
 
-    function setup()
+    override function setup()
     {
         expectedAck = 0;
         rand = new Random();

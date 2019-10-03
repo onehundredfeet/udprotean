@@ -28,10 +28,11 @@ class TestSequentialCommunicationBase extends SequentialCommunication implements
     }
 
 
-    function teardown()
+    function setup()
     {
         initSequentialCommunication();
         sendExpected = 0;
+
     }
 
 

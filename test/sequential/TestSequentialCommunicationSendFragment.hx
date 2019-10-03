@@ -30,7 +30,7 @@ class TestSequentialCommunicationSendFragment extends TestSequentialCommunicatio
     }
 
 
-    function setup()
+    override function setup()
     {
         bufferSize = Seedy.randomInt(FragmentSize * 3, FragmentSize * 12);
         expectedFragment = Std.int(bufferSize / FragmentSize);

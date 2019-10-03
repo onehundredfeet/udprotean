@@ -19,7 +19,7 @@ class TestSequentialCommunicationReceiveOutOfOrder extends TestSequentialCommuni
     var rand: Random;
 
 
-    function setup()
+    override function setup()
     {
         rand = new Random();
     }

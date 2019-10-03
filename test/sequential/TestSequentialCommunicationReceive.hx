@@ -18,8 +18,10 @@ class TestSequentialCommunicationReceive extends TestSequentialCommunicationBase
     var rand: Random;
 
 
-    function setup()
+    override function setup()
     {
+        super.setup();
+
         expectedAck = 0;
         rand = new Random();
     }
@@ -46,6 +48,32 @@ class TestSequentialCommunicationReceive extends TestSequentialCommunicationBase
         Assert.equals(count % SequenceSize, expectedAck);
     }
 
+    function testReceiveDuplicates()
+    {
+        var buffer = dgramInt(0, 0, 0);
+
+        onReceived(buffer);
+        onReceived(buffer);
+
+        Assert.equals(1, sendExpected);
+        Assert.equals(1, expectedAck);
+    }
+
+
+    function testReceiveFragmented()
+    {
+        var frag0 = dgramInt(0, 2, 0);
+        var frag1 = dgramInt(1, 1, 0);
+        var frag2 = dgramInt(2, 0, 0);
+
+        onReceived(frag0);
+        onReceived(frag1);
+        onReceived(frag2);
+
+        Assert.equals(1, sendExpected);
+        Assert.equals(3, expectedAck);
+    }
+    
 
     override function onTransmit(message: Bytes) 
     {
