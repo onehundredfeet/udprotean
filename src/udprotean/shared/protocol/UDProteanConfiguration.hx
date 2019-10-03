@@ -26,11 +26,13 @@ class UDProteanConfiguration
 
     /**
      * The time (in ms) after which a not acknowledged datagram should be re-sent.
+     * A larger value is recommended for servers with multiple clients.
      */
     public static inline var RepeatDatagramAge            = 50;
 
     /**
      * The time (in ms) after which retransmission of a datagram should be requested when receiving one out-of-order.
+     * A larger value is recommended for servers with multiple clients.
      */
     public static inline var StaleDatagramAge             = 20;
 

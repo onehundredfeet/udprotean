@@ -140,6 +140,26 @@ while (gameIsRunning)
 ```
 
 
+### The `send()` method
+
+By default, the `send()` method will write the necessary datagrams to the UDP socket immediately.
+
+```haxe
+// Will block for a few ms.
+client.send(Bytes.alloc(1024));
+```
+
+The alternative is to provide it with `false` as its second argument. This way, outgoing datagrams will only be stored in the underlying buffers and the method will return immediately without writing anything on the socket.
+
+```haxe
+// Will retun immediately.
+client.send(Bytes.alloc(1024), false);
+
+// Now update will transmit the previous message for the first time.
+client.update();
+```
+
+
 ### Unreliable Sending
 
 The option to send unreliable UDP messages is still available through the `sendUnreliable()` method. Messages sent this way will bypass the sequential communication protocol, will not be stored in the local buffers, and instead will just be transmitted immediately as plain UDP datagrams.
@@ -149,3 +169,4 @@ udproteanClient.sendUnreliable(bytes);
 ```
 
 This can be useful for certain types of messages, such as for example position updates sent by the server to the clients, as this could significantly lower the server's memory usage. Additionally, loss of such messages is generally acceptable, since newer more recent position updates are more or less sent out continuously.
+

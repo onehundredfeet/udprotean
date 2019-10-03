@@ -6,11 +6,11 @@ import haxe.io.BytesBuffer;
 
 class SequentialCommunication
 {
-    @:private var sendingSequence: Sequence = 0;      // Sending progress through sendingBuffer.
-    @:private var sendingAckSequence: Sequence = 0;   // Sent dgrams that have been ACKed.
-    @:private var receivingSequence: Sequence = 0;    // Receiving progress through receivingBuffer.
-    @:private var receivingAckSequence: Sequence = 0; // Received dgrams that have been ACKed.
-    @:private var processingSequence: Sequence = 0;   // Dgrams that have been processed.
+    @:private var sendingSequence: Sequence = 0;       // Sending progress through sendingBuffer.
+    @:private var sendingAckSequence: Sequence = 0;    // Sent dgrams that have been ACKed.
+    @:private var receivingSequence: Sequence = 0;     // Receiving progress through receivingBuffer.
+    @:private var receivingAckSequence: Sequence = -1; // Received dgrams that have been ACKed.
+    @:private var processingSequence: Sequence = 0;    // Dgrams that have been processed.
 
 
     @:private var sendingBuffer: DatagramBuffer;
@@ -33,10 +33,12 @@ class SequentialCommunication
 
 
     /**
-     * Send a payload datagram.
-     * Due to fragmentation, the maximum size for a single datagram is (255 * FragmentSize).
+     * Send a message to the connected peer.
+     * @param message The message to send. Due to fragmentation, the maximum size for a single message is (255 * FragmentSize).
+     * @param sendNow Whether or not to transmit datagrams immediately. If `false`, the method will only store datagrams in the 
+     *                buffers and return immediately. These datagrams will be sent during the next `update()`.
      */
-    public final function send(message: Bytes)
+    public final function send(message: Bytes, sendNow: Bool = true)
     {
         var fragmentCount: Int = Std.int(message.length / UDProteanConfiguration.FragmentSize) + 1;
         var dataIndex: Int = 0;
@@ -54,7 +56,7 @@ class SequentialCommunication
             
             dataIndex += fragmentSize;
 
-            sendDatagram(fragment);
+            sendDatagram(fragment, sendNow);
         }
     }
 
@@ -75,7 +77,8 @@ class SequentialCommunication
         }
 
         // Check if we already have this datagram and we just haven't ACKed it yet.
-        if (datagramSequence.isBetween(receivingAckSequence, receivingSequence))
+        if (datagramSequence == receivingAckSequence 
+         || datagramSequence.isBetween(receivingAckSequence, receivingSequence))
         {
             // TODO: Should it be inclusively between?
             return;
@@ -136,7 +139,7 @@ class SequentialCommunication
 
 
     @:noCompletion @:private
-    final function sendDatagram(fragment: Bytes)
+    final function sendDatagram(fragment: Bytes, sendNow: Bool = true)
     {
         // Get the sequence number for this datagram according to sendingSequence.
         var datagramSequence: Sequence = sendingSequence.getAndMoveNext();
@@ -151,7 +154,7 @@ class SequentialCommunication
         datagram.blit(UDProteanConfiguration.SequenceBytes, fragment, 0, fragment.length);
 
         // Store the datagram in the sending buffer.
-        sendingBuffer.insert(datagramSequence, datagram);
+        sendingBuffer.insertStale(datagramSequence, datagram);
 
         /*
         * Empty the next spot in the circular buffer.
@@ -162,8 +165,11 @@ class SequentialCommunication
         */
         sendingBuffer.clear(datagramSequence.next);
 
-        // Finally, transmit the datagram.
-        transmitFromBuffer(datagramSequence);
+        if (sendNow)
+        {
+            // Finally, transmit the datagram.
+            transmitFromBuffer(datagramSequence);
+        }
     }
 
     /**

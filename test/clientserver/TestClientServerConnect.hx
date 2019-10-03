@@ -1,5 +1,6 @@
 package clientserver;
 
+import udprotean.shared.Utils;
 import udprotean.shared.UDProteanPeer;
 import sys.thread.Thread;
 import haxe.Timer;
@@ -16,9 +17,10 @@ import utest.Assert;
 
 
 @:access(udprotean.server.UDProteanServer)
+@:access(udprotean.client.UDProteanClient)
 class TestClientServerConnect implements ITest
 {
-    final ServerUpdates = 1000;
+    final ServerUpdates = 500;
 
     var server: UDProteanServer;
     var client: TestConnectClient;
@@ -62,7 +64,7 @@ class TestClientServerConnect implements ITest
         var clientBranch = async.branch();
         var serverBranch = async.branch();
 
-        runServer(serverBranch, 1);        
+        runServer(1).sendMessage(serverBranch);
         
         var connected: Bool = client.connectTimeout(0.5);
 
@@ -83,7 +85,7 @@ class TestClientServerConnect implements ITest
         var clientBranch = async.branch();
         var serverBranch = async.branch();
 
-        runServer(serverBranch, numOfClients);
+        runServer(numOfClients).sendMessage(serverBranch);
 
         for (_ in 0...numOfClients)
         {
@@ -109,7 +111,7 @@ class TestClientServerConnect implements ITest
         var clientBranch = async.branch();
         var serverBranch = async.branch();
 
-        runServer(serverBranch, 0);
+        runServer(0).sendMessage(serverBranch);
 
         for (_ in 0...numOfClients)
         {
@@ -131,10 +133,39 @@ class TestClientServerConnect implements ITest
         clientBranch.done();
     }
 
+    
+    @:timeout(10000)
+    function testInvalidDisconnect(async: Async)
+    {
+        var clientBranch = async.branch();
+        var serverBranch = async.branch();
 
-    function runServer(async: Async, expectedPeerCount: Int): Thread
+        // Expect one connected client at the end.
+        runServer(1).sendMessage(serverBranch);
+
+        var connected = client.connectTimeout(0.5);
+        Assert.isTrue(client.initializeCalled);
+        Assert.isTrue(client.onConnectCaled);
+        Assert.isFalse(client.onDisconnectCalled);
+        Assert.isTrue(connected);
+
+        // Alter the initial handshake code so that disconnect fails.
+        client.handshakeCode = Utils.generateHandshake();
+
+        client.disconnect();
+
+        // onDisconnect should have been called regardless of the server.
+        Assert.isTrue(client.onDisconnectCalled);
+
+        clientBranch.done();
+    }
+
+
+    function runServer(expectedPeerCount: Int): Thread
     {
         return Thread.create(() -> {
+
+            var branch = Thread.readMessage(true);
             
             server.start();
 
@@ -152,7 +183,7 @@ class TestClientServerConnect implements ITest
                 Assert.isTrue(peerCasted.onConnectCaled);
             }
 
-            async.done();
+            branch.done();
         });
     }
 }

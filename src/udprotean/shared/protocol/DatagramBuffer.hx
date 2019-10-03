@@ -28,12 +28,24 @@ class DatagramBuffer
 
 
     /**
-        Inserts a datagram at the specified index in the buffer.
-    **/
+     * Inserts a datagram at the specified index in the buffer,
+     * with a current timestamp.
+     */
     public inline function insert(index: Int, datagram: Bytes)
     {
         buffer[index] = datagram;
         refresh(index);
+    }
+
+
+    /**
+     * Inserts a datagram at the specified index in the buffer,
+     * with a zero (stale) timestamp.
+     */
+    public inline function insertStale(index: Int, datagram: Bytes)
+    {
+        buffer[index] = datagram;
+        setStale(index);
     }
 
 
@@ -72,7 +84,7 @@ class DatagramBuffer
      */
     public inline function setStale(index: Int)
     {
-        timestamps[index] = cast(0.0, Timestamp);
+        timestamps[index] = Timestamp.Zero;
     }
 
 
