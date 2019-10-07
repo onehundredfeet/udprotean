@@ -1,5 +1,6 @@
 package sequential;
 
+import udprotean.shared.UDProteanPeer;
 import haxe.io.BytesData;
 import utest.ITest;
 import haxe.io.Bytes;
@@ -30,6 +31,7 @@ class TestSequentialCommunicationBase extends SequentialCommunication implements
 
     function setup()
     {
+        UDProteanPeer.PacketLoss = 0.0;
         initSequentialCommunication();
         sendExpected = 0;
 

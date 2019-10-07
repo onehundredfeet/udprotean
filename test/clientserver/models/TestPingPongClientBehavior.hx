@@ -25,7 +25,7 @@ class TestPingPongClientBehavior extends UDProteanClientBehavior
 
         expected++;
 
-        send(message, false);
+        send(message);
     }
 }
 

@@ -56,7 +56,7 @@ class TestClientServerPingPong implements ITest
         UDProteanPeer.PacketLoss = 0.1;
         doTest(async, 20000);
     }
-
+    
 
     function doTest(async: Async, updates: Int)
     {

@@ -145,7 +145,7 @@ class SequentialCommunication
 
 
     @:noCompletion @:private
-    final function sendDatagram(fragment: Bytes, sendNow: Bool = true)
+    final function sendDatagram(fragment: Bytes, sendNow: Bool)
     {
         // Get the sequence number for this datagram according to sendingSequence.
         var datagramSequence: Sequence = sendingSequence.getAndMoveNext();
