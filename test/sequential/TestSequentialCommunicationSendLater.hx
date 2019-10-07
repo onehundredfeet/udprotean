@@ -24,7 +24,7 @@ class TestSequentialCommunicationSendLater extends TestSequentialCommunicationBa
         send(msg1, false);
         send(msg2, false);
 
-        Assert.equals(1, sendingSequence);
+        Assert.equals(2, sendingSequence);
         Assert.equals(0, sendingAckSequence);
 
         Assert.equals(0, sendExpected);
