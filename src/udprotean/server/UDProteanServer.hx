@@ -33,6 +33,9 @@ class UDProteanServer
     }
 
 
+    /**
+     * Starts the server.Essentially only binds the UDP port.
+     */
     public function start()
     {
         socket.listen(host, port);
@@ -41,6 +44,9 @@ class UDProteanServer
     }
 
 
+    /**
+     * Stops the server and closes the socket.
+     */
     public function stop()
     {
         if (started)

@@ -38,13 +38,6 @@ class UdpSocketEx
     }
 
 
-    public function receive(): Bytes
-    {
-        socket.waitForRead();
-        return read();
-    }
-
-
     public function read(): Bytes
     {
         try
@@ -88,7 +81,7 @@ class UdpSocketEx
         {
             sendTo(buf, addr);
 
-            return readTimeout(0.0001);
+            return readTimeout(0.010);
         }
         catch (e: Dynamic)
         {

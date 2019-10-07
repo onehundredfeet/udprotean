@@ -64,6 +64,11 @@ class UDProteanClient extends UDProteanPeer
     }
 
 
+    /**
+     * Connect to the server.
+     * This method will block and repeatedly try to connect to the server.
+     * To attempt to connect for only a specified time, use `connectTimeout()`.
+     */
     @IgnoreCover
     public final inline function connect()
     {

@@ -1,5 +1,6 @@
 package clientserver;
 
+import seedyrng.Seedy;
 import udprotean.shared.Utils;
 import udprotean.shared.UDProteanPeer;
 import sys.thread.Thread;
@@ -22,6 +23,7 @@ class TestClientServerConnect implements ITest
 {
     final ServerUpdates = 500;
 
+    var port: Int;
     var server: UDProteanServer;
     var client: TestConnectClient;
     var clients: Array<UDProteanClient>;
@@ -33,8 +35,9 @@ class TestClientServerConnect implements ITest
     function setup()
     {
         UDProteanPeer.PacketLoss = 0;
-        server = new UDProteanServer("127.0.0.1", 9000, TestConnectClientBehavior);
-        client = new TestConnectClient("127.0.0.1", 9000);
+        port = Seedy.randomInt(1025, 65535);
+        server = new UDProteanServer("127.0.0.1", port, TestConnectClientBehavior);
+        client = new TestConnectClient("127.0.0.1", port);
         clients = new Array<UDProteanClient>();
     }
 
@@ -89,7 +92,7 @@ class TestClientServerConnect implements ITest
 
         for (_ in 0...numOfClients)
         {
-            var client = new TestConnectClient("127.0.0.1", 9000);
+            var client = new TestConnectClient("127.0.0.1", port);
             clients.push(client);
 
             var connected = client.connectTimeout(0.5);
@@ -115,7 +118,7 @@ class TestClientServerConnect implements ITest
 
         for (_ in 0...numOfClients)
         {
-            var client = new TestConnectClient("127.0.0.1", 9000);
+            var client = new TestConnectClient("127.0.0.1", port);
             clients.push(client);
             
             var connected = client.connectTimeout(0.5);

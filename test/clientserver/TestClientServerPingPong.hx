@@ -1,5 +1,6 @@
 package clientserver;
 
+import seedyrng.Seedy;
 import udprotean.shared.protocol.UDProteanConfiguration;
 import udprotean.shared.UDProteanPeer;
 import udprotean.shared.protocol.SequentialCommunication;
@@ -29,8 +30,9 @@ class TestClientServerPingPong implements ITest
 
     function setup()
     {
-        server = new UDProteanServer("127.0.0.1", 9000, TestPingPongClientBehavior);
-        client = new TestPingPongClient("127.0.0.1", 9000);
+        var port: Int = Seedy.randomInt(1025, 65535);
+        server = new UDProteanServer("127.0.0.1", port, TestPingPongClientBehavior);
+        client = new TestPingPongClient("127.0.0.1", port);
         client.count = Count;
     }
 

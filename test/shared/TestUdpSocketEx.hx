@@ -37,12 +37,12 @@ class TestUdpSocketEx extends Test
     {
         client.send(Bytes.ofString("ping"));
 
-        var serverRecv = server.receive().toString();
+        var serverRecv = server.read().toString();
         Assert.equals("ping", serverRecv);
 
         server.sendTo(Bytes.ofString("pong"), server.recvFromAddress());
 
-        var clientRecv = client.receive().toString();
+        var clientRecv = client.read().toString();
         Assert.equals("pong", clientRecv);
     }
 

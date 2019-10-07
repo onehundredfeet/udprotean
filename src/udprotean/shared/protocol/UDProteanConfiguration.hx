@@ -14,7 +14,7 @@ class UDProteanConfiguration
      *
      * **This option needs to have the same value on both peers.**
      */
-    public static inline var SequenceSize                 = 512;
+    public static inline var SequenceSize                 = getOrDefault("UDPROTEAN_SEQUENCE_SIZE", 512);
 
     /**
      * The maximum transmittable datagram size in bytes.
@@ -25,19 +25,19 @@ class UDProteanConfiguration
      *
      * **This option needs to have the same value on both peers.**
      */
-    public static inline var FragmentSize                 = 540;
+    public static inline var FragmentSize                 = getOrDefault("UDPROTEAN_FRAGMENT_SIZE", 540);
 
     /**
      * The time (in ms) after which a not acknowledged datagram should be re-sent.
      * A larger value is recommended for servers with multiple clients.
      */
-    public static inline var RepeatDatagramAge            = 50;
+    public static inline var RepeatDatagramAge            = getOrDefault("UDPROTEAN_REPEAT_AGE", 50);
 
     /**
      * The time (in ms) after which retransmission of a datagram should be requested when receiving one out-of-order.
      * A larger value is recommended for servers with multiple clients.
      */
-    public static inline var StaleDatagramAge             = 20;
+    public static inline var StaleDatagramAge             = getOrDefault("UDPROTEAN_STALE_AGE", 20);
 
     /** 
      * The number of bytes needed to hold the sequence number.
@@ -56,11 +56,12 @@ class UDProteanConfiguration
      * legitimate datagrams to be discarded during heavy network traffic and/or significant packet loss, when the 
      * head of the cyclic buffer approaches its tail.
      */
-    public static inline var SequenceDistanceRelationship = 32;
+    public static inline var SequenceDistanceRelationship = getOrDefault("UDPROTEAN_SEQUENCE_DISTANCE", 32);
     
     #end
 
 
+    @IgnoreCover
     macro static function getOrDefault(key: String, defaultValue: Int)
     {
         if (Context.defined(key))
