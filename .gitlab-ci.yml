@@ -29,6 +29,7 @@ test-cpp:
   stage: build-test
   retry: 2
   cache:
+    key: cpp-build
     paths:
     - build/cpp/obj
   variables:
