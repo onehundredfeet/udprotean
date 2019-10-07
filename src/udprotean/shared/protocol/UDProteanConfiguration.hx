@@ -1,8 +1,11 @@
 package udprotean.shared.protocol;
 
 
+import haxe.macro.Context;
+
 class UDProteanConfiguration
 {
+    #if !macro
     /**
      * The size of the sequential communication cyclic buffers.
      * Increasing this number makes the protocol more resistant to
@@ -43,7 +46,7 @@ class UDProteanConfiguration
      *
      * **This option needs to have the same value on both peers.**
      */
-    public static inline var SequenceBytes                = 3;
+    public static inline var SequenceBytes                = getOrDefault("UDPROTEAN_SEQUENCE_BYTES", 3);
 
     /** 
      * The maximum cyclical distance one datagram can have from another and be presumed to be earlier than it.
@@ -54,4 +57,19 @@ class UDProteanConfiguration
      * head of the cyclic buffer approaches its tail.
      */
     public static inline var SequenceDistanceRelationship = 32;
+    
+    #end
+
+
+    macro static function getOrDefault(key: String, defaultValue: Int)
+    {
+        if (Context.defined(key))
+        {
+            return macro $v{ Context.definedValue(key) };
+        }
+        else
+        {
+            return macro $v{ defaultValue };
+        }
+    }
 }
