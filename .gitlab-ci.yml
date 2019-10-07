@@ -28,6 +28,9 @@ test-neko:
 test-cpp:
   stage: build-test
   retry: 2
+  cache:
+    paths:
+    - build/cpp/obj
   variables:
     HXML: test-cpp.hxml
   script:
