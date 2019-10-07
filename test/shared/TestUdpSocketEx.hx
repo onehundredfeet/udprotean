@@ -1,5 +1,6 @@
 package shared;
 
+import utest.Async;
 import haxe.macro.Expr.Catch;
 import haxe.io.Bytes;
 import utest.Test;
@@ -33,7 +34,8 @@ class TestUdpSocketEx extends Test
     }
 
 
-    function testBasicSendReceive()
+    @:timeout(2000)
+    function testBasicSendReceive(async: Async)
     {
         client.send(Bytes.ofString("ping"));
 
@@ -44,10 +46,13 @@ class TestUdpSocketEx extends Test
 
         var clientRecv = client.read().toString();
         Assert.equals("pong", clientRecv);
+
+        async.done();
     }
 
 
-    function testReadTimeout()
+    @:timeout(2000)
+    function testReadTimeout(async: Async)
     {
         var serverRecv: Bytes = server.readTimeout(0.5);
         Assert.equals(null, serverRecv);
@@ -56,5 +61,7 @@ class TestUdpSocketEx extends Test
 
         var serverRecvMsg = server.readTimeout(0.5).toString();
         Assert.equals("ping", serverRecvMsg);
+        
+        async.done();
     }
 }
