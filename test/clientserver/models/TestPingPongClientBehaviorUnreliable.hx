@@ -15,7 +15,7 @@ class TestPingPongClientBehaviorUnreliable extends UDProteanClientBehavior
 
     override function onMessage(message: Bytes)
     {
-        send(message);
+        sendUnreliable(message);
     }
 }
 

@@ -3,6 +3,7 @@ import utest.ui.Report;
 import utest.ui.common.HeaderDisplayMode;
 import utest.ui.common.HeaderDisplayMode.SuccessResultsDisplayMode;
 import mcover.coverage.MCoverage;
+import mcover.coverage.client.PrintClient;
 
 
 class TestMain

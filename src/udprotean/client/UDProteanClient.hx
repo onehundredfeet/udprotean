@@ -120,12 +120,11 @@ class UDProteanClient extends UDProteanPeer
             var timestamp: Timestamp = new Timestamp();
             var response: Bytes = null;
 
-            do
+            while ((response == null || response.toHex() != disconnectCode)
+                && !timestamp.isTimedOut(timeout))
             {
                 response = socket.trySendAndRead(Bytes.ofHex(disconnectCode), peerAddress);
             }
-            while ((response == null || response.toHex() != disconnectCode)
-                && !timestamp.isTimedOut(timeout));
 
             socket.close();
 

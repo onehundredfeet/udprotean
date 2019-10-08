@@ -50,13 +50,23 @@ class TestSequentialCommunicationReceive extends TestSequentialCommunicationBase
 
     function testReceiveDuplicates()
     {
-        var buffer = dgramInt(0, 0, 0);
+        var buffer0 = dgramInt(0, 3, 0);
+        var buffer1 = dgramInt(1, 2, 0);
+        var buffer2 = dgramInt(2, 1, 0);
+        var buffer3 = dgramInt(3, 0, 0);
 
-        onReceived(buffer);
-        onReceived(buffer);
+        onReceived(buffer0);
+        onReceived(buffer0);
+        onReceived(buffer0);
+        onReceived(buffer1);
+        onReceived(buffer2);
+        onReceived(buffer1);
+        onReceived(buffer2);
+        onReceived(buffer3);
+        onReceived(buffer3);
 
         Assert.equals(1, sendExpected);
-        Assert.equals(1, expectedAck);
+        Assert.equals(4, expectedAck);
     }
 
 

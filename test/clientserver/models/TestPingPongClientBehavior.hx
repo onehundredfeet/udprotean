@@ -1,7 +1,8 @@
 package clientserver.models;
 
+import udprotean.shared.UdpSocketEx;
 import utest.Assert;
-import seedyrng.Random;
+import seedyrng.Seedy;
 import haxe.io.Bytes;
 import udprotean.server.UDProteanClientBehavior;
 
@@ -26,6 +27,25 @@ class TestPingPongClientBehavior extends UDProteanClientBehavior
         expected++;
 
         send(message);
+
+        if (Seedy.random() < 0.01)
+        {
+            sendMaliciousMessage();
+        }
+    }
+
+
+    /**
+     * Tests the client's ability to drop messages received from someone
+     * other than the server.
+     */
+    function sendMaliciousMessage()
+    {
+        var randomBuffer: Bytes = Bytes.alloc(4);
+        randomBuffer.setInt32(0, Seedy.randomInt(0, 65535));
+
+        var newSocket: UdpSocketEx = new UdpSocketEx();
+        newSocket.sendTo(randomBuffer, peerAddress);
     }
 }
 

@@ -1,5 +1,6 @@
 package shared;
 
+import seedyrng.Seedy;
 import utest.Async;
 import haxe.macro.Expr.Catch;
 import haxe.io.Bytes;
@@ -19,18 +20,30 @@ class TestUdpSocketEx extends Test
 
     public function setup()
     {
+        var port = Seedy.randomInt(1025, 65535);
+
         server = new  UdpSocketEx();
-        server.listen("127.0.0.1", 9000);
+        server.listen("127.0.0.1", port);
 
         client = new UdpSocketEx();
-        client.connect(new Host("127.0.0.1"), 9000);
+        client.connect(new Host("127.0.0.1"), port);
     }
 
 
     function teardown()
     {
-        server.close();
-        client.close();
+        if (server.isConnected())
+            server.close();
+
+        if (client.isConnected())
+            client.close();
+    }
+
+
+    function testReadFail()
+    {
+        var nullResp = client.read();
+        Assert.equals(null, nullResp);
     }
 
 
@@ -46,6 +59,11 @@ class TestUdpSocketEx extends Test
 
         var clientRecv = client.read().toString();
         Assert.equals("pong", clientRecv);
+
+        client.close();
+
+        var nullResp = server.trySendAndRead(Bytes.ofString("fail"), server.recvFromAddress());
+        Assert.equals(null, nullResp);
 
         async.done();
     }
