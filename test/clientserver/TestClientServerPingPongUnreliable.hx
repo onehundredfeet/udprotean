@@ -43,7 +43,7 @@ class TestClientServerPingPongUnreliable implements ITest
         UDProteanPeer.PacketLoss = 0;
     }
 
-#if !cpp
+
     @:timeout(10000)
     function testSendUnreliable(async: Async)
     {
@@ -62,13 +62,16 @@ class TestClientServerPingPongUnreliable implements ITest
             client.update();
         }
 
-        while (!serverBranch.resolved) { }
+        for (_ in 0...100)
+        {
+            client.update();
+        }
 
         Assert.equals(127, client.received);
 
         clientBranch.done();
     }
-#end
+
 
     function runServer(): Thread
     {
