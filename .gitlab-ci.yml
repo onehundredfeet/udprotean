@@ -1,8 +1,10 @@
 image: haxe:4.0-stretch
 
+
 stages:
 - build-test
 - deploy
+
 
 build-cs:
   stage: build-test
@@ -16,6 +18,7 @@ build-cs:
   - haxelib install $HXML --always --quiet
   - haxe $HXML
 
+
 test-neko:
   stage: build-test
   retry: 2
@@ -24,6 +27,28 @@ test-neko:
   script:
   - haxelib install $HXML --always --quiet
   - haxe $HXML
+
+
+test-lua:
+  stage: build-test
+  retry: 2
+  variables:
+    HXML: test-lua.hxml
+  script:
+  # Install Lua
+  - apt-get update
+  - apt-get install -yqq lua5.3 liblua5.3-dev luarocks libpcre3-dev cmake
+  - ln -s /usr/bin/lua5.3 /usr/bin/lua
+  - luarocks install lrexlib-pcre
+  - luarocks install environ
+  - luarocks install luasocket
+  - luarocks install luv
+  - luarocks install bit32 || true
+  - luarocks install luautf8
+
+  - haxelib install $HXML --always --quiet
+  - haxe $HXML
+
 
 test-cpp:
   stage: build-test
@@ -41,6 +66,7 @@ test-cpp:
   
   - haxelib install $HXML --always --quiet
   - haxe $HXML
+
 
 deploy:
   stage: deploy
