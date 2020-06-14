@@ -67,4 +67,19 @@ class TestUtils implements ITest
             Assert.equals(hsPeerID, dcPeerID);
         }
     }
+
+
+    function testIpToNum()
+    {
+        var check = (ip: String) ->
+        {
+            var fromUtils: Int = Utils.ipToNum(ip);
+            var fromHost: Int = new Host(ip).ip;
+
+            Assert.equals(fromHost, fromUtils);
+        };
+
+        check('127.0.0.1');
+        check('192.68.1.2');
+    }
 }

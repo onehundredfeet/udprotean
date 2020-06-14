@@ -13,7 +13,7 @@ class Utils
      */
     public static inline function getTimestamp(): Float
     {
-        #if (cpp || neko || hl)
+        #if sys
             return Sys.time() * 1000;
         #else
             return Date.now().getTime();
@@ -66,15 +66,38 @@ class Utils
     }
 
 
+    /**
+     * Returns the string representation of the given address in the `host:port` format.
+     */
     public static inline function addressToString(addr: Address)
     {
         return addr.host + ":" + addr.port;
     }
 
 
+    /**
+     * Packs the ip and port numbers of the given address into a single integer.
+     */
     public static inline function addressToId(addr: Address): Int
     {
         return (addr.port) | (addr.host << 16);
+    }
+
+
+    /**
+     * Converts an IP address string to an integer, in the same way that the
+     * std `Host` class does it in its constructor.
+     */
+    public static inline function ipToNum(ip: String): Int
+    {
+        var num: Int = 0;
+
+        for (part in ip.split('.'))
+        {
+            num = (num * 256) + Std.parseInt(part);
+        }
+
+        return num;
     }
 
 

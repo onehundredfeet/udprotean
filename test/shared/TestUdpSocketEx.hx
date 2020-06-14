@@ -1,5 +1,6 @@
 package shared;
 
+import udprotean.shared.Utils;
 import seedyrng.Seedy;
 import utest.Async;
 import haxe.macro.Expr.Catch;
@@ -17,6 +18,8 @@ class TestUdpSocketEx extends Test
     var server: UdpSocketEx;
     var client: UdpSocketEx;
 
+    var serverAddress: Address;
+
 
     public function setup()
     {
@@ -27,6 +30,10 @@ class TestUdpSocketEx extends Test
 
         client = new UdpSocketEx();
         client.connect(new Host("127.0.0.1"), port);
+
+        serverAddress = new Address();
+        serverAddress.host = Utils.ipToNum("127.0.0.1");
+        serverAddress.port = port;
     }
 
 
@@ -50,7 +57,7 @@ class TestUdpSocketEx extends Test
     @:timeout(2000)
     function testBasicSendReceive(async: Async)
     {
-        client.send(Bytes.ofString("ping"));
+        client.sendTo(Bytes.ofString("ping"), serverAddress);
 
         var serverRecv = server.read().toString();
         Assert.equals("ping", serverRecv);
@@ -74,12 +81,12 @@ class TestUdpSocketEx extends Test
     {
         var serverRecv: Bytes = server.readTimeout(0.5);
         Assert.equals(null, serverRecv);
-        
-        client.send(Bytes.ofString("ping"));
+
+        client.sendTo(Bytes.ofString("ping"), serverAddress);
 
         var serverRecvMsg = server.readTimeout(0.5).toString();
         Assert.equals("ping", serverRecvMsg);
-        
+
         async.done();
     }
 }
