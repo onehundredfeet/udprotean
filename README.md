@@ -77,6 +77,14 @@ while (running)
 server.stop();
 ```
 
+It is also possible to register notification callbacks on the server.
+
+```haxe
+server.onClientConnected(client -> { });
+
+server.onClientDisconnected(client -> { });
+```
+
 
 ### Client
 

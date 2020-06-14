@@ -20,6 +20,8 @@ class UDProteanServer
     @:private var started: Bool;
     @:private var socket: UdpSocketEx;
     @:private var peers: Map<Int, UDProteanClientBehavior>;
+    @:private var onClientConnectedCallback: (UDProteanClientBehavior) -> Void;
+    @:private var onClientDisconnectedCallback: (UDProteanClientBehavior) -> Void;
 
 
     public function new(host: String, port: Int, behaviorType: Class<UDProteanClientBehavior>)
@@ -83,6 +85,33 @@ class UDProteanServer
             updatePeers();
         }
         while (hadDatagrams && !timestamp.isTimedOut(timeout));
+    }
+
+
+    /**
+     * Registers a callback to be notified whenever a new client is connected.
+     *
+     * The callback will be invoked after the client's `initialize()` is called,
+     * and right before the client's `onConnect()` is called.
+     *
+     * @param callback The callback to register.
+     */
+    public function onClientConnected(callback: (UDProteanClientBehavior) -> Void)
+    {
+        onClientConnectedCallback = callback;
+    }
+
+
+    /**
+     * Registers a callback to be notified whenever a client is disconnected.
+     *
+     * The callback will be invoked right after the client's `onDisconnect()` is called.
+     *
+     * @param callback The callback to register.
+     */
+    public function onClientDisconnected(callback: (UDProteanClientBehavior) -> Void)
+    {
+        onClientDisconnectedCallback = callback;
     }
 
 
@@ -165,15 +194,22 @@ class UDProteanServer
 
         if (peers.exists(recvFromAddressId))
         {
-            var validDisconnectCode: Bool = ( peers[recvFromAddressId].peerID == peerID );
+            var peer: UDProteanClientBehavior = peers[recvFromAddressId];
+            var validDisconnectCode: Bool = ( peer.peerID == peerID );
 
             if (validDisconnectCode)
             {
                 // Call the onDisconnect callback.
-                peers[recvFromAddressId].onDisconnect();
+                peer.onDisconnect();
 
                 // Remove peer.
                 peers.remove(recvFromAddressId);
+
+                // Invoke the callback if registered.
+                if (onClientDisconnectedCallback != null)
+                {
+                    onClientDisconnectedCallback(peer);
+                }
             }
         }
     }
@@ -197,6 +233,13 @@ class UDProteanServer
         var peer: UDProteanClientBehavior = Type.createInstance(behaviorType, [socket, peerAddress, peerId]);
         peers.set(peerAddress.addressToId(), peer);
         peer.initialize();
+
+        // Invoke the callback if registered.
+        if (onClientConnectedCallback != null)
+        {
+            onClientConnectedCallback(peer);
+        }
+
         peer.onConnect();
     }
 }

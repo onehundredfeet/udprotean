@@ -1,5 +1,6 @@
 package clientserver;
 
+import udprotean.server.UDProteanClientBehavior;
 import seedyrng.Seedy;
 import udprotean.shared.Utils;
 import udprotean.shared.UDProteanPeer;
@@ -24,6 +25,9 @@ class TestClientServerConnect implements ITest
     var client: TestConnectClient;
     var clients: Array<UDProteanClient>;
 
+    var onConnectedCalledCounter: Int;
+    var onDisconnectedCalledCounter: Int;
+
 
     public function new() { }
 
@@ -31,8 +35,13 @@ class TestClientServerConnect implements ITest
     function setup()
     {
         UDProteanPeer.PacketLoss = 0;
+        onConnectedCalledCounter = 0;
+        onDisconnectedCalledCounter = 0;
+
         port = Seedy.randomInt(1025, 65535);
         server = new UDProteanServer("127.0.0.1", port, TestConnectClientBehavior);
+        server.onClientConnected(onClientConnectedCallback);
+        server.onClientDisconnected(onClientDisconnectedCallback);
         client = new TestConnectClient("127.0.0.1", port);
         clients = new Array<UDProteanClient>();
     }
@@ -54,6 +63,7 @@ class TestClientServerConnect implements ITest
         Assert.isTrue(client.initializeCalled);
         Assert.isFalse(client.onConnectCaled);
         Assert.isFalse(connected);
+        Assert.equals(0, onConnectedCalledCounter);
     }
 
 
@@ -63,7 +73,13 @@ class TestClientServerConnect implements ITest
         var clientBranch = async.branch();
         var serverBranch = async.branch();
 
-        runServer(1).sendMessage(serverBranch);
+        var onDone = () ->
+        {
+            Assert.equals(1, onConnectedCalledCounter);
+            Assert.equals(0, onDisconnectedCalledCounter);
+        };
+
+        runServer(1, onDone).sendMessage(serverBranch);
 
         var connected: Bool = client.connectTimeout(0.5);
 
@@ -84,7 +100,13 @@ class TestClientServerConnect implements ITest
         var clientBranch = async.branch();
         var serverBranch = async.branch();
 
-        runServer(numOfClients).sendMessage(serverBranch);
+        var onDone = () ->
+        {
+            Assert.equals(numOfClients, onConnectedCalledCounter);
+            Assert.equals(0, onDisconnectedCalledCounter);
+        };
+
+        runServer(numOfClients, onDone).sendMessage(serverBranch);
 
         for (_ in 0...numOfClients)
         {
@@ -110,7 +132,13 @@ class TestClientServerConnect implements ITest
         var clientBranch = async.branch();
         var serverBranch = async.branch();
 
-        runServer(0).sendMessage(serverBranch);
+        var onDone = () ->
+        {
+            Assert.equals(numOfClients, onConnectedCalledCounter);
+            Assert.equals(numOfClients, onDisconnectedCalledCounter);
+        };
+
+        runServer(0, onDone).sendMessage(serverBranch);
 
         for (_ in 0...numOfClients)
         {
@@ -160,7 +188,7 @@ class TestClientServerConnect implements ITest
     }
 
 
-    function runServer(expectedPeerCount: Int): Thread
+    function runServer(expectedPeerCount: Int, onDone: () -> Void = null): Thread
     {
         return Thread.create(() -> {
 
@@ -182,7 +210,24 @@ class TestClientServerConnect implements ITest
                 Assert.isTrue(peerCasted.onConnectCaled);
             }
 
+            if (onDone != null)
+            {
+                onDone();
+            }
+
             branch.done();
         });
+    }
+
+
+    function onClientConnectedCallback(client: UDProteanClientBehavior)
+    {
+        onConnectedCalledCounter++;
+    }
+
+
+    function onClientDisconnectedCallback(client: UDProteanClientBehavior)
+    {
+        onDisconnectedCalledCounter++;
     }
 }

@@ -6,7 +6,7 @@
   "description": "A UDP-based protocol for multiplayer games, with reliable in-order message delivery.",
   "version": "0.0.0",
   "classPath": "src",
-  "releasenote": "Made configuration adjustable via compiler flags and add method for sending unreliable messages.",
+  "releasenote": "Added option to register connection callbacks on the server.",
   "contributors": [ "Haath" ],
   "dependencies": {
   }
