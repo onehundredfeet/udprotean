@@ -4,6 +4,7 @@ package udprotean.shared;
 abstract Timestamp(Float) to Float
 {
     public static var Zero(get, never): Timestamp;
+    public static var Now(get, never): Timestamp;
 
 
     public inline function new()
@@ -52,5 +53,11 @@ abstract Timestamp(Float) to Float
     static inline function get_Zero(): Timestamp
     {
         return cast(0.0, Timestamp);
+    }
+
+
+    static inline function get_Now(): Timestamp
+    {
+        return new Timestamp();
     }
 }

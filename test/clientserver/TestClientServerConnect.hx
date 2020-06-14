@@ -4,16 +4,12 @@ import seedyrng.Seedy;
 import udprotean.shared.Utils;
 import udprotean.shared.UDProteanPeer;
 import sys.thread.Thread;
-import haxe.Timer;
 import utest.Async;
 import clientserver.models.TestConnectClient;
 import clientserver.models.TestConnectClientBehavior;
 import udprotean.client.UDProteanClient;
 import udprotean.server.UDProteanServer;
-import haxe.io.BytesData;
 import utest.ITest;
-import haxe.io.Bytes;
-import utest.Test;
 import utest.Assert;
 
 
@@ -68,7 +64,7 @@ class TestClientServerConnect implements ITest
         var serverBranch = async.branch();
 
         runServer(1).sendMessage(serverBranch);
-        
+
         var connected: Bool = client.connectTimeout(0.5);
 
         Assert.isTrue(client.initializeCalled);
@@ -120,7 +116,7 @@ class TestClientServerConnect implements ITest
         {
             var client = new TestConnectClient("127.0.0.1", port);
             clients.push(client);
-            
+
             var connected = client.connectTimeout(0.5);
 
             Assert.isTrue(client.initializeCalled);
@@ -136,7 +132,7 @@ class TestClientServerConnect implements ITest
         clientBranch.done();
     }
 
-    
+
     @:timeout(10000)
     function testInvalidDisconnect(async: Async)
     {
@@ -169,7 +165,7 @@ class TestClientServerConnect implements ITest
         return Thread.create(() -> {
 
             var branch: Async = cast Thread.readMessage(true);
-            
+
             server.start();
 
             for (_ in 0...ServerUpdates)

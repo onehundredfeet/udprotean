@@ -1,8 +1,8 @@
 package udprotean.shared;
 
-import udprotean.shared.protocol.CommandCode;
 import sys.net.Address;
 import haxe.io.Bytes;
+import udprotean.shared.protocol.CommandCode;
 import udprotean.shared.protocol.SequentialCommunication;
 
 
@@ -10,7 +10,8 @@ class UDProteanPeer extends SequentialCommunication
 {
     @:protected var socket: UdpSocketEx;
     @:protected var peerAddress: Address;
-    
+    @:private   var lastContact: Timestamp;
+
     #if UDPROTEAN_UNIT_TEST
     public static var PacketLoss: Float = 0;
     var rand: seedyrng.Random = new seedyrng.Random();
@@ -22,11 +23,12 @@ class UDProteanPeer extends SequentialCommunication
         super();
         this.socket = socket;
         this.peerAddress = peerAddress;
+        lastContact = Timestamp.Now;
     }
 
 
     /**
-     * Send an unreliable message. 
+     * Send an unreliable message.
      * This message is one that will bypass the sequential communication
      * protocol and be transmitted immediately as a normal UDP datagram.
      * Besides delivery and order of receiving of these messages not being guaranteed,
@@ -46,6 +48,17 @@ class UDProteanPeer extends SequentialCommunication
 
 
     /**
+        Returns the time elapsed since data was last received from this peer.
+
+        @return The time elapsed in **seconds**.
+    **/
+    public inline function getLastContactElapsed(): Float
+    {
+        return lastContact.elapsed();
+    }
+
+
+    /**
      * Returns `true` if the peer is currently connected.
      */
     @IgnoreCover
@@ -58,12 +71,14 @@ class UDProteanPeer extends SequentialCommunication
     @:noCompletion
     public override final function onReceived(datagram: Bytes)
     {
+        lastContact = Timestamp.Now;
+
         super.onReceived(datagram);
     }
 
-    
+
     @:noCompletion @:protected
-    override final function onTransmit(datagram: Bytes) 
+    override final function onTransmit(datagram: Bytes)
     {
         #if UDPROTEAN_UNIT_TEST
         if (rand.random() >= PacketLoss)
@@ -72,14 +87,14 @@ class UDProteanPeer extends SequentialCommunication
         socket.sendTo(datagram, peerAddress);
     }
 
-    
+
     @:noCompletion @:protected
-    final override function onMessageReceived(message: Bytes) 
+    final override function onMessageReceived(message: Bytes)
     {
         onMessage(message);
     }
 
-    
+
     @:noCompletion @:allow(udprotean.server.UDProteanServer)
     final function onUnreliableMessageReceived(datagram: Bytes)
     {

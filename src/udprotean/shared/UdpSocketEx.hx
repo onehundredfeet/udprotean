@@ -14,7 +14,7 @@ class UdpSocketEx
 
     var recvBuffer: Bytes;
     var recvAddress: Address;
-    
+
 
     public function new()
     {
@@ -96,9 +96,9 @@ class UdpSocketEx
     }
 
 
-    public inline function recvFromAddressString(): String
+    public inline function recvFromAddressId(): Int
     {
-        return recvAddress.addressToString();
+        return recvAddress.addressToId();
     }
 
 

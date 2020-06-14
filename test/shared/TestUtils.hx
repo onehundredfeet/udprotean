@@ -1,5 +1,7 @@
 package shared;
 
+import sys.net.Host;
+import sys.net.Address;
 import utest.ITest;
 import haxe.io.Bytes;
 import utest.Assert;
@@ -50,13 +52,17 @@ class TestUtils implements ITest
 
     function testPeerID()
     {
+        var addr: Address = new Address();
+        addr.host = new Host('127.0.0.1').ip;
+        addr.port = 9001;
+
         for (_ in 0...1000)
         {
             var hs: String = Utils.generateHandshake();
             var dc: String = Utils.getDisconnectCode(hs);
 
-            var hsPeerID: String = Utils.generatePeerID(hs, "127.0.0.1:9001");
-            var dcPeerID: String = Utils.generatePeerID(dc, "127.0.0.1:9001");
+            var hsPeerID: String = Utils.generatePeerID(hs, Utils.addressToId(addr));
+            var dcPeerID: String = Utils.generatePeerID(dc, Utils.addressToId(addr));
 
             Assert.equals(hsPeerID, dcPeerID);
         }

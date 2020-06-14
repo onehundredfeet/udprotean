@@ -19,7 +19,7 @@ class UDProteanServer
 
     @:private var started: Bool;
     @:private var socket: UdpSocketEx;
-    @:private var peers: Map<String, UDProteanClientBehavior>;
+    @:private var peers: Map<Int, UDProteanClientBehavior>;
 
 
     public function new(host: String, port: Int, behaviorType: Class<UDProteanClientBehavior>)
@@ -29,13 +29,14 @@ class UDProteanServer
         this.behaviorType = behaviorType;
         started = false;
         socket = new UdpSocketEx();
-        peers = new Map<String, UDProteanClientBehavior>();
+        peers = new Map();
     }
 
 
     /**
-     * Starts the server.Essentially only binds the UDP port.
-     */
+        Starts the server.
+        Essentially only binds the UDP port.
+    **/
     public function start()
     {
         socket.listen(host, port);
@@ -45,8 +46,8 @@ class UDProteanServer
 
 
     /**
-     * Stops the server and closes the socket.
-     */
+        Stops the server and closes the socket.
+    **/
     public function stop()
     {
         if (started)
@@ -55,21 +56,21 @@ class UDProteanServer
 
 
     /**
-     * Read and process all incoming datagrams currently available on the socket.
-     * The method will only return when there are no available data to read.
-     */
-    public function update()
+        Read and process all incoming datagrams currently available on the socket.
+        The method will only return when there are no available data to read.
+    **/
+    public inline function update()
     {
         updateTimeout(0);
     }
 
 
     /**
-     * Read and process all incoming datagrams currently available on the socket,
-     * for a maximum time of the given `timeout`.
-     * A `timeout` of `0` means infinite and the method will never return as long
-     * as there are available data to read.
-     */
+        Read and process all incoming datagrams currently available on the socket,
+        for a maximum time of the given `timeout`.
+        A `timeout` of `0` means infinite and the method will never return as long
+        as there are available data to read.
+    **/
     public function updateTimeout(timeout: Float)
     {
         var timestamp: Timestamp = new Timestamp();
@@ -98,10 +99,10 @@ class UDProteanServer
         }
 
         var recvFromAddress: Address = socket.recvFromAddress();
-        var recvFromAddressString: String = socket.recvFromAddressString();
+        var recvFromAddressId: Int = socket.recvFromAddressId();
         var commandCode: CommandCode = CommandCode.ofBytes(datagram);
-        
-        var peer: UDProteanClientBehavior = peers.get(recvFromAddressString);
+
+        var peer: UDProteanClientBehavior = peers[recvFromAddressId];
 
         switch (commandCode)
         {
@@ -125,7 +126,7 @@ class UDProteanServer
             // Necessary on Neko for some reason.
             // If not present, execution of the method will abruptly stop at the beginning of the switch.
         }
-        
+
         return true;
     }
 
@@ -137,10 +138,10 @@ class UDProteanServer
         socket.sendTo(datagram, recvFromAddress);
 
         var handshakeCode: String = datagram.toHex();
-        var peerID: String = Utils.generatePeerID(handshakeCode, recvFromAddress.addressToString());
+        var peerID: String = Utils.generatePeerID(handshakeCode, recvFromAddress.addressToId());
 
         // Add sender to the peers list.
-        if (!peers.exists(recvFromAddress.addressToString()))
+        if (!peers.exists(recvFromAddress.addressToId()))
         {
             initializePeer(recvFromAddress, peerID);
         }
@@ -150,7 +151,7 @@ class UDProteanServer
     @:private
     function handleDisconnect(datagram: Bytes, recvFromAddress: Address)
     {
-        var recvFromAddressString: String = recvFromAddress.addressToString();
+        var recvFromAddressId: Int = recvFromAddress.addressToId();
 
         // Bounce back the disconnect code.
         try
@@ -160,19 +161,19 @@ class UDProteanServer
         catch (e: Dynamic) { }
 
         var disconnectCode: String = datagram.toHex();
-        var peerID: String = Utils.generatePeerID(disconnectCode, recvFromAddressString);
+        var peerID: String = Utils.generatePeerID(disconnectCode, recvFromAddressId);
 
-        if (peers.exists(recvFromAddressString))
+        if (peers.exists(recvFromAddressId))
         {
-            var validDisconnectCode: Bool = ( peers[recvFromAddressString].peerID == peerID );
+            var validDisconnectCode: Bool = ( peers[recvFromAddressId].peerID == peerID );
 
             if (validDisconnectCode)
             {
                 // Call the onDisconnect callback.
-                peers[recvFromAddressString].onDisconnect();
+                peers[recvFromAddressId].onDisconnect();
 
                 // Remove peer.
-                peers.remove(recvFromAddressString);
+                peers.remove(recvFromAddressId);
             }
         }
     }
@@ -192,9 +193,9 @@ class UDProteanServer
     function initializePeer(peerAddress: Address, peerId: String)
     {
         peerAddress = peerAddress.clone();
-        
+
         var peer: UDProteanClientBehavior = Type.createInstance(behaviorType, [socket, peerAddress, peerId]);
-        peers.set(peerAddress.addressToString(), peer);
+        peers.set(peerAddress.addressToId(), peer);
         peer.initialize();
         peer.onConnect();
     }

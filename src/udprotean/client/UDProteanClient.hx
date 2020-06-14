@@ -28,7 +28,7 @@ class UDProteanClient extends UDProteanPeer
         var serverAddress = new Address();
         serverAddress.host = new Host(serverHost).ip;
         serverAddress.port = serverPort;
-        
+
         super(socket, serverAddress);
 
         initialize();
@@ -82,11 +82,11 @@ class UDProteanClient extends UDProteanPeer
     public final function connectTimeout(timeout: Float): Bool
     {
         initSequentialCommunication();
-        
+
         var timestamp: Timestamp = new Timestamp();
 
         socket.connect(serverHost, serverPort);
-        
+
         handshakeCode = Utils.generateHandshake();
 
         var response: Bytes = null;
@@ -102,10 +102,10 @@ class UDProteanClient extends UDProteanPeer
         }
 
         onConnect();
-        
+
         return true;
     }
-    
+
 
     /**
      * Disconnect from the server and close the socket.
@@ -145,7 +145,7 @@ class UDProteanClient extends UDProteanPeer
             return false;
         }
 
-        if (socket.recvFromAddressString() != peerAddress.addressToString())
+        if (socket.recvFromAddressId() != peerAddress.addressToId())
         {
             // Received from someone other than the server.
             return true;

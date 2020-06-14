@@ -60,15 +60,21 @@ class Utils
     /**
      * Calculates the Peer ID, given a code and a string representation of the peer's address.
      */
-    public static inline function generatePeerID(code: String, addressString: String): String
+    public static inline function generatePeerID(code: String, addressId: Int): String
     {
-        return Sha1.encode(addressString + "|" + code.substr(4));
+        return Sha1.encode(addressId + "|" + code.substr(4));
     }
 
-    
+
     public static inline function addressToString(addr: Address)
     {
         return addr.host + ":" + addr.port;
+    }
+
+
+    public static inline function addressToId(addr: Address): Int
+    {
+        return (addr.port) | (addr.host << 16);
     }
 
 
