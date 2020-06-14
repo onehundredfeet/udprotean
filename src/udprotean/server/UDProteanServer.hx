@@ -34,9 +34,9 @@ class UDProteanServer
 
 
     /**
-        Starts the server.
-        Essentially only binds the UDP port.
-    **/
+     * Starts the server.
+     * Essentially only binds the UDP port.
+    */
     public function start()
     {
         socket.listen(host, port);
@@ -46,8 +46,8 @@ class UDProteanServer
 
 
     /**
-        Stops the server and closes the socket.
-    **/
+     * Stops the server and closes the socket.
+     */
     public function stop()
     {
         if (started)
@@ -56,9 +56,9 @@ class UDProteanServer
 
 
     /**
-        Read and process all incoming datagrams currently available on the socket.
-        The method will only return when there are no available data to read.
-    **/
+     * Read and process all incoming datagrams currently available on the socket.
+     * The method will only return when there are no available data to read.
+     */
     public inline function update()
     {
         updateTimeout(0);
@@ -66,11 +66,11 @@ class UDProteanServer
 
 
     /**
-        Read and process all incoming datagrams currently available on the socket,
-        for a maximum time of the given `timeout`.
-        A `timeout` of `0` means infinite and the method will never return as long
-        as there are available data to read.
-    **/
+     * Read and process all incoming datagrams currently available on the socket,
+     * for a maximum time of the given `timeout`.
+     * A `timeout` of `0` means infinite and the method will never return as long
+     * as there are available data to read.
+     */
     public function updateTimeout(timeout: Float)
     {
         var timestamp: Timestamp = new Timestamp();

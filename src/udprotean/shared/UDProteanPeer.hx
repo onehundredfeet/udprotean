@@ -48,10 +48,10 @@ class UDProteanPeer extends SequentialCommunication
 
 
     /**
-        Returns the time elapsed since data was last received from this peer.
-
-        @return The time elapsed in **seconds**.
-    **/
+     * Returns the time elapsed since data was last received from this peer.
+     *
+     * @return The time elapsed in **seconds**.
+     */
     public inline function getLastContactElapsed(): Float
     {
         return lastContact.elapsed();
