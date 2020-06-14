@@ -89,7 +89,7 @@ server.onClientDisconnected(client -> { });
 ### Client
 
 ```haxe
-import udprotean.server.UDProteanClient;
+import udprotean.client.UDProteanClient;
 
 class MyClient extends UDProteanClient
 {
