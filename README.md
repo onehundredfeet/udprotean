@@ -1,12 +1,16 @@
-UDProtean - Haxe
+<div align="center">
+
+[![ ](https://gitlab.com/haath/udprotean/-/raw/master/assets/logo.png)](https://gitlab.com/haath/udprotean)
+
 [![pipeline status](https://gitlab.com/haath/udprotean/badges/master/pipeline.svg)](https://gitlab.com/haath/udprotean/pipelines/latest)
 [![coverage report](https://gitlab.com/haath/udprotean/badges/master/coverage.svg)](https://gitlab.com/haath/udprotean/pipelines/latest)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://gitlab.com/haath/udprotean/blob/master/LICENSE)
 [![release](https://img.shields.io/badge/release-haxelib-informational)](https://lib.haxe.org/p/udprotean/)
-====================
 
+</div>
 
-### Features
+---
+
 
 - Low-latency communication over **UDP**.
 - **Reliable** delivery, regardless of packet loss on the network.
