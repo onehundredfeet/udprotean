@@ -10,16 +10,6 @@ import sys.net.Host;
 
 abstract LuaUdpSocket(NativeSocket)
 {
-	/**
-	 * Hack to match the API needed at `UdpSocketEx.send()`.
-	 */
-	public var output(get, never): Output;
-    inline function get_output(): Output
-    {
-        return cast this;
-    }
-
-
 	public inline function new()
     {
         this = NativeSocket.udp();

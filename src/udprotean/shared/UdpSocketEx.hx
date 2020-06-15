@@ -27,7 +27,7 @@ class UdpSocketEx
 
     public inline function send(buf: Bytes)
     {
-        socket.output.writeBytes(buf, 0, buf.length);
+        socket.writeBytes(buf, 0, buf.length);
     }
 
 

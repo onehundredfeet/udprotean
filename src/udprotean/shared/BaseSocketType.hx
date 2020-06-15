@@ -12,7 +12,22 @@ typedef BaseSocketType =
 #if lua
     udprotean.shared.platform.lua.LuaUdpSocket
 #else
-    sys.net.UdpSocket
+    udprotean.shared.BaseSocketType.StdUdpSocket
 #end
 
 ;
+
+@:forward(setBlocking, sendTo, readFrom, bind, connect, close, peer)
+abstract StdUdpSocket(sys.net.UdpSocket)
+{
+    public inline function new()
+    {
+        this = new sys.net.UdpSocket();
+    }
+
+
+    public inline function writeBytes(buf: haxe.io.Bytes, pos: Int, len: Int)
+    {
+        this.output.writeFullBytes(buf, pos, len);
+    }
+}
