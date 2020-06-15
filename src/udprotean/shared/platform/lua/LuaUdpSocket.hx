@@ -7,38 +7,36 @@ import sys.net.Address;
 import sys.net.Host;
 
 
-class LuaUdpSocket implements SocketBase
+abstract LuaUdpSocket(NativeSocket)
 {
-    var sock: NativeSocket;
-
-
-	public function new()
+	public inline function new()
     {
-        sock = NativeSocket.udp();
+        this = NativeSocket.udp();
 	}
 
-    public function setBlocking(blocking: Bool): Void
+
+    public inline function setBlocking(blocking: Bool): Void
     {
         if (blocking)
         {
-            sock.settimeout(0);
+            this.settimeout(0);
         }
         else
         {
-            sock.settimeout(1e-3);
+            this.settimeout(1e-3);
         }
     }
 
 
-    public function sendTo(buf: Bytes, pos: Int, len: Int, addr: Address): Int
+    public inline function sendTo(buf: Bytes, pos: Int, len: Int, addr: Address): Int
     {
-        return sock.sendto(buf.toString(), addr.getHost().toString(), addr.port);
+        return this.sendto(buf.toString(), addr.getHost().toString(), addr.port);
     }
 
 
-    public function readFrom(buf: Bytes, pos: Int, len: Int, addr: Address): Int
+    public inline function readFrom(buf: Bytes, pos: Int, len: Int, addr: Address): Int
     {
-        var res = sock.receivefrom();
+        var res = this.receivefrom();
 
         var data: Bytes = Bytes.ofString(res.data);
 
@@ -51,27 +49,27 @@ class LuaUdpSocket implements SocketBase
     }
 
 
-    public function bind(host: Host, port: Int): Void
+    public inline function bind(host: Host, port: Int): Void
     {
         NativeSocket.bind(host.toString(), port);
     }
 
 
-    public function connect(host: Host, port: Int): Void
+    public inline function connect(host: Host, port: Int): Void
     {
 
     }
 
 
-    public function close(): Void
+    public inline function close(): Void
     {
 
     }
 
 
-    public function peer(): {host: Host, port: Int}
+    public inline function peer(): {host: Host, port: Int}
     {
-        var peer: UdpPeer = sock.getpeername();
+        var peer: UdpPeer = this.getpeername();
 
         return {
             host: new Host(peer.ip),

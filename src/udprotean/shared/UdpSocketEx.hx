@@ -1,17 +1,15 @@
 package udprotean.shared;
 
-import udprotean.shared.platform.StdUdpSocket;
-import haxe.CallStack;
 import haxe.io.Bytes;
 import sys.net.Address;
 import sys.net.Host;
-import sys.net.UdpSocket;
 
 using udprotean.shared.Utils;
 
+
 class UdpSocketEx
 {
-    @:private var socket: SocketBase;
+    @:private var socket: BaseSocketType;
 
     var recvBuffer: Bytes;
     var recvAddress: Address;
@@ -19,7 +17,7 @@ class UdpSocketEx
 
     public function new()
     {
-        socket = createSocket();
+        socket = new BaseSocketType();
         socket.setBlocking(false);
 
         recvBuffer = Bytes.alloc(1024);
@@ -27,7 +25,7 @@ class UdpSocketEx
     }
 
 
-    public function sendTo(buf: Bytes, addr: Address)
+    public inline function sendTo(buf: Bytes, addr: Address)
     {
         socket.sendTo(buf, 0, buf.length, addr);
     }
@@ -127,18 +125,8 @@ class UdpSocketEx
     }
 
 
-    public function setBlocking(blocking: Bool)
+    public inline function setBlocking(blocking: Bool)
     {
         socket.setBlocking(blocking);
-    }
-
-
-    static function createSocket(): SocketBase
-    {
-        #if lua
-        return new udprotean.shared.platform.lua.LuaUdpSocket();
-        #else
-        return new StdUdpSocket();
-        #end
     }
 }
