@@ -77,6 +77,7 @@ class TestUtils implements ITest
             var fromHost: Int = new Host(ip).ip;
 
             Assert.equals(fromHost, fromUtils);
+            Assert.equals(new Host(ip).toString(), ip);
         };
 
         check('127.0.0.1');

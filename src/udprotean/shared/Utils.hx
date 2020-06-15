@@ -1,5 +1,6 @@
 package udprotean.shared;
 
+import sys.net.Host;
 import haxe.crypto.Sha1;
 import sys.net.Address;
 import haxe.io.Bytes;
@@ -8,6 +9,9 @@ import udprotean.shared.protocol.CommandCode;
 
 class Utils
 {
+    static final isBigEndian: Bool = (new Host('1.0.0.0').ip != 1);
+
+
     /**
      * Returns the current UNIX timestamp in milliseconds.
      */
@@ -92,9 +96,16 @@ class Utils
     {
         var num: Int = 0;
 
-        for (part in ip.split('.'))
+        var bytes: Array<String> = ip.split('.');
+
+        if (!isBigEndian)
         {
-            num = (num * 256) + Std.parseInt(part);
+            bytes.reverse();
+        }
+
+        for (b in bytes)
+        {
+            num = (num << 8) + Std.parseInt(b);
         }
 
         return num;
