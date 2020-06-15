@@ -12,9 +12,11 @@ class TestMain
     {
         var runner = new Runner();
         runner.onComplete.add(onComplete);
-        
+
+        #if !lua
         runner.addCases("clientserver", false);
         runner.addCases("sequential", false);
+        #end
         runner.addCases("shared", false);
 
         Report.create(runner, SuccessResultsDisplayMode.NeverShowSuccessResults, HeaderDisplayMode.AlwaysShowHeader);
