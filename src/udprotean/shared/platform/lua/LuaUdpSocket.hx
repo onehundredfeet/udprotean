@@ -3,12 +3,23 @@ package udprotean.shared.platform.lua;
 #if lua
 import udprotean.shared.platform.lua.NativeSocket.UdpPeer;
 import haxe.io.Bytes;
+import haxe.io.Output;
 import sys.net.Address;
 import sys.net.Host;
 
 
 abstract LuaUdpSocket(NativeSocket)
 {
+	/**
+	 * Hack to match the API needed at `UdpSocketEx.send()`.
+	 */
+	public var output(get, never): Output;
+    inline function get_output(): Output
+    {
+        return cast this;
+    }
+
+
 	public inline function new()
     {
         this = NativeSocket.udp();
@@ -25,6 +36,12 @@ abstract LuaUdpSocket(NativeSocket)
         {
             this.settimeout(1e-3);
         }
+    }
+
+
+    public inline function writeBytes(buf: Bytes, pos: Int, len: Int): Int
+    {
+        return this.send(buf.toString());
     }
 
 
@@ -57,13 +74,13 @@ abstract LuaUdpSocket(NativeSocket)
 
     public inline function connect(host: Host, port: Int): Void
     {
-
+        this.setpeername(host.host, port);
     }
 
 
     public inline function close(): Void
     {
-
+        this.setpeername('*');
     }
 
 

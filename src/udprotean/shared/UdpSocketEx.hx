@@ -25,6 +25,12 @@ class UdpSocketEx
     }
 
 
+    public inline function send(buf: Bytes)
+    {
+        socket.output.writeBytes(buf, 0, buf.length);
+    }
+
+
     public inline function sendTo(buf: Bytes, addr: Address)
     {
         socket.sendTo(buf, 0, buf.length, addr);

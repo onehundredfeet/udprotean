@@ -57,7 +57,7 @@ class TestUdpSocketEx extends Test
     @:timeout(2000)
     function testBasicSendReceive(async: Async)
     {
-        client.sendTo(Bytes.ofString("ping"), serverAddress);
+        client.send(Bytes.ofString("ping"));
 
         var serverRecv = server.read().toString();
         Assert.equals("ping", serverRecv);
@@ -82,7 +82,7 @@ class TestUdpSocketEx extends Test
         var serverRecv: Bytes = server.readTimeout(0.5);
         Assert.equals(null, serverRecv);
 
-        client.sendTo(Bytes.ofString("ping"), serverAddress);
+        client.send(Bytes.ofString("ping"));
 
         var serverRecvMsg = server.readTimeout(0.5).toString();
         Assert.equals("ping", serverRecvMsg);

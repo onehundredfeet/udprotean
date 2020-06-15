@@ -10,6 +10,9 @@ extern class NativeSocket
     static function udp(): NativeSocket;
 
 
+    function send(datagram: String): Int;
+
+
     function sendto(datagram: String, ip: String, port: Int): Int;
 
 
@@ -17,6 +20,10 @@ extern class NativeSocket
 
 
     function getpeername(): UdpPeer;
+
+
+    @:overload(function(address: String): Void {})
+    function setpeername(address: String, port: Int): Void;
 
 
     function settimeout(value: Float): Void;
