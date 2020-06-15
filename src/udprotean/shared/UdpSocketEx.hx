@@ -9,7 +9,7 @@ using udprotean.shared.Utils;
 
 class UdpSocketEx
 {
-    @:private var socket: BaseSocketType;
+    var socket: BaseSocketType;
 
     var recvBuffer: Bytes;
     var recvAddress: Address;
