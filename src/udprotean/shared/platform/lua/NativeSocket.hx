@@ -4,7 +4,7 @@ package udprotean.shared.platform.lua;
 @:luaRequire("socket")
 extern class NativeSocket
 {
-    static function bind(address: String, port: Int): Void;
+    static function setsockname(address: String, port: Int): Void;
 
 
     static function udp(): NativeSocket;
@@ -14,6 +14,9 @@ extern class NativeSocket
 
 
     function sendto(datagram: String, ip: String, port: Int): Int;
+
+
+    function receive(size: Int = 0): String;
 
 
     function receivefrom(size: Int = 0): ReceiveFromResult;
@@ -27,6 +30,9 @@ extern class NativeSocket
 
 
     function settimeout(value: Float): Void;
+
+
+    function close(): Void;
 }
 
 

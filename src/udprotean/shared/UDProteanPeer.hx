@@ -2,13 +2,15 @@ package udprotean.shared;
 
 import sys.net.Address;
 import haxe.io.Bytes;
+import udprotean.client.ClientUdpSocket;
+import udprotean.server.ServerUdpSocket;
 import udprotean.shared.protocol.CommandCode;
 import udprotean.shared.protocol.SequentialCommunication;
 
 
 class UDProteanPeer extends SequentialCommunication
 {
-    @:protected var socket: UdpSocketEx;
+    @:protected var socket: ClientUdpSocket;
     @:protected var peerAddress: Address;
     @:private   var lastContact: Timestamp;
 
@@ -18,7 +20,7 @@ class UDProteanPeer extends SequentialCommunication
     #end
 
 
-    function new(socket: UdpSocketEx, peerAddress: Address)
+    function new(socket: ClientUdpSocket, peerAddress: Address)
     {
         super();
         this.socket = socket;
@@ -84,7 +86,14 @@ class UDProteanPeer extends SequentialCommunication
         if (rand.random() >= PacketLoss)
         #end
 
-        socket.sendTo(datagram, peerAddress);
+        if (socket.isConnected())
+        {
+            socket.sendToPeer(datagram);
+        }
+        else
+        {
+            cast(socket, ServerUdpSocket).send(datagram, peerAddress);
+        }
     }
 
 

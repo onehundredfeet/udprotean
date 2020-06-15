@@ -5,7 +5,6 @@ import udprotean.shared.Timestamp;
 import haxe.io.Bytes;
 import sys.net.Host;
 import sys.net.Address;
-import udprotean.shared.UdpSocketEx;
 import udprotean.shared.UDProteanPeer;
 
 using udprotean.shared.Utils;
@@ -24,7 +23,7 @@ class UDProteanClient extends UDProteanPeer
         this.serverHost = new Host(serverHost);
         this.serverPort = serverPort;
 
-        var socket: UdpSocketEx = new UdpSocketEx();
+        var socket: ClientUdpSocket = new ClientUdpSocket();
         var serverAddress = new Address();
         serverAddress.host = new Host(serverHost).ip;
         serverAddress.port = serverPort;
@@ -98,7 +97,7 @@ class UDProteanClient extends UDProteanPeer
                 return false;
             }
 
-            response = socket.trySendAndRead(Bytes.ofHex(handshakeCode), peerAddress);
+            response = socket.trySendToPeerAndRead(Bytes.ofHex(handshakeCode));
         }
 
         onConnect();
@@ -123,7 +122,7 @@ class UDProteanClient extends UDProteanPeer
             while ((response == null || response.toHex() != disconnectCode)
                 && !timestamp.isTimedOut(timeout))
             {
-                response = socket.trySendAndRead(Bytes.ofHex(disconnectCode), peerAddress);
+                response = socket.trySendToPeerAndRead(Bytes.ofHex(disconnectCode));
             }
 
             socket.close();
@@ -137,7 +136,7 @@ class UDProteanClient extends UDProteanPeer
     final function processRead(): Bool
     {
         // Attempt to read available data.
-        var datagram: Bytes = socket.readTimeout(0.001);
+        var datagram: Bytes = socket.readFromPeerTimeout(0.001);
 
         if (datagram == null)
         {

@@ -115,6 +115,7 @@ class TestClientServerConnect implements ITest
 
             var connected = client.connectTimeout(0.5);
 
+            Assert.isTrue(client.isConnected());
             Assert.isTrue(client.initializeCalled);
             Assert.isTrue(client.onConnectCaled);
             Assert.isFalse(client.onDisconnectCalled);
@@ -147,6 +148,7 @@ class TestClientServerConnect implements ITest
 
             var connected = client.connectTimeout(0.5);
 
+            Assert.isTrue(client.isConnected());
             Assert.isTrue(client.initializeCalled);
             Assert.isTrue(client.onConnectCaled);
             Assert.isFalse(client.onDisconnectCalled);

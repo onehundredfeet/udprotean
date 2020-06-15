@@ -30,4 +30,10 @@ abstract StdUdpSocket(sys.net.UdpSocket)
     {
         this.output.writeFullBytes(buf, pos, len);
     }
+
+
+    public inline function readBytes(buf: haxe.io.Bytes, pos: Int, len: Int)
+    {
+        return this.input.readBytes(buf, pos, len);
+    }
 }

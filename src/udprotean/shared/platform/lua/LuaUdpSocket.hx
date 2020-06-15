@@ -41,6 +41,18 @@ abstract LuaUdpSocket(NativeSocket)
     }
 
 
+    public inline function readBytes(buf: Bytes, pos: Int, len: Int): Int
+    {
+        var res: String = this.receive();
+
+        var data: Bytes = Bytes.ofString(res);
+
+        buf.blit(pos, data, 0, data.length);
+
+        return data.length;
+    }
+
+
     public inline function readFrom(buf: Bytes, pos: Int, len: Int, addr: Address): Int
     {
         var res = this.receivefrom();
@@ -58,7 +70,7 @@ abstract LuaUdpSocket(NativeSocket)
 
     public inline function bind(host: Host, port: Int): Void
     {
-        NativeSocket.bind(host.toString(), port);
+        NativeSocket.setsockname(host.toString(), port);
     }
 
 
@@ -70,7 +82,7 @@ abstract LuaUdpSocket(NativeSocket)
 
     public inline function close(): Void
     {
-        this.setpeername('*');
+        this.close();
     }
 
 

@@ -6,7 +6,6 @@ import udprotean.shared.Timestamp;
 import sys.net.Address;
 import udprotean.shared.UDProteanPeer;
 import haxe.io.Bytes;
-import udprotean.shared.UdpSocketEx;
 
 using udprotean.shared.Utils;
 
@@ -18,7 +17,7 @@ class UDProteanServer
     @:private var behaviorType: Class<UDProteanClientBehavior>;
 
     @:private var started: Bool;
-    @:private var socket: UdpSocketEx;
+    @:private var socket: ServerUdpSocket;
     @:private var peers: Map<Int, UDProteanClientBehavior>;
     @:private var onClientConnectedCallback: (UDProteanClientBehavior) -> Void;
     @:private var onClientDisconnectedCallback: (UDProteanClientBehavior) -> Void;
@@ -30,7 +29,7 @@ class UDProteanServer
         this.port = port;
         this.behaviorType = behaviorType;
         started = false;
-        socket = new UdpSocketEx();
+        socket = new ServerUdpSocket();
         peers = new Map();
     }
 
@@ -164,7 +163,7 @@ class UDProteanServer
     function handleHandshake(datagram: Bytes, recvFromAddress: Address)
     {
         // Bounce back the handshake code.
-        socket.sendTo(datagram, recvFromAddress);
+        socket.send(datagram, recvFromAddress);
 
         var handshakeCode: String = datagram.toHex();
         var peerID: String = Utils.generatePeerID(handshakeCode, recvFromAddress.addressToId());
@@ -185,7 +184,7 @@ class UDProteanServer
         // Bounce back the disconnect code.
         try
         {
-            socket.sendTo(datagram, recvFromAddress);
+            socket.send(datagram, recvFromAddress);
         }
         catch (e: Dynamic) { }
 

@@ -1,9 +1,9 @@
 package clientserver.models;
 
-import udprotean.shared.UdpSocketEx;
 import utest.Assert;
 import seedyrng.Seedy;
 import haxe.io.Bytes;
+import udprotean.shared.UdpSocketLayer;
 import udprotean.server.UDProteanClientBehavior;
 
 
@@ -12,7 +12,7 @@ class TestPingPongClientBehavior extends UDProteanClientBehavior
     public var expected: Int;
 
 
-    override function initialize() 
+    override function initialize()
     {
         expected = 0;
     }
@@ -44,8 +44,8 @@ class TestPingPongClientBehavior extends UDProteanClientBehavior
         var randomBuffer: Bytes = Bytes.alloc(4);
         randomBuffer.setInt32(0, Seedy.randomInt(0, 65535));
 
-        var newSocket: UdpSocketEx = new UdpSocketEx();
-        newSocket.sendTo(randomBuffer, peerAddress);
+        var newSocket: UdpSocketLayer = new UdpSocketLayer();
+        newSocket.send(randomBuffer, peerAddress);
     }
 }
 
