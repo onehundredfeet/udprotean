@@ -18,7 +18,7 @@ import utest.Assert;
 @:access(udprotean.client.UDProteanClient)
 class TestClientServerConnect implements ITest
 {
-    final ServerUpdates = 500;
+    final ServerUpdates = 1000;
 
     var port: Int;
     var server: UDProteanServer;
@@ -126,7 +126,7 @@ class TestClientServerConnect implements ITest
     }
 
 
-    @:timeout(10000)
+    @:timeout(20000)
     function testDisconnect(async: Async)
     {
         var numOfClients = 16;
@@ -141,12 +141,12 @@ class TestClientServerConnect implements ITest
 
         runServer(0, onDone).sendMessage(serverBranch);
 
-        for (_ in 0...numOfClients)
+        for (i in 0...numOfClients)
         {
             var client = new TestConnectClient("127.0.0.1", port);
             clients.push(client);
 
-            var connected = client.connectTimeout(0.5);
+            var connected = client.connectTimeout(1);
 
             Assert.isTrue(client.isConnected());
             Assert.isTrue(client.initializeCalled);

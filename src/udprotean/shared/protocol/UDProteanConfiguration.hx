@@ -39,7 +39,7 @@ class UDProteanConfiguration
      */
     public static inline var StaleDatagramAge             = getOrDefault("UDPROTEAN_STALE_AGE", 20);
 
-    /** 
+    /**
      * The number of bytes needed to hold the sequence number.
      * The amount of bytes set here needs to be able to hold the maximum sequence number
      * which is `SequenceSize-1` as a **signed** integer.
@@ -48,16 +48,16 @@ class UDProteanConfiguration
      */
     public static inline var SequenceBytes                = getOrDefault("UDPROTEAN_SEQUENCE_BYTES", 3);
 
-    /** 
+    /**
      * The maximum cyclical distance one datagram can have from another and be presumed to be earlier than it.
      * This is used as a threshold for discarding datagrams which arrive, and which are presumably older than
      * the ones that have already been processed. A value too small may caused older re-transmitted datagrams to be
      * processed a second time when the cyclic buffer reaches them on the next pass, and a value too big can cause
-     * legitimate datagrams to be discarded during heavy network traffic and/or significant packet loss, when the 
+     * legitimate datagrams to be discarded during heavy network traffic and/or significant packet loss, when the
      * head of the cyclic buffer approaches its tail.
      */
     public static inline var SequenceDistanceRelationship = getOrDefault("UDPROTEAN_SEQUENCE_DISTANCE", 32);
-    
+
     #end
 
 

@@ -56,9 +56,9 @@ class TestClientServerPingPong implements ITest
     function testPingPongPacketLoss(async: Async)
     {
         UDProteanPeer.PacketLoss = 0.1;
-        doTest(async, 20000);
+        doTest(async, 30000);
     }
-    
+
 
     function doTest(async: Async, updates: Int)
     {
@@ -68,25 +68,20 @@ class TestClientServerPingPong implements ITest
         var serverThread = Thread.create(() -> {
 
             var branch: Async = cast Thread.readMessage(true);
-            
+
             server.start();
 
-            var shouldStop: Bool = false;
-
-            do
+            for (_ in 0...updates)
             {
                 server.update();
-
-                shouldStop = Thread.readMessage(false) != null;
-
-            } while(!shouldStop);
+            }
 
             branch.done();
         });
 
         serverThread.sendMessage(serverBranch);
-        
-        var connected: Bool = client.connectTimeout(0.5);
+
+        var connected: Bool = client.connectTimeout(1);
 
         Assert.isTrue(connected);
 
@@ -96,8 +91,6 @@ class TestClientServerPingPong implements ITest
         {
             client.update();
         }
-
-        serverThread.sendMessage(true);
 
         Assert.equals(Count, client.expected);
 

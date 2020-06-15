@@ -152,13 +152,13 @@ class UdpSocketLayer
     }
 
 
-    public function listen(host: String, port: Int)
+    public inline function listen(host: String, port: Int)
     {
         socket.bind(new Host(host), port);
     }
 
 
-    public function connect(host: Host, port: Int)
+    public inline function connect(host: Host, port: Int)
     {
         socket.connect(host, port);
         recvAddress.host = host.ip;
@@ -167,7 +167,7 @@ class UdpSocketLayer
     }
 
 
-    public function close()
+    public inline function close()
     {
         socket.close();
         recvAddress.host = 0;
