@@ -24,6 +24,7 @@ test-neko:
   retry: 2
   variables:
     HXML: test-neko.hxml
+  coverage: '/COVERAGE RESULT\s+([0-9.]+)%/'
   script:
   - haxelib install $HXML --always --quiet
   - haxe $HXML
@@ -38,6 +39,7 @@ test-cpp:
     - build/cpp/obj
   variables:
     HXML: test-cpp.hxml
+  coverage: '/COVERAGE RESULT\s+([0-9.]+)%/'
   script:
   # Install C++ build tools
   - apt-get update
