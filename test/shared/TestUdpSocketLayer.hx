@@ -1,5 +1,6 @@
 package shared;
 
+import udprotean.shared.UdpSocketLayer;
 import udprotean.client.ClientUdpSocket;
 import udprotean.server.ServerUdpSocket;
 import udprotean.shared.Utils;
@@ -12,10 +13,11 @@ import haxe.io.Bytes;
 import seedyrng.Seedy;
 
 
+@:access(udprotean.shared.UdpSocketLayer)
 class TestUdpSocketLayer extends Test
 {
-    var server: ServerUdpSocket;
-    var client: ClientUdpSocket;
+    var server: UdpSocketLayer;
+    var client: UdpSocketLayer;
 
     var serverAddress: Address;
 
@@ -24,15 +26,19 @@ class TestUdpSocketLayer extends Test
     {
         var port = Seedy.randomInt(1025, 65535);
 
-        server = new  ServerUdpSocket();
+        server = new  UdpSocketLayer();
         server.listen("127.0.0.1", port);
 
-        client = new ClientUdpSocket();
+        client = new UdpSocketLayer();
         client.connect(new Host("127.0.0.1"), port);
 
         serverAddress = new Address();
         serverAddress.host = Utils.ipToNum("127.0.0.1");
         serverAddress.port = port;
+
+        Assert.isNull(server.getPeer());
+        Assert.equals("127.0.0.1", client.getPeer().host.toString());
+        Assert.equals(port, client.getPeer().port);
     }
 
 
@@ -80,12 +86,38 @@ class TestUdpSocketLayer extends Test
     {
         var serverRecv: Bytes = server.readTimeout(0.5);
         Assert.equals(null, serverRecv);
+        clearErrors();
 
         client.sendToPeer(Bytes.ofString("ping"));
+        checkErrors();
 
         var serverRecvMsg = server.readTimeout(0.5).toString();
         Assert.equals("ping", serverRecvMsg);
+        checkErrors();
 
         async.done();
+    }
+
+
+    function checkErrors()
+    {
+        if (server.error != null)
+        {
+            throw server.error;
+        }
+
+        if (client.error != null)
+        {
+            throw client.error;
+        }
+
+        clearErrors();
+    }
+
+
+    function clearErrors()
+    {
+        server.error = null;
+        client.error = null;
     }
 }

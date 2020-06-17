@@ -16,6 +16,7 @@ class UDProteanConfiguration
      */
     public static inline var SequenceSize                 = getOrDefault("UDPROTEAN_SEQUENCE_SIZE", 512);
 
+
     /**
      * The maximum transmittable datagram size in bytes.
      * Fragment numbers are represented with one byte, so the maximum
@@ -27,17 +28,20 @@ class UDProteanConfiguration
      */
     public static inline var FragmentSize                 = getOrDefault("UDPROTEAN_FRAGMENT_SIZE", 540);
 
+
     /**
      * The time (in ms) after which a not acknowledged datagram should be re-sent.
      * A larger value is recommended for servers with multiple clients.
      */
     public static inline var RepeatDatagramAge            = getOrDefault("UDPROTEAN_REPEAT_AGE", 50);
 
+
     /**
      * The time (in ms) after which retransmission of a datagram should be requested when receiving one out-of-order.
      * A larger value is recommended for servers with multiple clients.
      */
     public static inline var StaleDatagramAge             = getOrDefault("UDPROTEAN_STALE_AGE", 20);
+
 
     /**
      * The number of bytes needed to hold the sequence number.
@@ -47,6 +51,7 @@ class UDProteanConfiguration
      * **This option needs to have the same value on both peers.**
      */
     public static inline var SequenceBytes                = getOrDefault("UDPROTEAN_SEQUENCE_BYTES", 3);
+
 
     /**
      * The maximum cyclical distance one datagram can have from another and be presumed to be earlier than it.

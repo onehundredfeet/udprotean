@@ -13,6 +13,7 @@ class UdpSocketLayer
 
     var recvBuffer: Bytes;
     var recvAddress: Address;
+    var error: Dynamic;
 
     var connected: Bool;
 
@@ -40,22 +41,9 @@ class UdpSocketLayer
     }
 
 
-    public function readFromPeer(): Bytes
-    {
-        try
-        {
-            var bytesRead: Int = socket.readBytes(recvBuffer, 0, recvBuffer.length);
-            return recvBuffer.sub(0, bytesRead);
-        }
-        catch (e: Dynamic)
-        {
-            return null;
-        }
-    }
-
-
     public inline function read(): Bytes
     {
+        error = null;
         try
         {
             var bytesRead: Int = socket.readFrom(recvBuffer, 0, recvBuffer.length, recvAddress);
@@ -63,6 +51,7 @@ class UdpSocketLayer
         }
         catch (e: Dynamic)
         {
+            error = e;
             return null;
         }
     }
@@ -75,17 +64,30 @@ class UdpSocketLayer
     public function readTimeout(timeout: Float): Bytes
     {
         var timestamp: Timestamp = new Timestamp();
+        var data: Bytes = null;
 
-        while (timestamp.elapsed() < timeout)
+        while (data == null && timestamp.elapsed() < timeout)
         {
-            try
-            {
-                return read();
-            }
-            catch(e: Dynamic) { }
+            data = read();
         }
 
-        return null;
+        return data;
+    }
+
+
+    public function readFromPeer(): Bytes
+    {
+        error = null;
+        try
+        {
+            var bytesRead: Int = socket.readBytes(recvBuffer, 0, recvBuffer.length);
+            return recvBuffer.sub(0, bytesRead);
+        }
+        catch (e: Dynamic)
+        {
+            error = e;
+            return null;
+        }
     }
 
 
@@ -96,17 +98,14 @@ class UdpSocketLayer
     public function readFromPeerTimeout(timeout: Float): Bytes
     {
         var timestamp: Timestamp = new Timestamp();
+        var data: Bytes = null;
 
-        while (timestamp.elapsed() < timeout)
+        while (data == null && timestamp.elapsed() < timeout)
         {
-            try
-            {
-                return readFromPeer();
-            }
-            catch(e: Dynamic) { }
+            data = readFromPeer();
         }
 
-        return null;
+        return data;
     }
 
 
@@ -120,6 +119,7 @@ class UdpSocketLayer
         }
         catch (e: Dynamic)
         {
+            error = e;
             return null;
         }
     }
@@ -185,5 +185,11 @@ class UdpSocketLayer
     public inline function setBlocking(blocking: Bool)
     {
         socket.setBlocking(blocking);
+    }
+
+
+    public inline function getPeer(): { host: Host, port: Int }
+    {
+        return socket.peer();
     }
 }
