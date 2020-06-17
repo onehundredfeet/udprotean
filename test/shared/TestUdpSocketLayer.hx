@@ -35,10 +35,6 @@ class TestUdpSocketLayer extends Test
         serverAddress = new Address();
         serverAddress.host = Utils.ipToNum("127.0.0.1");
         serverAddress.port = port;
-
-        Assert.isNull(server.getPeer());
-        Assert.equals("127.0.0.1", client.getPeer().host.toString());
-        Assert.equals(port, client.getPeer().port);
     }
 
 

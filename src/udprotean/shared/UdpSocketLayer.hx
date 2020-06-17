@@ -29,18 +29,36 @@ class UdpSocketLayer
     }
 
 
+    /**
+     * Sends a datagram to the connected peer.
+     *
+     * @param buf The datagram to send.
+     */
     public inline function sendToPeer(buf: Bytes)
     {
         socket.writeBytes(buf, 0, buf.length);
     }
 
 
+    /**
+     * Sends a datagram to a specific address.
+     *
+     * @param buf The datagram to send.
+     * @param addr The address to send to.
+     */
     public inline function send(buf: Bytes, addr: Address)
     {
         socket.sendTo(buf, 0, buf.length, addr);
     }
 
 
+    /**
+     * Attempts to read a datagram on the socket from any address.
+     * If reading was successful, `recvFromAddress()` may be used to retrieve the address
+     * it was received from.
+     *
+     * @return The datagram that was read, or `null` if nothing was available on the socket.
+     */
     public inline function read(): Bytes
     {
         error = null;
@@ -58,8 +76,12 @@ class UdpSocketLayer
 
 
     /**
-     * Attempt to read from the socket for a given timeout in seconds,
-     * returning `null` is nothing is read.
+     * Attempt to read from the socket for a given timeout in seconds.
+     * If reading was successful, `recvFromAddress()` may be used to retrieve the address
+     * it was received from.
+     *
+     * @param timeout The time to attempt to read for, in seconds.
+     * @return The datagram that was read, or `null` if nothing was available on the socket.
      */
     public function readTimeout(timeout: Float): Bytes
     {
@@ -74,7 +96,11 @@ class UdpSocketLayer
         return data;
     }
 
-
+    /**
+     * Attempts to read a datagram on the socket from the connected peer.
+     *
+     * @return The datagram that was read, or `null` if nothing was available on the socket.
+     */
     public function readFromPeer(): Bytes
     {
         error = null;
@@ -92,8 +118,10 @@ class UdpSocketLayer
 
 
     /**
-     * Attempt to read from the socket for a given timeout in seconds,
-     * returning `null` is nothing is read.
+     * Attempt to read on the socket from the connected peer, for a given timeout in seconds.
+     *
+     * @param timeout The time to attempt to read for, in seconds.
+     * @return The datagram that was read, or `null` if nothing was available on the socket.
      */
     public function readFromPeerTimeout(timeout: Float): Bytes
     {
@@ -109,6 +137,13 @@ class UdpSocketLayer
     }
 
 
+    /**
+     * Sends a datagram to a given address, and then attempts to read a response on the socket.
+     *
+     * @param buf The datagram to send.
+     * @param addr The address to send to.
+     * @return The datagram that was read, or `null` if nothing was available on the socket.
+     */
     public function trySendAndRead(buf: Bytes, addr: Address): Bytes
     {
         try
@@ -125,6 +160,13 @@ class UdpSocketLayer
     }
 
 
+    /**
+     * Sends a datagram to the connected peer, and then attempts to read a response on the socket.
+     *
+     * @param buf The datagram to send.
+     * @param addr The address to send to.
+     * @return The datagram that was read, or `null` if nothing was available on the socket.
+     */
     public function trySendToPeerAndRead(buf: Bytes): Bytes
     {
         try
@@ -140,24 +182,46 @@ class UdpSocketLayer
     }
 
 
+    /**
+     * Gets the address from which the last datagram was received from.
+     */
     public inline function recvFromAddress(): Address
     {
         return recvAddress;
     }
 
 
+    /**
+     * Gets the numeric id for the address from which the last datagram was received from.
+     */
     public inline function recvFromAddressId(): Int
     {
         return recvAddress.addressToId();
     }
 
 
+    /**
+     * Binds the socket to the given IP address and port.
+     *
+     * @param host The host to bind the socket to.
+     * The wildcard would be `0.0.0.0` or `*` depending on the platform.
+     * @param port The port to bind the socket to.
+     */
     public inline function listen(host: String, port: Int)
     {
         socket.bind(new Host(host), port);
     }
 
 
+    /**
+     * Connects the socket to the given address.
+     *
+     * While connected, `readFromPeer()` and `sendToPeer()` should be used,
+     * instead of `read()` and `send()`.
+     *
+     * @param host The host to the connect to.
+     * @param port The port to connect to.
+     */
     public inline function connect(host: Host, port: Int)
     {
         socket.connect(host, port);
