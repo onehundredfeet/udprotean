@@ -4,10 +4,10 @@ package udprotean.shared.platform.lua;
 @:luaRequire("socket")
 extern class NativeSocket
 {
-    static function setsockname(address: String, port: Int): Void;
-
-
     static function udp(): NativeSocket;
+
+
+    function setsockname(address: String, port: Int): Void;
 
 
     function send(datagram: String): Int;

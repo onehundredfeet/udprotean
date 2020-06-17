@@ -70,7 +70,7 @@ abstract LuaUdpSocket(NativeSocket)
 
     public inline function bind(host: Host, port: Int): Void
     {
-        NativeSocket.setsockname(host.toString(), port);
+        this.setsockname(host.toString(), port);
     }
 
 
