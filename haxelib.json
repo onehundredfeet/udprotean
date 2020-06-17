@@ -2,11 +2,11 @@
   "name": "udprotean",
   "url" : "https://gitlab.com/haath/udprotean",
   "license": "MIT",
-  "tags": ["udp", "multiplayer", "udprotean", "reliable", "inorder"],
+  "tags": [ "udp", "multiplayer", "udprotean", "reliable", "inorder", "networking" ],
   "description": "A UDP-based protocol for multiplayer games, with reliable in-order message delivery.",
   "version": "0.0.0",
   "classPath": "src",
-  "releasenote": "Added option to register connection callbacks on the server.",
+  "releasenote": "Added lua support.",
   "contributors": [ "Haath" ],
   "dependencies": {
   }
