@@ -63,6 +63,12 @@ class UDProteanConfiguration
      */
     public static inline var SequenceDistanceRelationship = getOrDefault("UDPROTEAN_SEQUENCE_DISTANCE", 32);
 
+
+    /**
+     * The time (in ms) of inactivity after which the client will send a keep-alive ping message to the server.
+     */
+    public static inline var ClientPingInterval           = getOrDefault("UDPROTEAN_PING_INTERVAL", 2000);
+
     #end
 
 

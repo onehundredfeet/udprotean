@@ -9,6 +9,7 @@ abstract CommandCode(String) from String to String
     var Handshake         = "ffff";
     var Disconnect        = "fffe";
     var UnreliableMessage = "fffd";
+    var Ping              = "fffc";
 
 
     public inline function getByteLength(): Int
@@ -25,6 +26,6 @@ abstract CommandCode(String) from String to String
 
     public static inline function ofBytes(bytes: Bytes): CommandCode
     {
-        return bytes.length == 6 ? bytes.toHex().substr(0, 4) : "";
+        return bytes.length >= 2 ? bytes.toHex().substr(0, 4) : "";
     }
 }

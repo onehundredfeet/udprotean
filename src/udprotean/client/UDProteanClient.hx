@@ -1,5 +1,6 @@
 package udprotean.client;
 
+import udprotean.shared.protocol.UDProteanConfiguration;
 import udprotean.shared.protocol.CommandCode;
 import udprotean.shared.Timestamp;
 import haxe.io.Bytes;
@@ -60,6 +61,11 @@ class UDProteanClient extends UDProteanPeer
             hadDatagrams = processRead();
         }
         while (hadDatagrams && !timestamp.isTimedOut(timeout));
+
+        if (getLastTransmittedElapsed() > UDProteanConfiguration.ClientPingInterval)
+        {
+            onTransmit(CommandCode.Ping.toBytes());
+        }
     }
 
 
@@ -154,17 +160,21 @@ class UDProteanClient extends UDProteanPeer
 
         switch (commandCode)
         {
-            case CommandCode.Handshake:
+            case Handshake:
                 // Clients don't have to bounce handshake messages.
 
 
-            case CommandCode.Disconnect:
+            case Disconnect:
                 // Do nothing, probably a bounce.
                 // Although if we issued a disconnect we probably shouldn't be calling update() anymore.
 
 
-            case CommandCode.UnreliableMessage:
+            case UnreliableMessage:
                 onUnreliableMessageReceived(datagram);
+
+
+            case Ping:
+                resetLastReceivedTimestamp();
 
 
             case _:

@@ -37,7 +37,7 @@ class Utils
     /**
      * Generates a disconnect code for a given handshake code.
      */
-    public static inline function getDisconnectCode(handshakeCode: String)
+    public static inline function getDisconnectCode(handshakeCode: String): String
     {
         return CommandCode.Disconnect + handshakeCode.substr(4);
     }

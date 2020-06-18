@@ -31,18 +31,18 @@ class SequentialCommunication
         receivingBuffer = new DatagramBuffer();
 
         // Initialize sequences
-        sendingSequence = 0;      
-        sendingAckSequence = 0;   
-        receivingSequence = 0;    
+        sendingSequence = 0;
+        sendingAckSequence = 0;
+        receivingSequence = 0;
         receivingAckSequence = -1;
-        processingSequence = 0;   
+        processingSequence = 0;
     }
 
 
     /**
      * Send a message to the connected peer.
      * @param message The message to send. Due to fragmentation, the maximum size for a single message is (255 * FragmentSize).
-     * @param sendNow Whether or not to transmit datagrams immediately. If `false`, the method will only store datagrams in the 
+     * @param sendNow Whether or not to transmit datagrams immediately. If `false`, the method will only store datagrams in the
      *                buffers and return immediately. These datagrams will be sent during the next `update()`.
      */
     public final function send(message: Bytes, sendNow: Bool = true)
@@ -60,7 +60,7 @@ class SequentialCommunication
 
             fragment.set(0, fragmentCount);
             fragment.blit(1, message, dataIndex, fragmentSize);
-            
+
             dataIndex += fragmentSize;
 
             sendDatagram(fragment, sendNow);
@@ -84,7 +84,7 @@ class SequentialCommunication
         }
 
         // Check if we already have this datagram and we just haven't ACKed it yet.
-        if (datagramSequence == receivingAckSequence 
+        if (datagramSequence == receivingAckSequence
          || datagramSequence.isBetween(receivingAckSequence, receivingSequence))
         {
             return;
@@ -177,6 +177,7 @@ class SequentialCommunication
             transmitFromBuffer(datagramSequence);
         }
     }
+
 
     /**
      * Goes through all the datagrams in the receiving buffer which have not yet been consumed.

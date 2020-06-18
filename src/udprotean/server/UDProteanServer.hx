@@ -150,6 +150,10 @@ class UDProteanServer
                 peer.onReceived(datagram);
 
 
+            case Ping:
+                peer.resetLastReceivedTimestamp();
+
+
             case _:
             // Necessary on Neko for some reason.
             // If not present, execution of the method will abruptly stop at the beginning of the switch.
@@ -198,17 +202,7 @@ class UDProteanServer
 
             if (validDisconnectCode)
             {
-                // Call the onDisconnect callback.
-                peer.onDisconnect();
-
-                // Remove peer.
-                peers.remove(recvFromAddressId);
-
-                // Invoke the callback if registered.
-                if (onClientDisconnectedCallback != null)
-                {
-                    onClientDisconnectedCallback(peer);
-                }
+                removePeer(recvFromAddressId);
             }
         }
     }
@@ -240,5 +234,24 @@ class UDProteanServer
         }
 
         peer.onConnect();
+    }
+
+
+    @:private
+    function removePeer(peerAddressId: Int)
+    {
+        var peer: UDProteanClientBehavior = peers[peerAddressId];
+
+        // Call the onDisconnect callback.
+        peer.onDisconnect();
+
+        // Remove peer.
+        peers.remove(peerAddressId);
+
+        // Invoke the callback if registered.
+        if (onClientDisconnectedCallback != null)
+        {
+            onClientDisconnectedCallback(peer);
+        }
     }
 }

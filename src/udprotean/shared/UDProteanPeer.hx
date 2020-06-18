@@ -12,7 +12,8 @@ class UDProteanPeer extends SequentialCommunication
 {
     @:protected var socket: ClientUdpSocket;
     @:protected var peerAddress: Address;
-    @:private   var lastContact: Timestamp;
+    @:private   var lastReceived: Timestamp;
+    @:private   var lastTransmitted: Timestamp;
 
     #if UDPROTEAN_UNIT_TEST
     public static var PacketLoss: Float = 0;
@@ -25,7 +26,8 @@ class UDProteanPeer extends SequentialCommunication
         super();
         this.socket = socket;
         this.peerAddress = peerAddress;
-        lastContact = Timestamp.Now;
+        lastReceived = Timestamp.Now;
+        lastTransmitted = Timestamp.Now;
     }
 
 
@@ -54,9 +56,20 @@ class UDProteanPeer extends SequentialCommunication
      *
      * @return The time elapsed in **seconds**.
      */
-    public inline function getLastContactElapsed(): Float
+    public inline function getLastReceivedElapsed(): Float
     {
-        return lastContact.elapsed();
+        return lastReceived.elapsed();
+    }
+
+
+    /**
+     * Returns the time elapsed since data was last sent to this peer.
+     *
+     * @return The time elapsed in **seconds**.
+     */
+    public inline function getLastTransmittedElapsed(): Float
+    {
+        return lastTransmitted.elapsed();
     }
 
 
@@ -70,10 +83,22 @@ class UDProteanPeer extends SequentialCommunication
     }
 
 
+    public inline function resetLastReceivedTimestamp()
+    {
+        lastReceived = Timestamp.Now;
+    }
+
+
+    public inline function resetLastTransmittedTimestamp()
+    {
+        lastTransmitted = Timestamp.Now;
+    }
+
+
     @:noCompletion
     public override final function onReceived(datagram: Bytes)
     {
-        lastContact = Timestamp.Now;
+        resetLastReceivedTimestamp();
 
         super.onReceived(datagram);
     }
@@ -85,6 +110,8 @@ class UDProteanPeer extends SequentialCommunication
         #if UDPROTEAN_UNIT_TEST
         if (rand.random() >= PacketLoss)
         #end
+
+        resetLastTransmittedTimestamp();
 
         if (socket.isConnected())
         {
