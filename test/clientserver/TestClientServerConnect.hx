@@ -1,5 +1,6 @@
 package clientserver;
 
+import udprotean.shared.protocol.UDProteanConfiguration;
 import udprotean.server.UDProteanClientBehavior;
 import seedyrng.Seedy;
 import udprotean.shared.Utils;
@@ -158,6 +159,37 @@ class TestClientServerConnect implements ITest
 
             Assert.isTrue(client.onDisconnectCalled);
         }
+
+        clientBranch.done();
+    }
+
+
+    @:timeout(20000)
+    function testDisconnectIdle(async: Async)
+    {
+        var clientBranch = async.branch();
+        var serverBranch = async.branch();
+
+        runServer(1).sendMessage(serverBranch);
+
+        var client = new TestConnectClient("127.0.0.1", port);
+        clients.push(client);
+
+        var connected = client.connectTimeout(1);
+
+        Assert.isTrue(client.isConnected());
+        Assert.isTrue(client.initializeCalled);
+        Assert.isTrue(client.onConnectCaled);
+        Assert.isFalse(client.onDisconnectCalled);
+        Assert.isTrue(connected);
+
+        // Sleep until client is considered idle.
+        Sys.sleep(UDProteanConfiguration.ClientIdleTimeLimit / 999);
+
+        server.updatePeers();
+
+        Assert.isTrue(client.onDisconnectCalled);
+        Assert.equals(0, Lambda.count(server.peers));
 
         clientBranch.done();
     }

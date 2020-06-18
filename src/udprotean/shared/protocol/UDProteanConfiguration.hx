@@ -65,9 +65,15 @@ class UDProteanConfiguration
 
 
     /**
-     * The time (in ms) of inactivity after which the client will send a keep-alive ping message to the server.
+     * The time (in seconds) of inactivity after which the client will send a keep-alive ping message to the server.
      */
-    public static inline var ClientPingInterval           = getOrDefault("UDPROTEAN_PING_INTERVAL", 2000);
+    public static inline var ClientPingInterval           = getOrDefault("UDPROTEAN_PING_INTERVAL", 1);
+
+
+    /**
+     * The time (in seconds) of inactivity after which a client is considered disconnected and removed from the server.
+     */
+    public static inline var ClientIdleTimeLimit          = getOrDefault("UDPROTEAN_CLIENT_IDLE_TIME", 3);
 
     #end
 

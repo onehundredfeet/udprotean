@@ -12,8 +12,8 @@ class UDProteanPeer extends SequentialCommunication
 {
     @:protected var socket: ClientUdpSocket;
     @:protected var peerAddress: Address;
-    @:protected var lastReceived: Timestamp;
-    @:protected var lastTransmitted: Timestamp;
+    var lastReceived: Timestamp;
+    var lastTransmitted: Timestamp;
 
     #if UDPROTEAN_UNIT_TEST
     public static var PacketLoss: Float = 0;

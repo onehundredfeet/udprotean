@@ -6,7 +6,7 @@
   "description": "A UDP-based protocol for multiplayer games, with reliable in-order message delivery.",
   "version": "0.0.0",
   "classPath": "src",
-  "releasenote": "Added lua support.",
+  "releasenote": "Added keep-alive pings and disconnecting of idle clients.",
   "contributors": [ "Haath" ],
   "dependencies": {
   }

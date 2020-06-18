@@ -1,5 +1,6 @@
 package udprotean.server;
 
+import udprotean.shared.protocol.UDProteanConfiguration;
 import udprotean.shared.protocol.CommandCode;
 import haxe.crypto.Sha1;
 import udprotean.shared.Timestamp;
@@ -146,12 +147,12 @@ class UDProteanServer
                 peer.onUnreliableMessageReceived(datagram);
 
 
+            case Ping if (peer != null):
+                peer.resetLastReceivedTimestamp();
+
+
             case _ if (peer != null):
                 peer.onReceived(datagram);
-
-
-            case Ping:
-                peer.resetLastReceivedTimestamp();
 
 
             case _:
@@ -211,9 +212,21 @@ class UDProteanServer
     @:private
     function updatePeers()
     {
-        for (peer in peers)
+        var toRemove: Array<Int> = new Array();
+
+        for (addr => peer in peers)
         {
             peer.update();
+
+            if (peer.getLastReceivedElapsed() > UDProteanConfiguration.ClientIdleTimeLimit)
+            {
+                toRemove.push(addr);
+            }
+        }
+
+        while (toRemove.length > 0)
+        {
+            removePeer( toRemove.pop() );
         }
     }
 
