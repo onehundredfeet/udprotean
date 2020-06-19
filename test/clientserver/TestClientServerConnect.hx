@@ -184,11 +184,12 @@ class TestClientServerConnect implements ITest
         Assert.isTrue(connected);
 
         // Sleep until client is considered idle.
-        Sys.sleep(UDProteanConfiguration.ClientIdleTimeLimit / 999);
+        Sys.sleep(UDProteanConfiguration.ClientIdleTimeLimit + 1);
+
+        Assert.isTrue(server.peers.iterator().next().getLastReceivedElapsed() > UDProteanConfiguration.ClientIdleTimeLimit);
 
         server.updatePeers();
 
-        Assert.isTrue(client.onDisconnectCalled);
         Assert.equals(0, Lambda.count(server.peers));
 
         clientBranch.done();

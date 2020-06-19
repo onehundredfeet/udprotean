@@ -1,6 +1,7 @@
 package udprotean.shared.protocol;
 
 
+import haxe.macro.Expr;
 import haxe.macro.Context;
 
 class UDProteanConfiguration
@@ -14,7 +15,7 @@ class UDProteanConfiguration
      *
      * **This option needs to have the same value on both peers.**
      */
-    public static inline var SequenceSize                 = getOrDefault("UDPROTEAN_SEQUENCE_SIZE", 512);
+    public static inline var SequenceSize: Int                 = getOrDefault("UDPROTEAN_SEQUENCE_SIZE", 512);
 
 
     /**
@@ -26,21 +27,21 @@ class UDProteanConfiguration
      *
      * **This option needs to have the same value on both peers.**
      */
-    public static inline var FragmentSize                 = getOrDefault("UDPROTEAN_FRAGMENT_SIZE", 540);
+    public static inline var FragmentSize: Int                 = getOrDefault("UDPROTEAN_FRAGMENT_SIZE", 540);
 
 
     /**
      * The time (in ms) after which a not acknowledged datagram should be re-sent.
      * A larger value is recommended for servers with multiple clients.
      */
-    public static inline var RepeatDatagramAge            = getOrDefault("UDPROTEAN_REPEAT_AGE", 50);
+    public static inline var RepeatDatagramAge: Float            = getOrDefault("UDPROTEAN_REPEAT_AGE", 50);
 
 
     /**
      * The time (in ms) after which retransmission of a datagram should be requested when receiving one out-of-order.
      * A larger value is recommended for servers with multiple clients.
      */
-    public static inline var StaleDatagramAge             = getOrDefault("UDPROTEAN_STALE_AGE", 20);
+    public static inline var StaleDatagramAge: Float             = getOrDefault("UDPROTEAN_STALE_AGE", 20);
 
 
     /**
@@ -50,7 +51,7 @@ class UDProteanConfiguration
      *
      * **This option needs to have the same value on both peers.**
      */
-    public static inline var SequenceBytes                = getOrDefault("UDPROTEAN_SEQUENCE_BYTES", 3);
+    public static inline var SequenceBytes: Int                = getOrDefault("UDPROTEAN_SEQUENCE_BYTES", 3);
 
 
     /**
@@ -61,25 +62,25 @@ class UDProteanConfiguration
      * legitimate datagrams to be discarded during heavy network traffic and/or significant packet loss, when the
      * head of the cyclic buffer approaches its tail.
      */
-    public static inline var SequenceDistanceRelationship = getOrDefault("UDPROTEAN_SEQUENCE_DISTANCE", 32);
+    public static inline var SequenceDistanceRelationship: Int = getOrDefault("UDPROTEAN_SEQUENCE_DISTANCE", 32);
 
 
     /**
      * The time (in seconds) of inactivity after which the client will send a keep-alive ping message to the server.
      */
-    public static inline var ClientPingInterval           = getOrDefault("UDPROTEAN_PING_INTERVAL", 1);
+    public static inline var ClientPingInterval: Float           = getOrDefault("UDPROTEAN_PING_INTERVAL", 1.0);
 
 
     /**
      * The time (in seconds) of inactivity after which a client is considered disconnected and removed from the server.
      */
-    public static inline var ClientIdleTimeLimit          = getOrDefault("UDPROTEAN_CLIENT_IDLE_TIME", 3);
+    public static inline var ClientIdleTimeLimit: Float          = getOrDefault("UDPROTEAN_CLIENT_IDLE_TIME", 3.0);
 
     #end
 
 
     @IgnoreCover
-    macro static function getOrDefault(key: String, defaultValue: Int)
+    macro static function getOrDefault(key: String, defaultValue: Expr)
     {
         if (Context.defined(key))
         {
@@ -87,7 +88,7 @@ class UDProteanConfiguration
         }
         else
         {
-            return macro $v{ defaultValue };
+            return macro $e{ defaultValue };
         }
     }
 }
