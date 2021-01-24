@@ -6,7 +6,7 @@
   "description": "A UDP-based protocol for multiplayer games, with reliable in-order message delivery.",
   "version": "0.0.0",
   "classPath": "src",
-  "releasenote": "Added keep-alive pings and disconnecting of idle clients.",
+  "releasenote": "Unreliable messages now correctly update timeout timestamps.",
   "contributors": [ "Haath" ],
   "dependencies": {
   }
