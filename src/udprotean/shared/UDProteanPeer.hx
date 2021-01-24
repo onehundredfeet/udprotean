@@ -134,6 +134,8 @@ class UDProteanPeer extends SequentialCommunication
     @:noCompletion @:allow(udprotean.server.UDProteanServer)
     final function onUnreliableMessageReceived(datagram: Bytes)
     {
+        resetLastReceivedTimestamp();
+
         var commandCodeLength: Int = CommandCode.UnreliableMessage.getByteLength();
         var message = datagram.sub(commandCodeLength, datagram.length - commandCodeLength);
         onMessage(message);
