@@ -52,11 +52,31 @@ class UDProteanPeer extends SequentialCommunication
 
 
     /**
+     * Returns `true` if the peer is currently connected.
+     */
+    @IgnoreCover
+    public final inline function isConnected(): Bool
+    {
+        return socket.isConnected();
+    }
+
+
+    @:noCompletion
+    public override final function onReceived(datagram: Bytes)
+    {
+        resetLastReceivedTimestamp();
+
+        super.onReceived(datagram);
+    }
+
+
+    /**
      * Returns the time elapsed since data was last received from this peer.
      *
      * @return The time elapsed in **seconds**.
      */
     @:allow(udprotean.server.UDProteanServer)
+    @:noCompletion
     inline function getLastReceivedElapsed(): Float
     {
         return lastReceived.elapsed();
@@ -68,41 +88,25 @@ class UDProteanPeer extends SequentialCommunication
      *
      * @return The time elapsed in **seconds**.
      */
+    @:noCompletion
     inline function getLastTransmittedElapsed(): Float
     {
         return lastTransmitted.elapsed();
     }
 
 
-    /**
-     * Returns `true` if the peer is currently connected.
-     */
-    @IgnoreCover
-    public final inline function isConnected(): Bool
-    {
-        return socket.isConnected();
-    }
-
-
     @:allow(udprotean.server.UDProteanServer)
+    @:noCompletion
     inline function resetLastReceivedTimestamp()
     {
         lastReceived = Timestamp.Now;
     }
 
 
+    @:noCompletion
     inline function resetLastTransmittedTimestamp()
     {
         lastTransmitted = Timestamp.Now;
-    }
-
-
-    @:noCompletion
-    public override final function onReceived(datagram: Bytes)
-    {
-        resetLastReceivedTimestamp();
-
-        super.onReceived(datagram);
     }
 
 
