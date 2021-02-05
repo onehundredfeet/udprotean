@@ -6,7 +6,7 @@
   "description": "A UDP-based protocol for multiplayer games, with reliable in-order message delivery.",
   "version": "0.0.0",
   "classPath": "src",
-  "releasenote": "Unreliable messages now correctly update timeout timestamps.",
+  "releasenote": "Slight performance improvement.",
   "contributors": [ "Haath" ],
   "dependencies": {
   }

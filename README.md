@@ -22,7 +22,7 @@
 - **Dependency-free** native Haxe code, compile and use on any target that supports UDP.
 
 
-## Benchmark
+## Performance
 
 - Samples: `1000`
 - Ping time: `40-50ms`

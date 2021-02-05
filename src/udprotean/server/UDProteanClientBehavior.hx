@@ -25,4 +25,12 @@ class UDProteanClientBehavior extends UDProteanPeer
     {
         super.update();
     }
+
+
+    @:allow(udprotean.server.UDProteanServer)
+    @:noCompletion
+    final function getPeerAddressID(): Int
+    {
+        return peerAddress.addressToId();
+    }
 }

@@ -19,7 +19,8 @@ class UDProteanServer
 
     @:private var started: Bool;
     @:private var socket: ServerUdpSocket;
-    @:private var peers: Map<Int, UDProteanClientBehavior>;
+    @:private var peers: Array<UDProteanClientBehavior>;
+    @:private var peersMap: Map<Int, UDProteanClientBehavior>;
     @:private var onClientConnectedCallback: (UDProteanClientBehavior) -> Void;
     @:private var onClientDisconnectedCallback: (UDProteanClientBehavior) -> Void;
 
@@ -31,7 +32,8 @@ class UDProteanServer
         this.behaviorType = behaviorType;
         started = false;
         socket = new ServerUdpSocket();
-        peers = new Map();
+        peers = new Array();
+        peersMap = new Map();
     }
 
 
@@ -131,7 +133,7 @@ class UDProteanServer
         var recvFromAddressId: Int = socket.recvFromAddressId();
         var commandCode: CommandCode = CommandCode.ofBytes(datagram);
 
-        var peer: UDProteanClientBehavior = peers[recvFromAddressId];
+        var peer: UDProteanClientBehavior = peersMap[recvFromAddressId];
 
         switch (commandCode)
         {
@@ -174,7 +176,7 @@ class UDProteanServer
         var peerID: String = Utils.generatePeerID(handshakeCode, recvFromAddress.addressToId());
 
         // Add sender to the peers list.
-        if (!peers.exists(recvFromAddress.addressToId()))
+        if (!peersMap.exists(recvFromAddress.addressToId()))
         {
             initializePeer(recvFromAddress, peerID);
         }
@@ -196,9 +198,9 @@ class UDProteanServer
         var disconnectCode: String = datagram.toHex();
         var peerID: String = Utils.generatePeerID(disconnectCode, recvFromAddressId);
 
-        if (peers.exists(recvFromAddressId))
+        if (peersMap.exists(recvFromAddressId))
         {
-            var peer: UDProteanClientBehavior = peers[recvFromAddressId];
+            var peer: UDProteanClientBehavior = peersMap[recvFromAddressId];
             var validDisconnectCode: Bool = ( peer.peerID == peerID );
 
             if (validDisconnectCode)
@@ -214,13 +216,15 @@ class UDProteanServer
     {
         var toRemove: Array<Int> = new Array();
 
-        for (addr => peer in peers)
+        for (peer in peers)
         {
             peer.update();
 
             if (peer.getLastReceivedElapsed() > UDProteanConfiguration.ClientIdleTimeLimit)
             {
-                toRemove.push(addr);
+                var addrID: Int = peer.getPeerAddressID();
+
+                toRemove.push(addrID);
             }
         }
 
@@ -237,7 +241,8 @@ class UDProteanServer
         peerAddress = peerAddress.clone();
 
         var peer: UDProteanClientBehavior = Type.createInstance(behaviorType, [socket, peerAddress, peerId]);
-        peers.set(peerAddress.addressToId(), peer);
+        peers.push(peer);
+        peersMap.set(peerAddress.addressToId(), peer);
         peer.initialize();
 
         // Invoke the callback if registered.
@@ -253,13 +258,14 @@ class UDProteanServer
     @:private
     function removePeer(peerAddressId: Int)
     {
-        var peer: UDProteanClientBehavior = peers[peerAddressId];
+        var peer: UDProteanClientBehavior = peersMap[peerAddressId];
 
         // Call the onDisconnect callback.
         peer.onDisconnect();
 
         // Remove peer.
-        peers.remove(peerAddressId);
+        peers.remove(peer);
+        peersMap.remove(peerAddressId);
 
         // Invoke the callback if registered.
         if (onClientDisconnectedCallback != null)
