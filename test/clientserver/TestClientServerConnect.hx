@@ -17,6 +17,7 @@ import utest.Assert;
 
 @:access(udprotean.server.UDProteanServer)
 @:access(udprotean.client.UDProteanClient)
+@:access(udprotean.shared.UDProteanPeer)
 class TestClientServerConnect implements ITest
 {
     final ServerUpdates = 1000;

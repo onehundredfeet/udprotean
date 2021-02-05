@@ -56,7 +56,8 @@ class UDProteanPeer extends SequentialCommunication
      *
      * @return The time elapsed in **seconds**.
      */
-    public inline function getLastReceivedElapsed(): Float
+    @:allow(udprotean.server.UDProteanServer)
+    inline function getLastReceivedElapsed(): Float
     {
         return lastReceived.elapsed();
     }
@@ -67,7 +68,7 @@ class UDProteanPeer extends SequentialCommunication
      *
      * @return The time elapsed in **seconds**.
      */
-    public inline function getLastTransmittedElapsed(): Float
+    inline function getLastTransmittedElapsed(): Float
     {
         return lastTransmitted.elapsed();
     }
@@ -83,13 +84,14 @@ class UDProteanPeer extends SequentialCommunication
     }
 
 
-    public inline function resetLastReceivedTimestamp()
+    @:allow(udprotean.server.UDProteanServer)
+    inline function resetLastReceivedTimestamp()
     {
         lastReceived = Timestamp.Now;
     }
 
 
-    public inline function resetLastTransmittedTimestamp()
+    inline function resetLastTransmittedTimestamp()
     {
         lastTransmitted = Timestamp.Now;
     }
