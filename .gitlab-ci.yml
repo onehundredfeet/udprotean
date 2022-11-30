@@ -1,4 +1,4 @@
-image: haxe:4.0-stretch
+image: haxe:4.2-bullseye
 
 
 stages:
